@@ -17,5 +17,6 @@ public class CellSO : ScriptableObject
     private void OnDisable()
     {
         isCollapsed = false;
+        entropy = 0;
     }
 }

@@ -23,5 +23,10 @@ public class ModuleSO : ScriptableObject
         moduleType.Add(east);
         moduleType.Add(west);
     }
+
+    void OnDisable()
+    {
+        moduleUsageCount = 0;
+    }
 }
 

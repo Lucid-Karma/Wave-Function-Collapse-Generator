@@ -55,20 +55,16 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(transform.position, Vector3.down, out hit, 2.5f))
         {
-            // Ray'in temas ettiði noktanýn z eksenindeki konumunu kontrol et
-            float groundDepthThreshold = 0.3f; // Ot ve yol arasýndaki geçiþ derinlik eþiði
+            float groundDepthThreshold = 0.3f; 
             float distance = hit.distance;
 
             if (hit.point.y <= groundDepthThreshold)
             {
-                // Eðer ray'in temas ettiði noktanýn yüksekliði belirli bir eþiðin altýndaysa,
-                // karakter otun üzerinde kabul edilir
-                Debug.Log("Karakter yolun üzerinde.");
+                Debug.Log("road");
             }
             else
             {
-                // Aksi halde, karakter yolun üzerinde kabul edilir
-                Debug.Log("Karakter otun üzerinde.");
+                Debug.Log("green");
             }
 
             Debug.Log("name: " + hit.collider.name + " is: " + distance);
