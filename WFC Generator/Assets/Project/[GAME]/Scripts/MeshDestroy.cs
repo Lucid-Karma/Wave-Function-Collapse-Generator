@@ -13,13 +13,13 @@ public class MeshDestroy : MonoBehaviour
     public int CutCascades = 1;
     public float ExplodeForce = 0;
 
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            DestroyMesh();
-        }
-    }
+    // void Update()
+    // {
+    //     if (Input.GetMouseButtonDown(0))
+    //     {
+    //         DestroyMesh();
+    //     }
+    // }
 
     private void DestroyMesh()
     {

@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.AI;
 using UnityEditor;
 
 public class WfcGenerator : MonoBehaviour
 {
-    private List<CellSO> cells = new List<CellSO> ();
+    [HideInInspector]
+    public List<CellSO> cells = new List<CellSO> ();
     private List<CellSO> candidateCells = new List<CellSO>();
     public CellSO Cell; //.......................A CellSO reference with modules defined.
     [SerializeField] private int _width;
@@ -24,11 +24,17 @@ public class WfcGenerator : MonoBehaviour
     int lowestEntropyValue; //...................Lowest usage value of modules among cells to Find_Lowest_Entropy and to Get_Definite_State.
     int randomModule; //.........................Selected cell's random module index to Get_Definite_State.
 
-    //private void Start()
-    //{
-    //    GenerateWFC();
-    //}
-    [ContextMenu("GenerateWFC")]
+    [HideInInspector]
+    public GameObject gridHolder; //......Game object for centering the position of the grid.
+    [SerializeField] 
+    private GameObject emptyObject;
+    [HideInInspector] public List<Transform> rotatableObjectTs = new();
+
+    private void Start()
+    {
+       GenerateWFC();
+    }
+    //[ContextMenu("GenerateWFC")]
     public void GenerateWFC()
     {
         Generate();
@@ -50,6 +56,10 @@ public class WfcGenerator : MonoBehaviour
         prefabRotation = cells[firstCollapse].modules[0].modulePrefab.transform.rotation;
         GameObject obj = (GameObject)Instantiate(cells[firstCollapse].modules[0].modulePrefab, cells[firstCollapse].cellPos, prefabRotation);
         
+        gridHolder = (GameObject)Instantiate(emptyObject);
+        gridHolder.transform.position = obj.transform.position;
+        obj.transform.SetParent(gridHolder.transform);
+    
     }
 
     private void Generate()
@@ -209,6 +219,7 @@ public class WfcGenerator : MonoBehaviour
                 {
                     selectedModule.moduleUsageCount ++;
                     prefabRotation = modulePrefab.transform.rotation;
+                    IsEmptyOrFour(selectedModule);
                     return modulePrefab;
                 }
                 else
@@ -236,16 +247,15 @@ public class WfcGenerator : MonoBehaviour
         nextCell = FindLowestEntropy();
         nextCell.isCollapsed = true;
         GameObject obj = (GameObject)Instantiate(GetDefiniteState(nextCell), nextCell.cellPos, prefabRotation);
+
+        ListRotatableObjectTs(obj.transform);
+        obj.transform.SetParent(gridHolder.transform);
         //Debug.Log("cell index is: " + candidateCells.IndexOf(nextCell));
         candidateCells.Remove(nextCell);
         
         //Debug.Log("Cell collapsed. CandidateCells count: " + candidateCells.Count);
 
         FindNeighbors(nextCell);
-
-        // NavMeshSourceTag navMeshSourceTag = nextCell.AddComponent<NavMeshSourceTag>();
-        // navMeshSurface.BuildNavMesh();
-
     }
     private void CollapseGrid()
     {
@@ -268,6 +278,29 @@ public class WfcGenerator : MonoBehaviour
             }
         }
         //Debug.Log("All cells are collapsed.");
+        gridHolder.transform.position = Vector3.zero;
     }
-            
+
+    #region Utility Methods
+    void ListRotatableObjectTs(Transform moduleTransform)
+    {
+        if (isEmptyOrFour)
+        {
+            rotatableObjectTs.Add(moduleTransform);
+        }
+    }
+
+    bool isEmptyOrFour;
+    void IsEmptyOrFour(ModuleSO module)
+    {
+        if (module.north == module.south && module.south == module.east && module.east == module.west)
+        {
+            isEmptyOrFour = false;
+        }
+        else
+        {
+            isEmptyOrFour = true;
+        }
+    }
+    #endregion        
 }
