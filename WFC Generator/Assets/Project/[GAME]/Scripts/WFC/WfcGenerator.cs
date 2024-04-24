@@ -10,8 +10,8 @@ public class WfcGenerator : MonoBehaviour
     public List<CellSO> cells = new List<CellSO> ();
     private List<CellSO> candidateCells = new List<CellSO>();
     public CellSO Cell; //.......................A CellSO reference with modules defined.
-    [SerializeField] private int _width;
-    [SerializeField] private int _length;
+    public int _width;
+    public int _length;
     [SerializeField] private int _moduleSize;
 
 
@@ -28,6 +28,8 @@ public class WfcGenerator : MonoBehaviour
     public GameObject gridHolder; //......Game object for centering the position of the grid.
     [SerializeField] 
     private GameObject emptyObject;
+    [HideInInspector] public List<ModuleObject> rotatableModuleObjects = new();
+    [HideInInspector] public List<ModuleObject> moduleObjects = new();
     [HideInInspector] public List<Transform> rotatableObjectTs = new();
 
     private void Start()
@@ -56,6 +58,10 @@ public class WfcGenerator : MonoBehaviour
         prefabRotation = cells[firstCollapse].modules[0].modulePrefab.transform.rotation;
         GameObject obj = (GameObject)Instantiate(cells[firstCollapse].modules[0].modulePrefab, cells[firstCollapse].cellPos, prefabRotation);
         
+        moduleObjects.Add(cells[firstCollapse].modules[0].moduleObject);
+        moduleObjects.First().Row = cells[firstCollapse].Row;
+        moduleObjects.First().Column = cells[firstCollapse].Column;
+
         gridHolder = (GameObject)Instantiate(emptyObject);
         gridHolder.transform.position = obj.transform.position;
         obj.transform.SetParent(gridHolder.transform);
@@ -219,7 +225,11 @@ public class WfcGenerator : MonoBehaviour
                 {
                     selectedModule.moduleUsageCount ++;
                     prefabRotation = modulePrefab.transform.rotation;
-                    IsEmptyOrFour(selectedModule);
+                    
+                    selectedModule.moduleObject.Row = currentCell.Row;
+                    selectedModule.moduleObject.Column = currentCell.Column;
+                    moduleObjects.Add(selectedModule.moduleObject);
+                    ListRotatableModuleObject(selectedModule);
                     return modulePrefab;
                 }
                 else
@@ -248,7 +258,19 @@ public class WfcGenerator : MonoBehaviour
         nextCell.isCollapsed = true;
         GameObject obj = (GameObject)Instantiate(GetDefiniteState(nextCell), nextCell.cellPos, prefabRotation);
 
-        ListRotatableObjectTs(obj.transform);
+        // moduleObjects.Add(nextCell.modules[0].moduleObject);
+        // moduleObjects.Last().Row = nextCell.Row;
+        // moduleObjects.Last().Column = nextCell.Column;
+        if (rotatableModuleObjects.Any())
+        {
+            if(rotatableModuleObjects.Last() == nextCell.modules[0].moduleObject)
+            {
+                rotatableObjectTs.Add(obj.transform);
+                //nextCell.modules[0].moduleObject.moduleTransform = obj.transform;
+            }
+        }
+            
+        
         obj.transform.SetParent(gridHolder.transform);
         //Debug.Log("cell index is: " + candidateCells.IndexOf(nextCell));
         candidateCells.Remove(nextCell);
@@ -282,24 +304,15 @@ public class WfcGenerator : MonoBehaviour
     }
 
     #region Utility Methods
-    void ListRotatableObjectTs(Transform moduleTransform)
-    {
-        if (isEmptyOrFour)
-        {
-            rotatableObjectTs.Add(moduleTransform);
-        }
-    }
-
-    bool isEmptyOrFour;
-    void IsEmptyOrFour(ModuleSO module)
-    {
+    void ListRotatableModuleObject(ModuleSO module)
+    {   
         if (module.north == module.south && module.south == module.east && module.east == module.west)
         {
-            isEmptyOrFour = false;
+            
         }
         else
         {
-            isEmptyOrFour = true;
+            rotatableModuleObjects.Add(module.moduleObject);
         }
     }
     #endregion        
