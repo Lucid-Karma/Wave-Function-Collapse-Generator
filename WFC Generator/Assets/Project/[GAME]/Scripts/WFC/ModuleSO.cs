@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +5,7 @@ using UnityEngine;
 public class ModuleSO : ScriptableObject 
 {
     public GameObject modulePrefab;
+    [HideInInspector] public ModuleObject moduleObject;
     [Space]
     public int north;
     public int south;
@@ -23,40 +23,19 @@ public class ModuleSO : ScriptableObject
         moduleType.Add(east);
         moduleType.Add(west);
 
-        moduleObject = new(){
-
-            isChecked = false,
-
-            north = north,
-            south = south,
-            east = east,
-            west = west
-        };
-        RotateCells.OnGridCollapse.AddListener(() => moduleObject.isChecked = false);
+        moduleObject = modulePrefab.GetComponent<ModuleObject>();
+        if (moduleObject != null)
+        {
+            moduleObject.north = north;
+            moduleObject.south = south;
+            moduleObject.east = east;
+            moduleObject.west = west;
+        }
     }
 
     void OnDisable()
     {
         moduleUsageCount = 0;
-
-        RotateCells.OnGridCollapse.RemoveListener(() => moduleObject.isChecked = false);
     }
-
-    [HideInInspector] public ModuleObject moduleObject;
-}
-
-public class ModuleObject
-{
-    public Transform moduleTransform;
-
-    public bool isChecked;
-
-    public int Row;
-    public int Column;
-
-    public int north;
-    public int south;
-    public int east;
-    public int west;
 }
 

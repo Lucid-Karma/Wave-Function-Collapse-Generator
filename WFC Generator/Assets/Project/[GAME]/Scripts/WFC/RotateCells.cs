@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
@@ -7,17 +6,18 @@ using UnityEngine.Events;
 
 public class RotateCells : MonoBehaviour
 {
-    private List<ModuleObject> _rotatableModuleObjects = new();
     private List<ModuleObject> _candidateMOs = new();
     WfcGenerator generator;
+    IModuleObject moduleObject;
     int cellCountToRotate;  // DifficultyManager
     int randomTIndex;
-    private List<ModuleObject> MOs = new();
     private List<Transform> lotTransforms = new();
     private List<float> _moduleAngles = new();
-    private List<Transform> _transforms = new();
+    private List<Transform> _rotatableTransforms = new();
     private int[] _desiredAngles = new int[3] {90, 180, 270};
     private bool isRotating = false;
+
+    [HideInInspector] public static UnityEvent OnGridCollapse = new();
 
     void Start()
     {
@@ -35,16 +35,13 @@ public class RotateCells : MonoBehaviour
     {
         _length = generator._length;
         _width = generator._width;
-        MOs.AddRange(generator.moduleObjects);
-        _candidateMOs.AddRange(MOs);
-        _rotatableModuleObjects.AddRange(generator.rotatableModuleObjects);
-        _transforms.AddRange(generator.rotatableObjectTs);
-        for (int i = 0; i < _transforms.Count; i++)
+        _candidateMOs.AddRange(generator.moduleObjects);
+        _rotatableTransforms.AddRange(generator.rotatableObjectTs);
+        for (int i = 0; i < _rotatableTransforms.Count; i++)
         {
-            _moduleAngles.Add(_transforms[i].rotation.eulerAngles.y);
-            _rotatableModuleObjects[i].moduleTransform = _transforms[i];    // !!!!
+            _moduleAngles.Add(_rotatableTransforms[i].rotation.eulerAngles.y);
         }
-        lotTransforms.AddRange(_transforms);
+        lotTransforms.AddRange(_rotatableTransforms);
         
         cellCountToRotate = 1;///*lotTransforms.Count;*/ lotTransforms.Count / 2;    //gonna be deleted..
 
@@ -69,7 +66,11 @@ public class RotateCells : MonoBehaviour
             //    .SetEase(Ease.OutQuad);
             for (int i = 0; i < randomIndex+1; i++)
             {
-                UpdateMO_Angle(_transforms.IndexOf(moduleTransform));
+                moduleObject = moduleTransform.GetComponent<IModuleObject>();
+                if (moduleObject != null)
+                {
+                    moduleObject.UpdateMO_Angle(moduleTransform);
+                }
             }
         }
     }
@@ -107,20 +108,24 @@ public class RotateCells : MonoBehaviour
 
                 if (moduleTransform != null && !isRotating)
                 {
-                    if(_transforms.Contains(moduleTransform))
+                    if(_rotatableTransforms.Contains(moduleTransform))
                     {
-                        RotateModule(moduleTransform);
-                        UpdateMO_Angle(_transforms.IndexOf(moduleTransform));
-                        FindNeighbors(_rotatableModuleObjects[_transforms.IndexOf(moduleTransform)]);
-                        //CollapseGrid();
-                        // _candidateMOs.Clear();
-                        // _candidateMOs.AddRange(MOs);
-                        // isFail = false;
+                        moduleObject = moduleTransform.GetComponent<IModuleObject>();
+                        if (moduleObject != null)
+                        {
+                            RotateModule(moduleTransform);
+                            moduleObject.UpdateMO_Angle(moduleTransform);
+                            CollapseGrid();
+                            _candidateMOs.Clear();
+                            _candidateMOs.AddRange(generator.moduleObjects);
+                            isFail = false;
+                        }  
                     } 
                 }
             }
         }
     }
+    
     private void RotateModule(Transform modulePrefab)
     {
         isRotating = true;
@@ -128,29 +133,6 @@ public class RotateCells : MonoBehaviour
             .SetEase(Ease.OutQuad) 
             .OnComplete(() => isRotating = false);
         //modulePrefab.Rotate(Vector3.up, 90f);
-    }
-    int _north, _south, _east, _west;
-    private void UpdateMO_Angle(int index)
-    {
-        ModuleObject moduleObject = _rotatableModuleObjects[index];
-        // Debug.Log("default: " + moduleObject.moduleTransform.name +
-        //     "\nnorth: " + moduleObject.north+
-        //     "\nsouth: " + moduleObject.south+
-        //     "\neast: " + moduleObject.east+
-        //     "\nwest: " + moduleObject.west);
-        _north = moduleObject.north;
-        _south = moduleObject.south;
-        _east = moduleObject.east;
-        _west = moduleObject.west;
-        moduleObject.north = _west;
-        moduleObject.south = _east;
-        moduleObject.east = _north;
-        moduleObject.west = _south;
-        // Debug.Log("current: " + moduleObject.moduleTransform.name +
-        //     "\nnorth: " + moduleObject.north+
-        //     "\nsouth: " + moduleObject.south+
-        //     "\neast: " + moduleObject.east+
-        //     "\nwest: " + moduleObject.west);
     }
 
     private void CollapseMO()
@@ -162,14 +144,13 @@ public class RotateCells : MonoBehaviour
 
         FindNeighbors(nextMO);
     }
-    [HideInInspector] public static UnityEvent OnGridCollapse = new();
+    
     private void CollapseGrid()
     {
         OnGridCollapse.Invoke();
-        Debug.Log("enter collapse grid");
 
         if (isFail) return;
-        while (MOs.Where(x => !x.isChecked).Any())
+        while (generator.moduleObjects.Where(x => !x.isChecked).Any())
         {
             if (_candidateMOs.Count > 0)
             {
@@ -190,53 +171,39 @@ public class RotateCells : MonoBehaviour
         {
             Debug.Log("WIN !!!");
         }
-        Debug.Log("exit collapse grid"); 
     }
     int _row;
     int _col;
     private int _length;
     private int _width;
     private bool isFail;
-    private void FindNeighbors(ModuleObject currentModuleObject)
+    private void FindNeighbors(ModuleObject moduleObject)
     {
-        _row = currentModuleObject.Row;
-        _col = currentModuleObject.Column;
-        Debug.Log("satir: " + _row + " sütun: " + _col);
+        _row = moduleObject.Row;
+        _col = moduleObject.Column;
 
         // North
         if (_col > 0 )
         {
-            ModuleObject northNeighbor = MOs.Find(c => c.Column == _col - 1 && c.Row == _row && !c.isChecked);
+            ModuleObject northNeighbor = generator.moduleObjects.Find(c => c.Column == _col - 1 && c.Row == _row && !c.isChecked);
             if (northNeighbor != null)
             {
-                Debug.Log("North N: " + northNeighbor.moduleTransform.name +
-            "\nnorth: " + northNeighbor.north+
-            "\nsouth: " + northNeighbor.south+
-            "\neast: " + northNeighbor.east+
-            "\nwest: " + northNeighbor.west);
-                if (!IsMatching(0, northNeighbor, currentModuleObject))
+                if (!IsMatching(0, northNeighbor, moduleObject))
                 {
-                    Debug.Log("false");
                     isFail = true;
                     return;
                 }
             }
         }
-
+        
         // South
         if (_col < _length - 1 )
         {
-            ModuleObject southNeighbor = MOs.Find(c => c.Column == _col + 1 && c.Row == _row && !c.isChecked);
+            ModuleObject southNeighbor = generator.moduleObjects.Find(c => c.Column == _col + 1 && c.Row == _row && !c.isChecked);
             if (southNeighbor != null)
             {
-                Debug.Log("South N: " + southNeighbor.moduleTransform.name +
-            "\nnorth: " + southNeighbor.north+
-            "\nsouth: " + southNeighbor.south+
-            "\neast: " + southNeighbor.east+
-            "\nwest: " + southNeighbor.west);
-                if (!IsMatching(1, southNeighbor, currentModuleObject))
+                if (!IsMatching(1, southNeighbor, moduleObject))
                 {
-                    Debug.Log("false");
                     isFail = true;
                     return;
                 }
@@ -246,17 +213,11 @@ public class RotateCells : MonoBehaviour
         // East
         if (_row < _width - 1 )
         {
-            ModuleObject eastNeighbor = MOs.Find(c => c.Column == _col && c.Row == _row + 1 && !c.isChecked);
+            ModuleObject eastNeighbor = generator.moduleObjects.Find(c => c.Column == _col && c.Row == _row + 1 && !c.isChecked);
             if (eastNeighbor != null)
             {
-                Debug.Log("East N: " + eastNeighbor.moduleTransform.name +
-            "\nnorth: " + eastNeighbor.north+
-            "\nsouth: " + eastNeighbor.south+
-            "\neast: " + eastNeighbor.east+
-            "\nwest: " + eastNeighbor.west);
-                if (!IsMatching(2, eastNeighbor, currentModuleObject))
+                if (!IsMatching(2, eastNeighbor, moduleObject))
                 {
-                    Debug.Log("false");
                     isFail = true;
                     return;
                 }
@@ -266,17 +227,11 @@ public class RotateCells : MonoBehaviour
         // West
         if (_row > 0)
         {
-            ModuleObject westNeighbor = MOs.Find(c => c.Column == _col && c.Row == _row - 1 && !c.isChecked);
+            ModuleObject westNeighbor = generator.moduleObjects.Find(c => c.Column == _col && c.Row == _row - 1 && !c.isChecked);
             if (westNeighbor != null)
             {
-                Debug.Log("West N: " + westNeighbor.moduleTransform.name +
-            "\nnorth: " + westNeighbor.north+
-            "\nsouth: " + westNeighbor.south+
-            "\neast: " + westNeighbor.east+
-            "\nwest: " + westNeighbor.west);
-                if (!IsMatching(3, westNeighbor, currentModuleObject))
+                if (!IsMatching(3, westNeighbor, moduleObject))
                 {
-                    Debug.Log("false");
                     isFail = true;
                     return;
                 }
@@ -286,19 +241,19 @@ public class RotateCells : MonoBehaviour
         isFail = false;
     }
 
-    private bool IsMatching(int direction, ModuleObject neighborModule, ModuleObject currentModuleObject)
+    private bool IsMatching(int direction, ModuleObject neighborModule, ModuleObject currentModule)
     {
         if (direction == 0) // North
-            return neighborModule.south == currentModuleObject.north;
+            return neighborModule.south == currentModule.north;
 
         if (direction == 1) // South
-            return neighborModule.north == currentModuleObject.south;
+            return neighborModule.north == currentModule.south;
 
         if (direction == 2) // East
-            return neighborModule.west == currentModuleObject.east;
+            return neighborModule.west == currentModule.east;
 
         if (direction == 3) // West
-            return neighborModule.east == currentModuleObject.west;
+            return neighborModule.east == currentModule.west;
 
         return false;
     }

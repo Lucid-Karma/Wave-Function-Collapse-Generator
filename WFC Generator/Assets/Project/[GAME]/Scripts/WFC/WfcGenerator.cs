@@ -28,9 +28,9 @@ public class WfcGenerator : MonoBehaviour
     public GameObject gridHolder; //......Game object for centering the position of the grid.
     [SerializeField] 
     private GameObject emptyObject;
-    [HideInInspector] public List<ModuleObject> rotatableModuleObjects = new();
-    [HideInInspector] public List<ModuleObject> moduleObjects = new();
     [HideInInspector] public List<Transform> rotatableObjectTs = new();
+    public List<ModuleObject> moduleObjects = new();
+    ModuleObject moduleObject;
 
     private void Start()
     {
@@ -51,16 +51,18 @@ public class WfcGenerator : MonoBehaviour
         cells[firstCollapse].isCollapsed = true;
         //Debug.Log("Starting wave. Collapsed cell is: " + firstCollapse);
 
-        // GameObject obj = (GameObject)Instantiate(GetDefiniteState(cells[firstCollapse]), cells[firstCollapse].cellPos, prefabRotation);
-
         cells[firstCollapse].modules.RemoveAll(module => module !=cells[firstCollapse].modules[4]);
         cells[firstCollapse].modules[0].moduleUsageCount ++;
         prefabRotation = cells[firstCollapse].modules[0].modulePrefab.transform.rotation;
         GameObject obj = (GameObject)Instantiate(cells[firstCollapse].modules[0].modulePrefab, cells[firstCollapse].cellPos, prefabRotation);
-        
-        moduleObjects.Add(cells[firstCollapse].modules[0].moduleObject);
-        moduleObjects.First().Row = cells[firstCollapse].Row;
-        moduleObjects.First().Column = cells[firstCollapse].Column;
+
+        moduleObject = obj.GetComponent<ModuleObject>();
+        if (moduleObject != null)
+        {
+            moduleObject.Row = cells[firstCollapse].Row;
+            moduleObject.Column = cells[firstCollapse].Column;
+            moduleObjects.Add(moduleObject);
+        }
 
         gridHolder = (GameObject)Instantiate(emptyObject);
         gridHolder.transform.position = obj.transform.position;
@@ -225,11 +227,6 @@ public class WfcGenerator : MonoBehaviour
                 {
                     selectedModule.moduleUsageCount ++;
                     prefabRotation = modulePrefab.transform.rotation;
-                    
-                    selectedModule.moduleObject.Row = currentCell.Row;
-                    selectedModule.moduleObject.Column = currentCell.Column;
-                    moduleObjects.Add(selectedModule.moduleObject);
-                    ListRotatableModuleObject(selectedModule);
                     return modulePrefab;
                 }
                 else
@@ -258,17 +255,15 @@ public class WfcGenerator : MonoBehaviour
         nextCell.isCollapsed = true;
         GameObject obj = (GameObject)Instantiate(GetDefiniteState(nextCell), nextCell.cellPos, prefabRotation);
 
-        // moduleObjects.Add(nextCell.modules[0].moduleObject);
-        // moduleObjects.Last().Row = nextCell.Row;
-        // moduleObjects.Last().Column = nextCell.Column;
-        if (rotatableModuleObjects.Any())
+        moduleObject = obj.GetComponent<ModuleObject>();
+        if (moduleObject != null)
         {
-            if(rotatableModuleObjects.Last() == nextCell.modules[0].moduleObject)
-            {
-                rotatableObjectTs.Add(obj.transform);
-                //nextCell.modules[0].moduleObject.moduleTransform = obj.transform;
-            }
+            moduleObject.Row = nextCell.Row;
+            moduleObject.Column = nextCell.Column;
+            moduleObjects.Add(moduleObject);
         }
+        
+        ListRotatableCellSO(nextCell.modules[0], obj.transform);
             
         
         obj.transform.SetParent(gridHolder.transform);
@@ -304,7 +299,7 @@ public class WfcGenerator : MonoBehaviour
     }
 
     #region Utility Methods
-    void ListRotatableModuleObject(ModuleSO module)
+    void ListRotatableCellSO(ModuleSO module, Transform moduleTransform)
     {   
         if (module.north == module.south && module.south == module.east && module.east == module.west)
         {
@@ -312,7 +307,7 @@ public class WfcGenerator : MonoBehaviour
         }
         else
         {
-            rotatableModuleObjects.Add(module.moduleObject);
+            rotatableObjectTs.Add(moduleTransform);
         }
     }
     #endregion        
