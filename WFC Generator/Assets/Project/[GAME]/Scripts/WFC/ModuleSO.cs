@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +5,7 @@ using UnityEngine;
 public class ModuleSO : ScriptableObject 
 {
     public GameObject modulePrefab;
+    [HideInInspector] public ModuleObject moduleObject;
     [Space]
     public int north;
     public int south;
@@ -22,6 +22,15 @@ public class ModuleSO : ScriptableObject
         moduleType.Add(south);
         moduleType.Add(east);
         moduleType.Add(west);
+
+        moduleObject = modulePrefab.GetComponent<ModuleObject>();
+        if (moduleObject != null)
+        {
+            moduleObject.north = north;
+            moduleObject.south = south;
+            moduleObject.east = east;
+            moduleObject.west = west;
+        }
     }
 
     void OnDisable()

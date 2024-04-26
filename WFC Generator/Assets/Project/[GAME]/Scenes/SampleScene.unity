@@ -448,7 +448,9 @@ MonoBehaviour:
   _width: 5
   _length: 9
   _moduleSize: 30
+  gridHolder: {fileID: 0}
   emptyObject: {fileID: 4712077171367693700, guid: 607c5de3780ea3340ac15eefa63fa5d7, type: 3}
+  rotatableObjectTs: []
 --- !u!4 &217411832
 Transform:
   m_ObjectHideFlags: 0
