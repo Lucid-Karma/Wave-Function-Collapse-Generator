@@ -19,11 +19,18 @@ public class RotateCells : MonoBehaviour
 
     [HideInInspector] public static UnityEvent OnGridCollapse = new();
 
+    void OnEnable()
+    {
+        WfcGenerator.OnMapReady.AddListener(DrawCells);
+    }
+    void OnDisable()
+    {
+        WfcGenerator.OnMapReady.RemoveListener(DrawCells);
+    }
+
     void Start()
     {
         generator = GetComponent<WfcGenerator>();
-
-        Invoke("DrawCells", 3f);
     }
 
     void Update()
@@ -43,7 +50,7 @@ public class RotateCells : MonoBehaviour
         }
         lotTransforms.AddRange(_rotatableTransforms);
         
-        cellCountToRotate = 1;///*lotTransforms.Count;*/ lotTransforms.Count / 2;    //gonna be deleted..
+        cellCountToRotate = /*lotTransforms.Count;*/ lotTransforms.Count / 2;    //gonna be deleted..
 
         for (int i = 0; i < cellCountToRotate; i++)
         {
@@ -60,10 +67,10 @@ public class RotateCells : MonoBehaviour
             int randomIndex = Random.Range(0, _desiredAngles.Length - 1);
             int randomRotation = _desiredAngles[randomIndex];
 
-            Vector3 currentRotation = moduleTransform.rotation.eulerAngles;
-            moduleTransform.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y + randomRotation, currentRotation.z);
-            //moduleTransform.DORotate(new Vector3(0f, (float)randomRotation, 0f), 1f, RotateMode.LocalAxisAdd)
-            //    .SetEase(Ease.OutQuad);
+            //Vector3 currentRotation = moduleTransform.rotation.eulerAngles;
+            //moduleTransform.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y + randomRotation, currentRotation.z);
+            moduleTransform.DORotate(new Vector3(0f, (float)randomRotation, 0f), 1f, RotateMode.LocalAxisAdd)
+                .SetEase(Ease.OutQuad);
             for (int i = 0; i < randomIndex+1; i++)
             {
                 moduleObject = moduleTransform.GetComponent<IModuleObject>();
@@ -105,20 +112,17 @@ public class RotateCells : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 Transform moduleTransform = hit.transform;
-
+                //Debug.Log("transform..");
                 if (moduleTransform != null && !isRotating)
                 {
-                    if(_rotatableTransforms.Contains(moduleTransform))
+                    //Debug.Log("transform is not null");
+                    if (_rotatableTransforms.Contains(moduleTransform))
                     {
+                        //Debug.Log("_rot... contains the transform");
                         moduleObject = moduleTransform.GetComponent<IModuleObject>();
                         if (moduleObject != null)
                         {
                             RotateModule(moduleTransform);
-                            moduleObject.UpdateMO_Angle(moduleTransform);
-                            CollapseGrid();
-                            _candidateMOs.Clear();
-                            _candidateMOs.AddRange(generator.moduleObjects);
-                            isFail = false;
                         }  
                     } 
                 }
@@ -131,8 +135,16 @@ public class RotateCells : MonoBehaviour
         isRotating = true;
         modulePrefab.DORotate(new Vector3(0f, 90f, 0f), 1f, RotateMode.LocalAxisAdd) 
             .SetEase(Ease.OutQuad) 
-            .OnComplete(() => isRotating = false);
+            .OnComplete(() => { isRotating = false; UpdateAndCheckMap(modulePrefab); });
         //modulePrefab.Rotate(Vector3.up, 90f);
+    }
+    private void UpdateAndCheckMap(Transform moduleTransform)
+    {
+        moduleObject.UpdateMO_Angle(moduleTransform);
+        CollapseGrid();
+        _candidateMOs.Clear();
+        _candidateMOs.AddRange(generator.moduleObjects);
+        isFail = false;
     }
 
     private void CollapseMO()
@@ -162,7 +174,7 @@ public class RotateCells : MonoBehaviour
             }
             if (isFail) 
             {
-                Debug.Log("failed");
+                //Debug.Log("failed");
                 break;
             }
         }
@@ -170,8 +182,18 @@ public class RotateCells : MonoBehaviour
         if (!isFail)
         {
             Debug.Log("WIN !!!");
+            RecreateLevel();
         }
     }
+    private void RecreateLevel()
+    {
+        _candidateMOs.Clear();
+        _rotatableTransforms.Clear();
+        lotTransforms.Clear();
+        _moduleAngles.Clear();
+        EventManager.OnLevelSuccess.Invoke();
+    }
+
     int _row;
     int _col;
     private int _length;

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEditor;
+using UnityEngine.Events;
 
 public class WfcGenerator : MonoBehaviour
 {
@@ -32,10 +32,30 @@ public class WfcGenerator : MonoBehaviour
     public List<ModuleObject> moduleObjects = new();
     ModuleObject moduleObject;
 
-    private void Start()
+    [HideInInspector] public static UnityEvent OnMapReady = new();
+
+    void OnEnable()
     {
-       GenerateWFC();
+        EventManager.OnLevelStart.AddListener(GenerateWFC);
+        EventManager.OnLevelSuccess.AddListener(RecreateLevel);
     }
+    void OnDisable()
+    {
+        EventManager.OnLevelStart.RemoveListener(GenerateWFC);
+        EventManager.OnLevelSuccess.RemoveListener(RecreateLevel);
+    }
+
+    private void RecreateLevel()
+    {
+        cells.Clear ();
+        candidateCells.Clear ();
+        rotatableObjectTs.Clear ();
+        moduleObjects.Clear ();
+
+        Destroy(gridHolder); 
+        EventManager.OnLevelStart.Invoke();
+    }
+
     //[ContextMenu("GenerateWFC")]
     public void GenerateWFC()
     {
@@ -49,9 +69,10 @@ public class WfcGenerator : MonoBehaviour
         firstCollapse = cells.Count / 2;
         
         cells[firstCollapse].isCollapsed = true;
+        int starterModule = Random.Range(0, cells[firstCollapse].modules.Count - 1);
         //Debug.Log("Starting wave. Collapsed cell is: " + firstCollapse);
 
-        cells[firstCollapse].modules.RemoveAll(module => module !=cells[firstCollapse].modules[4]);
+        cells[firstCollapse].modules.RemoveAll(module => module !=cells[firstCollapse].modules[starterModule]); //it was 4.
         cells[firstCollapse].modules[0].moduleUsageCount ++;
         prefabRotation = cells[firstCollapse].modules[0].modulePrefab.transform.rotation;
         GameObject obj = (GameObject)Instantiate(cells[firstCollapse].modules[0].modulePrefab, cells[firstCollapse].cellPos, prefabRotation);
@@ -63,6 +84,8 @@ public class WfcGenerator : MonoBehaviour
             moduleObject.Column = cells[firstCollapse].Column;
             moduleObjects.Add(moduleObject);
         }
+
+        ListRotatableMOTransforms(cells[firstCollapse].modules[0], obj.transform);
 
         gridHolder = (GameObject)Instantiate(emptyObject);
         gridHolder.transform.position = obj.transform.position;
@@ -263,7 +286,7 @@ public class WfcGenerator : MonoBehaviour
             moduleObjects.Add(moduleObject);
         }
         
-        ListRotatableCellSO(nextCell.modules[0], obj.transform);
+        ListRotatableMOTransforms(nextCell.modules[0], obj.transform);
             
         
         obj.transform.SetParent(gridHolder.transform);
@@ -296,10 +319,11 @@ public class WfcGenerator : MonoBehaviour
         }
         //Debug.Log("All cells are collapsed.");
         gridHolder.transform.position = Vector3.zero;
+        OnMapReady.Invoke();
     }
 
     #region Utility Methods
-    void ListRotatableCellSO(ModuleSO module, Transform moduleTransform)
+    void ListRotatableMOTransforms(ModuleSO module, Transform moduleTransform)
     {   
         if (module.north == module.south && module.south == module.east && module.east == module.west)
         {
