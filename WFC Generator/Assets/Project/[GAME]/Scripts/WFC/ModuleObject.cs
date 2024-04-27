@@ -21,15 +21,24 @@ public class ModuleObject: MonoBehaviour, IModuleObject
     {
         RotateCells.OnGridCollapse.RemoveListener(() => isChecked = false);
         isChecked = false;
+
+        //!!!
+        north = _north;
+        south = _south;
+        east = _east;
+        west = _west;
+
+        Row = 0;
+        Column = 0;
     }
 
     public void UpdateMO_Angle(Transform moduleTransform)
     {
-        Debug.Log("default: " + moduleTransform.name +
-            "\nnorth: " + north+
-            "\nsouth: " + south+
-            "\neast: " + east+
-            "\nwest: " + west);
+        // Debug.Log("default: " + moduleTransform.name +
+        //     "\nnorth: " + north+
+        //     "\nsouth: " + south+
+        //     "\neast: " + east+
+        //     "\nwest: " + west);
         _north = north;
         _south = south;
         _east = east;
@@ -39,10 +48,10 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         south = _east;
         east = _north;
         west = _south;
-        Debug.Log("current: " + moduleTransform.name +
-            "\nnorth: " + north+
-            "\nsouth: " + south+
-            "\neast: " + east+
-            "\nwest: " + west);
+        // Debug.Log("current: " + moduleTransform.name +
+        //     "\nnorth: " + north+
+        //     "\nsouth: " + south+
+        //     "\neast: " + east+
+        //     "\nwest: " + west);
     }
 }
