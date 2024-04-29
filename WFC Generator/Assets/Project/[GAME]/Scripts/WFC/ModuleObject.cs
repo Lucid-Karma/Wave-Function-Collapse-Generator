@@ -13,16 +13,22 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     int _north, _south, _east, _west;
 
+
     void OnEnable()
     {
         RotateCells.OnGridCollapse.AddListener(() => isChecked = false);
+        //RotateCells.OnModulesRotate.AddListener(DeactivateCity);
+        //EventManager.OnLevelSuccess.AddListener(ActivateCity);
     }
     void OnDisable()
     {
         RotateCells.OnGridCollapse.RemoveListener(() => isChecked = false);
+        //RotateCells.OnModulesRotate.RemoveListener(DeactivateCity);
+        //EventManager.OnLevelSuccess.RemoveListener(ActivateCity);
+
         isChecked = false;
 
-        //!!!
+        // ModuleSO already updates these variables on OnEnable..!!!
         north = _north;
         south = _south;
         east = _east;

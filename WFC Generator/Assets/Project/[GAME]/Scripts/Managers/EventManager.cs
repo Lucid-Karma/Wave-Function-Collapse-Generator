@@ -16,11 +16,11 @@ public static class EventManager
     public static UnityEvent OnLevelFail = new UnityEvent();
 
     public static UnityEvent OnRestart = new UnityEvent();
-
-    public static UnityEvent OnObstacleCreated = new UnityEvent();
-
-    public static UnityEvent OnPlayerStartedRunning = new UnityEvent();
+    
+    public static PlayerDataEvent OnPlayerDataUpdated = new();
 
     public static UnityEvent OnMusicOn = new UnityEvent();
     public static UnityEvent OnMusicOff = new UnityEvent();
 }
+
+public class PlayerDataEvent : UnityEvent<PlayerData> { }

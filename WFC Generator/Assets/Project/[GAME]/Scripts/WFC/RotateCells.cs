@@ -18,6 +18,7 @@ public class RotateCells : MonoBehaviour
     private bool isRotating = false;
 
     [HideInInspector] public static UnityEvent OnGridCollapse = new();
+    [HideInInspector] public static UnityEvent OnModulesRotate = new();
 
     void OnEnable()
     {
@@ -50,7 +51,8 @@ public class RotateCells : MonoBehaviour
         }
         lotTransforms.AddRange(_rotatableTransforms);
         
-        cellCountToRotate = /*lotTransforms.Count;*/ lotTransforms.Count / 2;    //gonna be deleted..
+        cellCountToRotate = LevelManager.Instance.DifficulityData.MO_CountToRotate;
+        //cellCountToRotate = lotTransforms.Count / 2;    
 
         for (int i = 0; i < cellCountToRotate; i++)
         {
@@ -58,6 +60,7 @@ public class RotateCells : MonoBehaviour
             RotatePrefab(lotTransforms[randomTIndex]);
             lotTransforms.RemoveAt(randomTIndex);
         }
+        OnModulesRotate.Invoke();
     }
 
     void RotatePrefab(Transform moduleTransform)
