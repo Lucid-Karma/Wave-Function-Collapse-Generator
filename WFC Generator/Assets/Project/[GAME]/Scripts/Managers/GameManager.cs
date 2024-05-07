@@ -1,15 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 public class GameManager : Singleton<GameManager>
 {
     private bool isGameStarted;
+    [ShowInInspector]
+    [ReadOnly]
     public bool IsGameStarted { get { return isGameStarted; } private set { isGameStarted = value; } }
+
+    //void Awake()
+    //{
+    //    PlayerPrefs.SetInt("LastLevel", 0);
+    //    PlayerPrefs.SetInt("LevelCount", 0);
+    //    PlayerPrefs.SetInt("RewardAmount", 0);
+    //    PlayerPrefs.SetInt("SolveCount", 0);
+    //    PlayerPrefs.SetInt("LoginCount", 0);
+    //}
 
     public void StartGame()
     {
-        if (IsGameStarted || applicationIsQuitting == false)
+        if (IsGameStarted)
             return;
 
         IsGameStarted = true;
@@ -18,7 +28,7 @@ public class GameManager : Singleton<GameManager>
 
     public void EndGame()
     {
-        if (!IsGameStarted || applicationIsQuitting == true)
+        if (!IsGameStarted)
             return;
 
         IsGameStarted = false;
@@ -30,14 +40,12 @@ public class GameManager : Singleton<GameManager>
     {
         EventManager.OnRestart.AddListener(ContinueGame);
         EventManager.OnLevelFail.AddListener(PauseGame);
-        EventManager.OnLevelSuccess.AddListener(PauseGame);
         //Timer.OnTimeOut += PauseGame;
     }
     private void OnDisable()
     {
         EventManager.OnRestart.RemoveListener(ContinueGame);
         EventManager.OnLevelFail.RemoveListener(PauseGame);
-        EventManager.OnLevelSuccess.RemoveListener(PauseGame);
         //Timer.OnTimeOut -= PauseGame;
     }
 

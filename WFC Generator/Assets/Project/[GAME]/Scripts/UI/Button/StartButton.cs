@@ -1,11 +1,23 @@
 using UnityEngine;
+using UnityEngine.UI;
 
-public class StartButton : MonoBehaviour
+public class StartButton : Button
 {
-    public void StartGame()
+    protected override void OnEnable()
     {
-        EventManager.OnGameStart.Invoke();
-        EventManager.OnLevelStart.Invoke();
-        gameObject.SetActive(false);
+        base.OnEnable();
+        onClick.AddListener(StartGame);
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnEnable();
+        onClick.RemoveListener(StartGame);
+    }
+
+    private void StartGame()
+    {
+        GameManager.Instance.StartGame();
+        LevelManager.Instance.StartLevel();
     }
 }

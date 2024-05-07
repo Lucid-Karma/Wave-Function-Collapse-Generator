@@ -13,16 +13,29 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     int _north, _south, _east, _west;
 
+    GameObject _cityPart;
+
+
     void OnEnable()
     {
+        
+        if (gameObject.transform.childCount > 0)
+           _cityPart = gameObject.transform.GetChild(0).gameObject;
+        ActivateCity();
+
         RotateCells.OnGridCollapse.AddListener(() => isChecked = false);
+        RotateCells.OnModulesRotate.AddListener(DeactivateCity);
+        EventManager.OnLevelFinish.AddListener(ActivateCity);
     }
     void OnDisable()
     {
         RotateCells.OnGridCollapse.RemoveListener(() => isChecked = false);
+        RotateCells.OnModulesRotate.RemoveListener(DeactivateCity);
+        EventManager.OnLevelFinish.RemoveListener(ActivateCity);
+
         isChecked = false;
 
-        //!!!
+        // ModuleSO already updates these variables on OnEnable..!!!
         north = _north;
         south = _south;
         east = _east;
@@ -34,11 +47,6 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     public void UpdateMO_Angle(Transform moduleTransform)
     {
-        // Debug.Log("default: " + moduleTransform.name +
-        //     "\nnorth: " + north+
-        //     "\nsouth: " + south+
-        //     "\neast: " + east+
-        //     "\nwest: " + west);
         _north = north;
         _south = south;
         _east = east;
@@ -48,10 +56,21 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         south = _east;
         east = _north;
         west = _south;
-        // Debug.Log("current: " + moduleTransform.name +
-        //     "\nnorth: " + north+
-        //     "\nsouth: " + south+
-        //     "\neast: " + east+
-        //     "\nwest: " + west);
+    }
+
+    private void ActivateCity()
+    {
+        if (_cityPart != null)
+        {
+            _cityPart.SetActive(true);
+        }
+    }
+
+    private void DeactivateCity()
+    {
+        if (_cityPart != null)
+        {
+            _cityPart.SetActive(false);
+        }
     }
 }
