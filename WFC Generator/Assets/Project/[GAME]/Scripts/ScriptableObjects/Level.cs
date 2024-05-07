@@ -11,10 +11,13 @@ public class Level : ScriptableObject
     public List<ThemeData> ThemeDatas = new();
     [Header("Difficulity Data")]
     [InlineEditor(InlineEditorModes.GUIOnly)]
-    public List<DifficulityData> DifficulityData = new();
+    public List<DifficultyData> DifficultyData = new();
+
+    [Header("Reward")]
+    public int point;
 
 
-    public Vector2 GetTilingNum(Theme theme)
+    public Texture GetColorAtlas(Theme theme)
     {
         try
         {
@@ -22,16 +25,16 @@ public class Level : ScriptableObject
             {
                 if (theme == ThemeDatas[i].Theme)
                 {
-                    return ThemeDatas[i].Tiling;
+                    return ThemeDatas[i].ColorAtlasTexture;
                 }
             }
             Debug.LogError("Theme Numbers are null");
-            return Vector2.zero;
+            return null;
         }
         catch (System.Exception ex)
         {
             Debug.LogError("Can't find a theme Numbers " + ex.ToString());
-            return Vector2.zero;
+            return null;
         }
     }
 }

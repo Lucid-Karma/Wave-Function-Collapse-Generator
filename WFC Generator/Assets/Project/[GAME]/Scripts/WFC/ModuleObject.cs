@@ -13,18 +13,25 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     int _north, _south, _east, _west;
 
+    GameObject _cityPart;
+
 
     void OnEnable()
     {
+        
+        if (gameObject.transform.childCount > 0)
+           _cityPart = gameObject.transform.GetChild(0).gameObject;
+        ActivateCity();
+
         RotateCells.OnGridCollapse.AddListener(() => isChecked = false);
-        //RotateCells.OnModulesRotate.AddListener(DeactivateCity);
-        //EventManager.OnLevelSuccess.AddListener(ActivateCity);
+        RotateCells.OnModulesRotate.AddListener(DeactivateCity);
+        EventManager.OnLevelFinish.AddListener(ActivateCity);
     }
     void OnDisable()
     {
         RotateCells.OnGridCollapse.RemoveListener(() => isChecked = false);
-        //RotateCells.OnModulesRotate.RemoveListener(DeactivateCity);
-        //EventManager.OnLevelSuccess.RemoveListener(ActivateCity);
+        RotateCells.OnModulesRotate.RemoveListener(DeactivateCity);
+        EventManager.OnLevelFinish.RemoveListener(ActivateCity);
 
         isChecked = false;
 
@@ -40,11 +47,6 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     public void UpdateMO_Angle(Transform moduleTransform)
     {
-        // Debug.Log("default: " + moduleTransform.name +
-        //     "\nnorth: " + north+
-        //     "\nsouth: " + south+
-        //     "\neast: " + east+
-        //     "\nwest: " + west);
         _north = north;
         _south = south;
         _east = east;
@@ -54,10 +56,21 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         south = _east;
         east = _north;
         west = _south;
-        // Debug.Log("current: " + moduleTransform.name +
-        //     "\nnorth: " + north+
-        //     "\nsouth: " + south+
-        //     "\neast: " + east+
-        //     "\nwest: " + west);
+    }
+
+    private void ActivateCity()
+    {
+        if (_cityPart != null)
+        {
+            _cityPart.SetActive(true);
+        }
+    }
+
+    private void DeactivateCity()
+    {
+        if (_cityPart != null)
+        {
+            _cityPart.SetActive(false);
+        }
     }
 }

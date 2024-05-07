@@ -25,7 +25,9 @@ namespace UnityToolbarExtender.Examples
 	[InitializeOnLoad]
 	public class SceneSwitchLeftButton {
 		static SceneSwitchLeftButton() {
+			//Debug.Log("left button before");
 			ToolbarExtender.LeftToolbarGUI.Add(OnToolbarGUI);
+		//Debug.Log("left button after");
 		}
 
         static List<SceneAsset> scenes = new List<SceneAsset>();
@@ -35,13 +37,14 @@ namespace UnityToolbarExtender.Examples
             GUILayout.BeginHorizontal();
 
             for (int i = 0; i < EditorBuildSettings.scenes.Length; i++) {
-
+				//Debug.Log("?");
 				var scene = EditorBuildSettings.scenes[i].path;
 				if (scene.Contains("Level"))
 					continue;
-
+				//Debug.Log("??");
                 if (GUILayout.Button(new GUIContent(i.ToString()), ToolbarStyles.commandButtonStyle)) {
                     SceneHelper.OpenScene(EditorBuildSettings.scenes[i].path);
+					//Debug.Log("winn");
                 }
             }
 

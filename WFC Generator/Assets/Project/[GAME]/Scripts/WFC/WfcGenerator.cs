@@ -25,7 +25,7 @@ public class WfcGenerator : MonoBehaviour
     int randomModule; //.........................Selected cell's random module index to Get_Definite_State.
 
     [HideInInspector]
-    public GameObject gridHolder; //......Game object for centering the position of the grid.
+    public GameObject gridHolder; //.............Game object for centering the position of the grid.
     [SerializeField] 
     private GameObject emptyObject;
     [HideInInspector] public List<Transform> rotatableObjectTs = new();
@@ -33,27 +33,39 @@ public class WfcGenerator : MonoBehaviour
     ModuleObject moduleObject;
 
     [HideInInspector] public static UnityEvent OnMapReady = new();
+    [HideInInspector] public static UnityEvent OnMapSolve = new();
 
     void OnEnable()
     {
         EventManager.OnLevelStart.AddListener(GenerateWFC);
-        EventManager.OnLevelSuccess.AddListener(RecreateLevel);
+        EventManager.OnLevelInitialize.AddListener(RecreateLevel);
     }
     void OnDisable()
     {
         EventManager.OnLevelStart.RemoveListener(GenerateWFC);
-        EventManager.OnLevelSuccess.RemoveListener(RecreateLevel);
+        EventManager.OnLevelInitialize.RemoveListener(RecreateLevel);
     }
 
+    //private IEnumerator RecreateLevel()
+    //{
+    //    yield return new WaitForSeconds(2f);
+    //    cells.Clear ();
+    //    candidateCells.Clear ();
+    //    rotatableObjectTs.Clear ();
+    //    moduleObjects.Clear ();
+
+    //    Destroy(gridHolder);
+    //    LevelManager.Instance.StartLevel();
+    //}
     private void RecreateLevel()
     {
-        cells.Clear ();
-        candidateCells.Clear ();
-        rotatableObjectTs.Clear ();
-        moduleObjects.Clear ();
+        cells.Clear();
+        candidateCells.Clear();
+        rotatableObjectTs.Clear();
+        moduleObjects.Clear();
 
-        Destroy(gridHolder); 
-        EventManager.OnLevelStart.Invoke();
+        Destroy(gridHolder);
+        LevelManager.Instance.StartLevel();
     }
 
     //[ContextMenu("GenerateWFC")]
@@ -69,7 +81,7 @@ public class WfcGenerator : MonoBehaviour
         firstCollapse = cells.Count / 2;
         
         cells[firstCollapse].isCollapsed = true;
-        int starterModule = Random.Range(0, cells[firstCollapse].modules.Count - 1);
+        int starterModule = Random.Range(0, cells[firstCollapse].modules.Count);
         //Debug.Log("Starting wave. Collapsed cell is: " + firstCollapse);
 
         cells[firstCollapse].modules.RemoveAll(module => module !=cells[firstCollapse].modules[starterModule]); //it was 4.
@@ -319,7 +331,7 @@ public class WfcGenerator : MonoBehaviour
         }
         //Debug.Log("All cells are collapsed.");
         gridHolder.transform.position = Vector3.zero;
-        OnMapReady.Invoke();
+        Invoke("AnnounceMapReady", 2f);
     }
 
     #region Utility Methods
@@ -333,6 +345,11 @@ public class WfcGenerator : MonoBehaviour
         {
             rotatableObjectTs.Add(moduleTransform);
         }
+    }
+
+    void AnnounceMapReady()
+    {
+        OnMapReady.Invoke();
     }
     #endregion        
 }

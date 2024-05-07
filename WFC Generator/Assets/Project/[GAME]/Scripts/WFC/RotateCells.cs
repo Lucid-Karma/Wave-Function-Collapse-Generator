@@ -16,17 +16,22 @@ public class RotateCells : MonoBehaviour
     private List<Transform> _rotatableTransforms = new();
     private int[] _desiredAngles = new int[3] {90, 180, 270};
     private bool isRotating = false;
+    private bool isDrawCompleted;
+    [HideInInspector] public static int rotatableCount;
 
     [HideInInspector] public static UnityEvent OnGridCollapse = new();
     [HideInInspector] public static UnityEvent OnModulesRotate = new();
+    [HideInInspector] public static bool isMapSucceed { get; private set; }
 
     void OnEnable()
     {
         WfcGenerator.OnMapReady.AddListener(DrawCells);
+        WfcGenerator.OnMapSolve.AddListener(RestoreMOsToOriginal);
     }
     void OnDisable()
     {
         WfcGenerator.OnMapReady.RemoveListener(DrawCells);
+        WfcGenerator.OnMapSolve.RemoveListener(RestoreMOsToOriginal);
     }
 
     void Start()
@@ -36,8 +41,13 @@ public class RotateCells : MonoBehaviour
 
     void Update()
     {
+        if (!isDrawCompleted) return;
+
         CheckInput();
     }
+
+    
+    
 
     void DrawCells()
     {
@@ -50,9 +60,9 @@ public class RotateCells : MonoBehaviour
             _moduleAngles.Add(_rotatableTransforms[i].rotation.eulerAngles.y);
         }
         lotTransforms.AddRange(_rotatableTransforms);
+        rotatableCount = _rotatableTransforms.Count;
         
-        cellCountToRotate = LevelManager.Instance.DifficulityData.MO_CountToRotate;
-        //cellCountToRotate = lotTransforms.Count / 2;    
+        cellCountToRotate = LevelManager.Instance.DifficultyData.MO_CountToRotate;
 
         for (int i = 0; i < cellCountToRotate; i++)
         {
@@ -60,10 +70,10 @@ public class RotateCells : MonoBehaviour
             RotatePrefab(lotTransforms[randomTIndex]);
             lotTransforms.RemoveAt(randomTIndex);
         }
-        OnModulesRotate.Invoke();
+        Invoke("AnnounceRotateCompleted", 1f);
     }
 
-    void RotatePrefab(Transform moduleTransform)
+    private void RotatePrefab(Transform moduleTransform)
     {
         if (moduleTransform != null) 
         {
@@ -74,7 +84,7 @@ public class RotateCells : MonoBehaviour
             //moduleTransform.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y + randomRotation, currentRotation.z);
             moduleTransform.DORotate(new Vector3(0f, (float)randomRotation, 0f), 1f, RotateMode.LocalAxisAdd)
                 .SetEase(Ease.OutQuad);
-            for (int i = 0; i < randomIndex+1; i++)
+            for (int i = 0; i < randomIndex + 1; i++)
             {
                 moduleObject = moduleTransform.GetComponent<IModuleObject>();
                 if (moduleObject != null)
@@ -83,6 +93,32 @@ public class RotateCells : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void AnnounceRotateCompleted()
+    {
+        OnModulesRotate.Invoke();
+        isDrawCompleted = true;
+    }
+
+    float gap;
+    private void RestoreMOsToOriginal()
+    {
+        for (int i = 0; i < _rotatableTransforms.Count; i++)
+        {
+            gap = _moduleAngles[i] - _rotatableTransforms[i].localEulerAngles.y;
+            _rotatableTransforms[i].DORotate(new Vector3(0f, gap, 0f), 1f, RotateMode.LocalAxisAdd)
+                .SetEase(Ease.OutQuad);
+
+            moduleObject = _rotatableTransforms[i].GetComponent<IModuleObject>();
+            if (moduleObject != null)
+            {
+                moduleObject.UpdateMO_Angle(_rotatableTransforms[i]);
+            }
+        }
+
+        isMapSucceed = false;
+        Invoke("EndMap", 1f);
     }
 
     void CheckInput()
@@ -115,13 +151,11 @@ public class RotateCells : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 Transform moduleTransform = hit.transform;
-                //Debug.Log("transform..");
+
                 if (moduleTransform != null && !isRotating)
                 {
-                    //Debug.Log("transform is not null");
                     if (_rotatableTransforms.Contains(moduleTransform))
                     {
-                        //Debug.Log("_rot... contains the transform");
                         moduleObject = moduleTransform.GetComponent<IModuleObject>();
                         if (moduleObject != null)
                         {
@@ -136,8 +170,8 @@ public class RotateCells : MonoBehaviour
     private void RotateModule(Transform modulePrefab)
     {
         isRotating = true;
-        modulePrefab.DORotate(new Vector3(0f, 90f, 0f), 1f, RotateMode.LocalAxisAdd) 
-            .SetEase(Ease.OutQuad) 
+        modulePrefab.DORotate(new Vector3(0f, 90f, 0f), 0.4f, RotateMode.LocalAxisAdd) 
+            .SetEase(Ease.Unset) 
             .OnComplete(() => { isRotating = false; UpdateAndCheckMap(modulePrefab); });
         //modulePrefab.Rotate(Vector3.up, 90f);
     }
@@ -172,29 +206,36 @@ public class RotateCells : MonoBehaviour
                 CollapseMO();
             }
             else
-            {
                 break;
-            }
+
             if (isFail) 
-            {
-                //Debug.Log("failed");
                 break;
-            }
         }
 
         if (!isFail)
         {
-            Debug.Log("WIN !!!");
-            RecreateLevel();
+            isMapSucceed = true;
+            EventManager.OnLevelSuccess.Invoke();
+            EndMap();
         }
     }
+
+    private void EndMap()
+    {
+        Debug.Log("WIN !!!");
+        LevelManager.Instance.LevelIndex++;
+        PlayerPrefs.SetInt("LastLevel", LevelManager.Instance.LevelIndex);
+        RecreateLevel();
+    }
+    
     private void RecreateLevel()
     {
+        isDrawCompleted = false;
         _candidateMOs.Clear();
         _rotatableTransforms.Clear();
         lotTransforms.Clear();
         _moduleAngles.Clear();
-        EventManager.OnLevelSuccess.Invoke();
+        LevelManager.Instance.FinishLevel();
     }
 
     int _row;

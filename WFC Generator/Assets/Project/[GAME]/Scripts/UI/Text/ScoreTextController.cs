@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class ScoreTextController : MonoBehaviour
@@ -20,18 +17,25 @@ public class ScoreTextController : MonoBehaviour
 
     private void OnEnable()
     {
-        //EventManager.OnSthHappen.AddListener(UpdateScoreText);
+        EventManager.OnLevelFinish.AddListener(UpdateScoreText);
+        BuyButton.OnSolutionBuy.AddListener(UpdateScoreText);
     }
 
     private void OnDisable()
     {
-        //EventManager.OnSthHappen.RemoveListener(UpdateScoreText); 
+        EventManager.OnLevelFinish.RemoveListener(UpdateScoreText);
+        BuyButton.OnSolutionBuy.RemoveListener(UpdateScoreText);
     }
 
-    public int point = 0;
+    private void Start()
+    {
+        UpdateScoreText();
+    }
+
+    int point;
     private void UpdateScoreText()
     {
-        //point = SomeClass.point;
-        //ScoreText.text = "SCORE " + point;
+        point = PlayerCoinController.RewardAmount;
+        ScoreText.text = point.ToString();
     }
 }

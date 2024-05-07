@@ -19,6 +19,5 @@ public class StartButton : Button
     {
         GameManager.Instance.StartGame();
         LevelManager.Instance.StartLevel();
-        gameObject.SetActive(false);
     }
 }

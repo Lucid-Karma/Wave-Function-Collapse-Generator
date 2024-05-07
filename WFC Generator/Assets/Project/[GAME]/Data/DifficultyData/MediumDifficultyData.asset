@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe71549041aa8ec4e854a1c677d5f5ba, type: 3}
   m_Name: MediumDifficultyData
   m_EditorClassIdentifier: 
-  DifficulityMode: 0
-  MO_CountToRotate: 4
-  ActivateTimeTrashold: 0
+  DifficulityMode: 1
+  mO_CountToRotate: 4
+  DefaultCountToRotate: 4

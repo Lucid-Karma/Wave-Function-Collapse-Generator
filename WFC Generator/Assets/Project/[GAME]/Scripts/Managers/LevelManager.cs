@@ -1,10 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.Events;
 
 public class LevelManager : Singleton<LevelManager>
 {
+    [HideInInspector] public static UnityEvent OnLoopComplete = new();
+
     [InlineEditor(InlineEditorModes.GUIOnly)]
     public LevelData LevelData;
     public Theme CurrentTheme = Theme.Purple;
@@ -12,7 +13,7 @@ public class LevelManager : Singleton<LevelManager>
 
     //Public Properities about current Level
     public Level CurrentLevel { get { return (LevelData.Levels[LevelIndex]); } }
-    public DifficulityData DifficulityData { get { return (LevelData.Levels[LevelIndex].DifficulityData[DifficulityIndex]); } }
+    public DifficultyData DifficultyData { get { return (LevelData.Levels[LevelIndex].DifficultyData[DifficultyIndex]); } }
     public ThemeData CurrentThemeData { get { return (LevelData.Levels[LevelIndex].ThemeDatas[(int)CurrentTheme]); } }
 
 
@@ -29,14 +30,33 @@ public class LevelManager : Singleton<LevelManager>
         }
         set
         {
-            if (value >= LevelData.Levels.Count)
+            if (value == LevelData.Levels.Count - 2) // -2 because of bonus levels.
+            {
+                value = Random.Range(LevelData.Levels.Count - 2, LevelData.Levels.Count);
+            }
+            else if (value >= LevelData.Levels.Count - 1)
+            {
                 value = 0;
-
+                OnLoopComplete.Invoke();
+            }
+                
             PlayerPrefs.SetInt("LastLevel", value);
         }
     }
 
-    public int DifficulityIndex 
+    public int LevelCount
+    {
+        get
+        {
+            return PlayerPrefs.GetInt("LevelCount", 0);
+        }
+        set
+        {
+            PlayerPrefs.SetInt("LevelCount", value);
+        }
+    }
+
+    public int DifficultyIndex 
     { 
         get
         {
@@ -44,8 +64,8 @@ public class LevelManager : Singleton<LevelManager>
         }
         set 
         {
-            if (value > LevelData.Levels[LevelIndex].DifficulityData.Count)
-                value = LevelData.Levels[LevelIndex].DifficulityData.Count - 1;
+            if (value > LevelData.Levels[LevelIndex].DifficultyData.Count)
+                value = LevelData.Levels[LevelIndex].DifficultyData.Count - 1;
 
             PlayerPrefs.SetInt("LastLevelDifficultyIndex", value);
         }
@@ -66,6 +86,8 @@ public class LevelManager : Singleton<LevelManager>
             return;
 
         IsLevelStarted = false;
+        LevelCount++;
+        //PlayerPrefs.SetInt("LevelCount", LevelCount);
         EventManager.OnLevelFinish.Invoke();
     }
     
