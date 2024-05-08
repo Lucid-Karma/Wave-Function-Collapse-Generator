@@ -23,6 +23,7 @@ public class BuyButton : Button
         if (PlayerCoinController.RewardAmount >= 50)
         {
             OnSolutionBuy.Invoke();
+            EventManager.OnButtonClick.Invoke();
         }
     }
 }

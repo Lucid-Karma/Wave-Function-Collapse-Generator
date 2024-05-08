@@ -24,6 +24,7 @@ public class GameManager : Singleton<GameManager>
 
         IsGameStarted = true;
         EventManager.OnGameStart.Invoke();
+        //EventManager.OnMusicOn.Invoke();
     }
 
     public void EndGame()
@@ -33,6 +34,7 @@ public class GameManager : Singleton<GameManager>
 
         IsGameStarted = false;
         EventManager.OnGameEnd.Invoke();
+        //EventManager.OnMusicOff.Invoke();
     }
 
 

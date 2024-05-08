@@ -137,6 +137,7 @@ public class RotateCells : MonoBehaviour
         //         if (moduleTransform != null)
         //         {
         //             RotateModule(moduleTransform);
+        //             EventManager.OnClick.Invoke();
         //         }
         //     }
         // }
@@ -160,6 +161,7 @@ public class RotateCells : MonoBehaviour
                         if (moduleObject != null)
                         {
                             RotateModule(moduleTransform);
+                            EventManager.OnClick.Invoke();
                         }  
                     } 
                 }

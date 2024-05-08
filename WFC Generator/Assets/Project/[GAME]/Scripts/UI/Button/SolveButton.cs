@@ -24,6 +24,7 @@ public class SolveButton : Button
         {
             WfcGenerator.OnMapSolve.Invoke();
             OnSolveBtnUse.Invoke();
+            EventManager.OnButtonClick.Invoke();
         }
     }
 }

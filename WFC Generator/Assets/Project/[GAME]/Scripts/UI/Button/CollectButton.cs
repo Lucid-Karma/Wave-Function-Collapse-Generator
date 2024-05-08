@@ -21,5 +21,6 @@ public class CollectButton : Button
     private void CollectCoin()
     {
         OnCoinCollect.Invoke();
+        EventManager.OnButtonClick.Invoke();
     }
 }
