@@ -7,5 +7,6 @@ public class QuitButton : MonoBehaviour
     public void Finish()
     {
         Application.Quit();
+        EventManager.OnButtonClick.Invoke();
     }
 }
