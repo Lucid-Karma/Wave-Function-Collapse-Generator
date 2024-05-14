@@ -7,10 +7,12 @@ using UnityEngine.Events;
 public class LevelPanels : Panel
 {
     [HideInInspector] public static UnityEvent OnSuccessTxtCome = new();
+    private int bonusLevelIndex;
 
     public Panel BonusWinPanel;
     public Panel LevelSuccessPanel;
     public Panel LevelCompletedPanel;
+    public Panel BonusLevelPanel;
 
     private void OnEnable()
     {
@@ -24,6 +26,12 @@ public class LevelPanels : Panel
         EventManager.OnLevelStart.RemoveListener(HideLevelPanels);
         EventManager.OnLevelFinish.RemoveListener(() => StartCoroutine(InitializeLevelSuccessPanel()));
         SuccessAnimController.OnSuccessWent.RemoveListener(InitializeLevelCompletedPanel);
+    }
+
+    private void Start()
+    {
+        bonusLevelIndex = LevelManager.Instance.LevelData.Levels.Count - 2;
+        BonusLevelPanel.HidePanel();
     }
 
     private IEnumerator InitializeLevelSuccessPanel()
@@ -57,8 +65,14 @@ public class LevelPanels : Panel
 
     private void InitializeBonusWinPanel()
     {
+        BonusLevelPanel.HidePanel();
         BonusWinPanel.ShowPanel();
         OnBonusShowedUp.Invoke();
+    }
+
+    private void InitializeBonusLevelPanel()
+    {
+        BonusLevelPanel.ShowPanel();
     }
 
     private void HideLevelPanels()
@@ -66,6 +80,12 @@ public class LevelPanels : Panel
         BonusWinPanel.HidePanel();
         LevelSuccessPanel.HidePanel();
         LevelCompletedPanel.HidePanel();
+        BonusLevelPanel.HidePanel();
+
+        if (LevelManager.Instance.LevelIndex >= bonusLevelIndex)
+        {
+            InitializeBonusLevelPanel();
+        }
     }
 
     private bool IsBonusLevel()

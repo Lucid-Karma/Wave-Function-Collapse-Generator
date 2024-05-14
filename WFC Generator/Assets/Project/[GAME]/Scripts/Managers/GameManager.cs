@@ -24,7 +24,6 @@ public class GameManager : Singleton<GameManager>
 
         IsGameStarted = true;
         EventManager.OnGameStart.Invoke();
-        //EventManager.OnMusicOn.Invoke();
     }
 
     public void EndGame()
@@ -34,30 +33,5 @@ public class GameManager : Singleton<GameManager>
 
         IsGameStarted = false;
         EventManager.OnGameEnd.Invoke();
-        //EventManager.OnMusicOff.Invoke();
-    }
-
-
-    private void OnEnable()
-    {
-        EventManager.OnRestart.AddListener(ContinueGame);
-        EventManager.OnLevelFail.AddListener(PauseGame);
-        //Timer.OnTimeOut += PauseGame;
-    }
-    private void OnDisable()
-    {
-        EventManager.OnRestart.RemoveListener(ContinueGame);
-        EventManager.OnLevelFail.RemoveListener(PauseGame);
-        //Timer.OnTimeOut -= PauseGame;
-    }
-
-    void PauseGame()
-    {
-        Time.timeScale = 0.5f;
-    }
-
-    void ContinueGame()
-    {
-        Time.timeScale = 1;
     }
 }

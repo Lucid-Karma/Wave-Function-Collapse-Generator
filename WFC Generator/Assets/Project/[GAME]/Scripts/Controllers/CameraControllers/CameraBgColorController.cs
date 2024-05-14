@@ -20,6 +20,6 @@ public class CameraBgColorController : MonoBehaviour
 
     private void UpdateCameraColor()
     {
-        _camera.backgroundColor = LevelManager.Instance.CurrentThemeData.ThemeColor;
+        _camera.backgroundColor = LevelManager.Instance.CurrentThemeData.roadColor;
     }
 }

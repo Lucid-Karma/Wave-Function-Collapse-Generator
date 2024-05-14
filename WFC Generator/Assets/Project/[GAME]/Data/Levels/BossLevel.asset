@@ -21,3 +21,4 @@ MonoBehaviour:
   DifficultyData:
   - {fileID: 11400000, guid: 4a7d6c906d86bce4ba4af5d84ed7f219, type: 2}
   point: 50
+  bonusPoint: 50

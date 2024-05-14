@@ -5,6 +5,7 @@ using UnityEngine.Events;
 public class LevelManager : Singleton<LevelManager>
 {
     [HideInInspector] public static UnityEvent OnLoopComplete = new();
+    [HideInInspector] public static UnityEvent OnBonusLevel = new();
 
     [InlineEditor(InlineEditorModes.GUIOnly)]
     public LevelData LevelData;

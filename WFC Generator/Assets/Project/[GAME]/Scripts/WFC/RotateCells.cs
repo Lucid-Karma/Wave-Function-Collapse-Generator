@@ -16,7 +16,7 @@ public class RotateCells : MonoBehaviour
     private List<Transform> _rotatableTransforms = new();
     private int[] _desiredAngles = new int[3] {90, 180, 270};
     private bool isRotating = false;
-    private bool isDrawCompleted;
+    [HideInInspector] public static bool isDrawCompleted;
     [HideInInspector] public static int rotatableCount;
 
     [HideInInspector] public static UnityEvent OnGridCollapse = new();

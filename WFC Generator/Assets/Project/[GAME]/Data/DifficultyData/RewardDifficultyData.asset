@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RewardDifficultyData
   m_EditorClassIdentifier: 
   DifficulityMode: 5
-  mO_CountToRotate: 14
+  mO_CountToRotate: 12
   DefaultCountToRotate: 3

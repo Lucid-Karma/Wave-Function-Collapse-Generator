@@ -20,7 +20,9 @@ public class SolveButton : Button
 
     private void SolveLevel()
     {
-        if(SolveTextController.SolveCount > 0)
+        if (!RotateCells.isDrawCompleted) return;
+
+        if (SolveTextController.SolveCount > 0)
         {
             WfcGenerator.OnMapSolve.Invoke();
             OnSolveBtnUse.Invoke();
