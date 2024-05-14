@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BossDifficultyData
   m_EditorClassIdentifier: 
   DifficulityMode: 4
-  mO_CountToRotate: 14
+  mO_CountToRotate: 12
   DefaultCountToRotate: 3
