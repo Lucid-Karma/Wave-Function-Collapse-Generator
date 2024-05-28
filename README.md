@@ -2,7 +2,7 @@
 
 ## About the Game
 
-Civic Connect is an engaging puzzle game developed with Unity3D. Inspired by the classic "pipes" game, players rotate road pieces to connect roads and create a functioning city. The game features seven different color-coded levels, each with a unique map generated using the <b>wave function collapse algorithm</b>. With <b>unlimited levels</b> of increasing difficulty and challenging bonus levels, PuzzleGame offers endless fun and excitement. <br>
+Civic Connect is an engaging puzzle game developed with Unity3D. Inspired by the classic "pipes" game, players rotate road pieces to connect roads and create a functioning city. The game features seven different color-coded levels, each with a unique map generated using the "wave function collapse algorithm". With <b>unlimited levels</b> of increasing difficulty and challenging bonus levels, PuzzleGame offers endless fun and excitement. <br>
 **Gameplay Video:** https://youtu.be/6NFHPpTAlf4
 <br>
 **Play the Game** https://lucid-karma.github.io/github-portfolio/PlayCivicConnect.html
@@ -12,7 +12,7 @@ Civic Connect is an engaging puzzle game developed with Unity3D. Inspired by the
 ## Features:
 
 - **Intuitive Gameplay:** Rotate road pieces to connect roads and build a city.
-- **Unlimited Levels:** <b>Procedurally generated</b> maps ensure each level is unique, with no limit on the number of levels.
+- **Unlimited Levels:** "Procedurally generated" maps ensure each level is unique, with no limit on the number of levels.
 - **Difficulty Progression:** Players advance through levels of increasing difficulty.
 - **Bonus Levels:** Challenging bonus levels appear every five levels, offering higher point rewards.
 - **Points System:** Earn points by completing levels, which can be used to purchase solve rights for difficult puzzles.
