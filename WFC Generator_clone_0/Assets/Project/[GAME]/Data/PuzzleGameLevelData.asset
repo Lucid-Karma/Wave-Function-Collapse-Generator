@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbf193a8fcf17a045b8f46705183570a, type: 3}
+  m_Name: PuzzleGameLevelData
+  m_EditorClassIdentifier: 
+  Levels:
+  - {fileID: 11400000, guid: 4f04c1ae857128749af399798e868ce7, type: 2}
+  - {fileID: 11400000, guid: 3fb418faf33379d459ce7e8e15cbdbdd, type: 2}
+  - {fileID: 11400000, guid: e02dcd27b2913e44c8e93df795f00439, type: 2}
+  - {fileID: 11400000, guid: 0e68af00a73256e489deaf84c390daa1, type: 2}
+  - {fileID: 11400000, guid: 37aab889ecd17834c995b7d69d99c7b8, type: 2}
+  - {fileID: 11400000, guid: a04be1f1b2da1ac4dbcc6e32f7cefed8, type: 2}
+  - {fileID: 11400000, guid: 05cda75e33b775a48bb006238465d12f, type: 2}
+  FakeLevels:
+  - {fileID: 11400000, guid: d5aee1ad37185c847896b3aa42eaabb1, type: 2}
