@@ -13,12 +13,16 @@ public class LevelPanels : Panel
     public Panel LevelSuccessPanel;
     public Panel LevelCompletedPanel;
     public Panel BonusLevelPanel;
+    public Panel ProcessLostNoticePanel;
+    public Panel MultiplayerPanel;
 
     private void OnEnable()
     {
         EventManager.OnLevelStart.AddListener(HideLevelPanels);
         EventManager.OnLevelFinish.AddListener(() => StartCoroutine(InitializeLevelSuccessPanel()));
         SuccessAnimController.OnSuccessWent.AddListener(InitializeLevelCompletedPanel);
+        ChallengeManager.OnChallengeRequest += InitializeChallengeRequestPanel;
+        StartMatchmakingButton.OnMatchmakingRequest += InitializeMultiplayerPanel;
     }
 
     private void OnDisable()
@@ -26,12 +30,16 @@ public class LevelPanels : Panel
         EventManager.OnLevelStart.RemoveListener(HideLevelPanels);
         EventManager.OnLevelFinish.RemoveListener(() => StartCoroutine(InitializeLevelSuccessPanel()));
         SuccessAnimController.OnSuccessWent.RemoveListener(InitializeLevelCompletedPanel);
+        ChallengeManager.OnChallengeRequest -= InitializeChallengeRequestPanel;
+        StartMatchmakingButton.OnMatchmakingRequest -= InitializeMultiplayerPanel;
     }
 
     private void Start()
     {
         bonusLevelIndex = LevelManager.Instance.LevelData.Levels.Count - 2;
         BonusLevelPanel.HidePanel();
+        ProcessLostNoticePanel.HidePanel();
+        MultiplayerPanel.HidePanel();
     }
 
     private IEnumerator InitializeLevelSuccessPanel()
@@ -52,6 +60,7 @@ public class LevelPanels : Panel
         }
         else
             InitializeLevelCompletedPanel();
+        Debug.Log("level ended");
     }
     [HideInInspector] public static Action OnBonusShowedUp;
 
@@ -75,12 +84,26 @@ public class LevelPanels : Panel
         BonusLevelPanel.ShowPanel();
     }
 
+    private void InitializeChallengeRequestPanel()
+    {
+        ProcessLostNoticePanel.ShowPanel();
+    }
+    private void InitializeMultiplayerPanel()
+    {
+        ProcessLostNoticePanel.HidePanel();
+        MultiplayerPanel.ShowPanel();
+    }
+
     private void HideLevelPanels()
     {
         BonusWinPanel.HidePanel();
         LevelSuccessPanel.HidePanel();
         LevelCompletedPanel.HidePanel();
         BonusLevelPanel.HidePanel();
+
+        //ProcessLostNoticePanel.HidePanel();
+        //MultiplayerPanel.HidePanel() ;
+        Debug.Log("level started"); ;
 
         if (LevelManager.Instance.LevelIndex >= bonusLevelIndex)
         {

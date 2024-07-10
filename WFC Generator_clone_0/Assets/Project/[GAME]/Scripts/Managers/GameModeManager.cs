@@ -11,12 +11,12 @@ public class GameModeManager : Singleton<GameModeManager>
     private void OnEnable()
     {
         EventManager.OnGameStart.AddListener(StartSinglePlayer);
-        GameManager.OnMultiplayerGameStart.AddListener(StartMultiplayer);
+        //GameManager.OnMultiplayerGameStart.AddListener(StartMultiplayer);
     }
     private void OnDisable()
     {
         EventManager.OnGameStart.RemoveListener(StartSinglePlayer);
-        GameManager.OnMultiplayerGameStart.RemoveListener(StartMultiplayer);
+        //GameManager.OnMultiplayerGameStart.RemoveListener(StartMultiplayer);
     }
 
     public void StartSinglePlayer()
@@ -29,6 +29,7 @@ public class GameModeManager : Singleton<GameModeManager>
     public void StartMultiplayer()
     {
         CurrentGameMode = GameMode.Multiplayer;
+        GameManager.OnMultiplayerGameStart.Invoke();    //?????
 
         IsMultiplayer = true;
     }

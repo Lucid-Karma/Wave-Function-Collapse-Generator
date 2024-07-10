@@ -2,27 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using Sirenix.Utilities;
 
 public class MultiplayerPuzzleGenerator : WfcGeneratorStates
 {
     public override void CreatePuzzle(WfcGenerator fsm)
     {
-        Debug.Log("multiplayer");
-        GameManager.OnMultiplayerGameStart.Invoke();
+        GameModeManager.Instance.StartMultiplayer();
 
         if (fsm.IsHost || fsm.IsServer)
         {
-            Debug.Log("this is host creating");
             fsm.StartCoroutine(StartChallenge(fsm));
-            //fsm.SpawnClientPuzzleClientRpc();
             NetworkSpawnPuzzle(fsm);
-            
-        }
-        else if (fsm.IsClient)
-        {
-            Debug.Log("this is client creating");
-            //fsm.SpawnClientPuzzle();
-            //fsm.Invoke("AnnounceMapReady", 2f);
         }
     }
 
@@ -43,7 +34,7 @@ public class MultiplayerPuzzleGenerator : WfcGeneratorStates
 
     private void NetworkSpawnPuzzle(WfcGenerator generator)
     {
-        foreach (var piece in generator.multiplayerPieces)
+        foreach (var piece in generator.moduleObjects)
         {
             var networkObject = piece.GetComponent<NetworkObject>();
             if (networkObject != null)
@@ -56,6 +47,17 @@ public class MultiplayerPuzzleGenerator : WfcGeneratorStates
     }
     private void RegisterObject(NetworkObject obj)
     {
+        if (NetworkManager.Singleton == null)
+        {
+            Debug.LogError("NetworkManager.Singleton is null in RegisterObject.");
+            return;
+        }
+        if (NetworkManager.Singleton.SpawnManager == null)
+        {
+            Debug.LogError("NetworkManager.Singleton.SpawnManager is null in RegisterObject.");
+            return;
+        }
+
         if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(obj.NetworkObjectId))
         {
             obj.Spawn();
@@ -65,14 +67,6 @@ public class MultiplayerPuzzleGenerator : WfcGeneratorStates
         {
             Debug.LogWarning("Object with same NetworkObjectId already exists.");
         }
-    }
-
-    [ClientRpc]
-    private void SpawnClientPuzzleClientRpc(WfcGenerator generator)
-    {
-        //generator.SpawnClientPuzzle();
-        generator.Invoke("AnnounceMapReady", 2f);
-        Debug.Log("inside ClientRpc");
     }
 
 

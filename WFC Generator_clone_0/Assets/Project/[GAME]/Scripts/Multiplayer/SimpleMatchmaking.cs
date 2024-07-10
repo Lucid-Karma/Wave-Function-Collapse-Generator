@@ -20,7 +20,6 @@ using ParrelSync;
 
 public class SimpleMatchmaking : MonoBehaviour
 {
-    //[SerializeField] private GameObject _buttons;
     [HideInInspector] public static UnityEvent OnLobbyCreate = new();
     [HideInInspector] public static UnityEvent OnPlayersMatch = new();
 
@@ -31,6 +30,17 @@ public class SimpleMatchmaking : MonoBehaviour
     private string _playerId;
 
     private void Awake() => _transport = FindObjectOfType<UnityTransport>();
+
+    private void OnEnable()
+    {
+        StartMatchmakingButton.OnMatchmakingRequest += CreateOrJoinLobby;
+        GameManager.OnMultiplayerGameFinish.AddListener(EndProcess);
+    }
+    private void OnDisable()
+    {
+        StartMatchmakingButton.OnMatchmakingRequest -= CreateOrJoinLobby;
+        GameManager.OnMultiplayerGameFinish.RemoveListener(EndProcess);
+    }
 
     public async void CreateOrJoinLobby()
     {
@@ -52,9 +62,12 @@ public class SimpleMatchmaking : MonoBehaviour
 #endif
 
         await UnityServices.InitializeAsync(options);
-
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        _playerId = AuthenticationService.Instance.PlayerId;
+        if (!AuthenticationService.Instance.IsSignedIn)
+        {
+            Debug.Log("not signed in yet!");
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            _playerId = AuthenticationService.Instance.PlayerId;
+        }
     }
 
     private async Task<Lobby> QuickJoinLobby()
@@ -74,6 +87,8 @@ public class SimpleMatchmaking : MonoBehaviour
             
             // Join the game room as a client
             NetworkManager.Singleton.StartClient();
+            //if(NetworkManager.Singleton.IsClient)
+            //    LobbyManager.Instance.ClientsConnectedServerRpc();
             Debug.Log("(client) players count is: " + lobby.Players.Count);
             return lobby;
         }
@@ -137,6 +152,11 @@ public class SimpleMatchmaking : MonoBehaviour
 
     private void OnDestroy()
     {
+        EndProcess();
+    }
+
+    private void EndProcess()
+    {
         try
         {
             StopAllCoroutines();
@@ -151,5 +171,7 @@ public class SimpleMatchmaking : MonoBehaviour
         {
             Debug.Log($"Error shutting down lobby: {e}");
         }
+
+        AuthenticationService.Instance.SignOut();
     }
 }

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ public class ModuleObject: NetworkBehaviour, IModuleObject
     int _north, _south, _east, _west;
 
     GameObject _cityPart;
+
+    public bool isRotatable;
 
 
     void OnEnable()
@@ -66,37 +69,76 @@ public class ModuleObject: NetworkBehaviour, IModuleObject
         }
     }
 
+    #region City Network Activation
     private void DeactivateCity()
-    {
-        //if (IsClient)
-        //{
-        //    if(IsOwner)
-        //    {
-        //        DeactivateCityServerRpc();
-        //    }
-        //}
-        /*else*/ if (_cityPart != null)
-        {
-            _cityPart.SetActive(false);
-        }
-    }
-
-    [ServerRpc]
-    private void DeactivateCityServerRpc()
     {
         if (_cityPart != null)
         {
-            _cityPart.GetComponent<NetworkObject>().Despawn();
+            if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
+            {
+                _cityPart.SetActive(false);
+            }
+            else
+            {
+                if (NetworkManager.IsHost)
+                {
+                    //_cityPart.SetActive(false);
+                    DeactivateCityClientRpc();
+                }
+            }
+            
         }
-        DeactivateCityClientRpc();
     }
 
     [ClientRpc]
     private void DeactivateCityClientRpc()
     {
-        if (_cityPart != null)
+        _cityPart.SetActive(false);
+    }
+    #endregion
+
+    #region RotateProcess
+    public void RotateModuleForDrawn(int randomIndex, int randomRotation)
+    {
+        transform.DORotate(new Vector3(0f, (float)randomRotation, 0f), 1f, RotateMode.LocalAxisAdd)
+                .SetEase(Ease.OutQuad);
+        for (int i = 0; i < randomIndex + 1; i++)
         {
-            _cityPart.GetComponent<NetworkObject>().Despawn();
+            UpdateMO_Angle(transform);
         }
     }
+    public void RotateModule()
+    {
+        //Debug.Log("rotating m object");
+        RotateCells.isRotating = true;
+        transform.DORotate(new Vector3(0f, 90f, 0f), 0.4f, RotateMode.LocalAxisAdd)
+            .SetEase(Ease.Unset)
+            .OnComplete(() => { RotateCells.isRotating = false;  UpdateMO_Angle(transform); 
+                                                                    if (IsAuthority()) { EventManager.OnClick.Invoke(); } });
+        //modulePrefab.Rotate(Vector3.up, 90f);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void RotatePuzzlePieceServerRpc(ServerRpcParams rpcParams = default)
+    {
+        //Debug.Log("server rpc module");
+        RotatePuzzlePieceClientRpc();
+    }
+
+    [ClientRpc]
+    private void RotatePuzzlePieceClientRpc()
+    {
+        //Debug.Log("client rpc module");
+        RotateModule();
+    }
+
+    private bool IsAuthority()
+    {
+        if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
+        {
+            if(IsHost) return true;
+            return false;
+        }
+        return true;
+    }
+    #endregion
 }

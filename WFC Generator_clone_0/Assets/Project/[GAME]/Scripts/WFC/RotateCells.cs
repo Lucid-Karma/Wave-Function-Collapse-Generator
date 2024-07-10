@@ -4,8 +4,9 @@ using DG.Tweening;
 using System.Linq;
 using UnityEngine.Events;
 using Unity.Netcode;
+using UnityEngine.EventSystems;
 
-public class RotateCells : MonoBehaviour//NetworkBehaviour
+public class RotateCells : NetworkBehaviour
 {
     private List<ModuleObject> _candidateMOs = new();
     WfcGenerator generator;
@@ -16,7 +17,7 @@ public class RotateCells : MonoBehaviour//NetworkBehaviour
     private List<float> _moduleAngles = new();
     private List<Transform> _rotatableTransforms = new();
     private int[] _desiredAngles = new int[3] {90, 180, 270};
-    private bool isRotating = false;
+    [HideInInspector] public static bool isRotating = false;///////
     [HideInInspector] public static bool isDrawCompleted;
     [HideInInspector] public static int rotatableCount;
 
@@ -28,16 +29,19 @@ public class RotateCells : MonoBehaviour//NetworkBehaviour
     {
         WfcGenerator.OnMapReady.AddListener(DrawCells);
         WfcGenerator.OnMapSolve.AddListener(RestoreMOsToOriginal);
+        EventManager.OnClick.AddListener(UpdateAndCheckMap);
     }
     void OnDisable()
     {
         WfcGenerator.OnMapReady.RemoveListener(DrawCells);
         WfcGenerator.OnMapSolve.RemoveListener(RestoreMOsToOriginal);
+        EventManager.OnClick.RemoveListener(UpdateAndCheckMap);
     }
 
     void Start()
     {
         generator = GetComponent<WfcGenerator>();
+        isRotating = false;
     }
 
     void Update()
@@ -82,8 +86,6 @@ public class RotateCells : MonoBehaviour//NetworkBehaviour
             int randomIndex = Random.Range(0, _desiredAngles.Length - 1);
             int randomRotation = _desiredAngles[randomIndex];
 
-            //Vector3 currentRotation = moduleTransform.rotation.eulerAngles;
-            //moduleTransform.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y + randomRotation, currentRotation.z);
             moduleTransform.DORotate(new Vector3(0f, (float)randomRotation, 0f), 1f, RotateMode.LocalAxisAdd)
                 .SetEase(Ease.OutQuad);
             for (int i = 0; i < randomIndex + 1; i++)
@@ -94,6 +96,8 @@ public class RotateCells : MonoBehaviour//NetworkBehaviour
                     moduleObject.UpdateMO_Angle(moduleTransform);
                 }
             }
+
+            //moduleTransform.GetComponent<ModuleObject>().RotateModuleForDrawn(randomIndex, randomRotation);
         }
     }
 
@@ -147,41 +151,80 @@ public class RotateCells : MonoBehaviour//NetworkBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
+            if (EventSystem.current.IsPointerOverGameObject()) return;
+
+            //Debug.Log("mouse button down");
             Vector3 mousePosition = Input.mousePosition;
             Ray ray = Camera.main.ScreenPointToRay(mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit))
             {
+                //Debug.Log("raycast hit");
                 Transform moduleTransform = hit.transform;
-
+                //Debug.Log(isRotating);
                 if (moduleTransform != null && !isRotating)
                 {
-                    if (_rotatableTransforms.Contains(moduleTransform))
-                    {
-                        moduleObject = moduleTransform.GetComponent<IModuleObject>();
-                        if (moduleObject != null)
-                        {
-                            RotateModule(moduleTransform);
-                            EventManager.OnClick.Invoke();
-                        }  
-                    } 
+                    //Debug.Log(moduleTransform.name + " module is not null");
+                    AdaptGameMode(moduleTransform);
                 }
             }
         }
     }
-    
-    private void RotateModule(Transform modulePrefab)
+    private void AdaptGameMode(Transform moduleTransform)
     {
-        isRotating = true;
-        modulePrefab.DORotate(new Vector3(0f, 90f, 0f), 0.4f, RotateMode.LocalAxisAdd) 
-            .SetEase(Ease.Unset) 
-            .OnComplete(() => { isRotating = false; UpdateAndCheckMap(modulePrefab); });
-        //modulePrefab.Rotate(Vector3.up, 90f);
+        if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
+        {
+            if (_rotatableTransforms.Contains(moduleTransform))
+            {
+                //Debug.Log("rotatable contains the module");
+                moduleObject = moduleTransform.GetComponent<IModuleObject>();
+                if (moduleObject != null)
+                {
+                    //Debug.Log("m object is not null");
+                    moduleTransform.GetComponent<ModuleObject>().RotateModule();
+                }
+            }
+        }
+        else
+        {
+            //Debug.Log("rotate multiplayer mode");
+            //if (!IsOwner) return;
+
+            if (IsServer || IsHost)
+            {
+                if (_rotatableTransforms.Contains(moduleTransform))
+                {
+                    //Debug.Log("rotatable contains the module");
+                    moduleObject = moduleTransform.GetComponent<IModuleObject>();
+                    if (moduleObject != null)
+                    {
+                        //Debug.Log("m object is not null");
+                        moduleTransform.GetComponent<ModuleObject>().RotateModule();
+                    }
+                }
+            }
+            else if (IsClient)
+            {
+                //Debug.Log("is client true");
+                if (moduleTransform.GetComponent<ModuleObject>().isRotatable)
+                {
+                    //Debug.Log("moduletransfrom is rotatable");
+                    moduleObject = moduleTransform.GetComponent<IModuleObject>();
+                    if (moduleObject != null)
+                    {
+                        //Debug.Log("m object is not null");
+                        moduleTransform.GetComponent<ModuleObject>().RotatePuzzlePieceServerRpc();
+                    }
+                }
+            }
+            
+        }
     }
-    private void UpdateAndCheckMap(Transform moduleTransform)
+    public NetworkVariable<bool> isRotatableTransformsContains = new NetworkVariable<bool>(false);
+
+    private void UpdateAndCheckMap()
     {
-        moduleObject.UpdateMO_Angle(moduleTransform);
         CollapseGrid();
         _candidateMOs.Clear();
         _candidateMOs.AddRange(generator.moduleObjects);
@@ -218,9 +261,43 @@ public class RotateCells : MonoBehaviour//NetworkBehaviour
 
         if (!isFail)
         {
-            isMapSucceed = true;
-            EventManager.OnLevelSuccess.Invoke();
-            EndMap();
+            //isMapSucceed = true;
+
+            if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
+            {
+                if (IsHost)
+                {
+                    //EndMultiplayerSession();
+                    //GameManager.OnMultiplayerGameFinish.Invoke();
+                    EndChallengeClientRpc();
+                }
+            }
+            else
+            {
+                isMapSucceed = true;
+                EventManager.OnLevelSuccess.Invoke();
+                EndMap();
+            }
+        }
+    }
+    [ClientRpc]
+    private void EndChallengeClientRpc()
+    {
+        GameManager.OnMultiplayerGameFinish.Invoke();
+        EndMultiplayerSession();
+        
+        generator.executingWfcGeneratorState = ExecutingWfcGeneratorState.Singleplayer;
+        generator.SwitchState(generator.singleplayerPuzzleGenerator);
+        isMapSucceed = true;
+        EventManager.OnLevelSuccess.Invoke();
+        EndMap();
+    }
+    public void EndMultiplayerSession()
+    {
+        if (IsServer || IsHost)
+        {
+            NetworkManager.Singleton.Shutdown();
+            Debug.Log("session ended");
         }
     }
 
