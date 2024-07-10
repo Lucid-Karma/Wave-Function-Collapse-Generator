@@ -10,6 +10,7 @@ public class GameManager : Singleton<GameManager>
     public bool IsGameStarted { get { return isGameStarted; } private set { isGameStarted = value; } }
 
     [HideInInspector] public static UnityEvent OnMultiplayerGameStart = new();
+    [HideInInspector] public static UnityEvent OnMultiplayerGameFinish = new();
 
     void Awake()
     {

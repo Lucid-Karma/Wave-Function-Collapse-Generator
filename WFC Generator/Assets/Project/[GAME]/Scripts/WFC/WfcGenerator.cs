@@ -44,6 +44,7 @@ public class WfcGenerator : FSMBase<WfcGenerator>
     [HideInInspector] public List<Transform> rotatableObjectTs = new();
     public List<ModuleObject> moduleObjects = new();
     ModuleObject moduleObject;
+    [HideInInspector] public List<GameObject> multiplayerPieces = new();
 
     [HideInInspector] public static UnityEvent OnMapReady = new();
     [HideInInspector] public static UnityEvent OnMapSolve = new();
@@ -86,19 +87,25 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         candidateCells.Clear();
         rotatableObjectTs.Clear();
         moduleObjects.Clear();
-        multiplayerPieces.Clear();
     }
     private void DestroyMO_Objects()
     {
-        Debug.Log("destroying objects");
         for (int i = 0; i < moduleObjects.Count; i++)
         {
             if (moduleObjects[i] != null)
             {
-                if (IsHost)
+                if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
                 {
-                    moduleObjects[i].GetComponent<NetworkObject>().Despawn();  // Ensure network despawn
-                    //Destroy(moduleObjects[i].gameObject);
+                    if (IsHost)
+                    {
+                        if(moduleObjects[i].GetComponent<NetworkObject>() != null)
+                        {
+                            moduleObjects[i].GetComponent<NetworkObject>().Despawn();  // Ensure network despawn
+                            //Debug.Log(moduleObjects[i].name + " despwaned");
+                            //Destroy(moduleObjects[i].gameObject);
+                        }
+                        
+                    }
                 }
                 Destroy(moduleObjects[i].gameObject);
             }
@@ -106,39 +113,12 @@ public class WfcGenerator : FSMBase<WfcGenerator>
             //    Debug.Log(i + " null " + moduleObjects.Count);
         }
     }
-    [ServerRpc(RequireOwnership = false)]
-    private void DespawnFormerPuzzleServerRpc()
-    {
-        for (int i = 0; i < moduleObjects.Count; i++)
-        {
-            if (moduleObjects[i] != null)
-            {
-                moduleObjects[i].GetComponent<NetworkObject>().Despawn();
-            }
-        }
-        Debug.Log("Server Sama, tasukete kudasai..");
-
-        DespawnFormerPuzzleClientRpc();
-    }
-    [ClientRpc]
-    private void DespawnFormerPuzzleClientRpc()
-    {
-        for (int i = 0; i < moduleObjects.Count; i++)
-        {
-            if (moduleObjects[i] != null)
-            {
-                moduleObjects[i].GetComponent<NetworkObject>().Despawn();
-            }
-        }
-        Debug.Log("anshinshiro youu..");
-    }
 
     public void GenerateWFC()
     {
         Generate();
         StartWave();
         CollapseGrid();
-        Debug.Log("generated");
     }
 
     private void StartWave()
@@ -163,8 +143,6 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         }
 
         ListRotatableMOTransforms(cells[firstCollapse].modules[0], obj.transform);
-        if(IsHost)
-            multiplayerPieces.Add(obj);
     }
 
     private void Generate()
@@ -345,7 +323,6 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         }
     }
 
-    [HideInInspector] public List<GameObject> multiplayerPieces = new();
     private void CollapseCell()
     {
         CellSO nextCell;
@@ -363,8 +340,6 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         }
         
         ListRotatableMOTransforms(nextCell.modules[0], obj.transform);
-        if(IsHost)
-            multiplayerPieces.Add(obj);
 
         //obj.transform.SetParent(gridHolder.transform);
         //Debug.Log("cell index is: " + candidateCells.IndexOf(nextCell));
@@ -415,16 +390,6 @@ public class WfcGenerator : FSMBase<WfcGenerator>
     void AnnounceMapReady()
     {
         OnMapReady?.Invoke();
-    }
-
-    [ClientRpc]
-    public void SpawnClientPuzzleClientRpc()
-    {
-        foreach (GameObject piece in multiplayerPieces)
-        {
-            Instantiate(piece);
-            //obj.GetComponent<NetworkObject>().Spawn();
-        }
     }
     #endregion        
 }

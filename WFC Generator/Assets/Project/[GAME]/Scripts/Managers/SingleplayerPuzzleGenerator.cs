@@ -4,6 +4,8 @@ public class SingleplayerPuzzleGenerator : WfcGeneratorStates
 {
     public override void CreatePuzzle(WfcGenerator fsm)
     {
+        Debug.Log("single player..");
+        GameModeManager.Instance.StartSinglePlayer();
         fsm.RecreateLevel();
 
         LevelManager.Instance.StartLevel();
