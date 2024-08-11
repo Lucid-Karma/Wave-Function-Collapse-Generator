@@ -23,6 +23,7 @@ public class LevelManager : Singleton<LevelManager>
     [ReadOnly]
     public bool IsLevelStarted { get { return isLevelStarted; } private set { isLevelStarted = value; } }
 
+    // from 0 to 6
     public int LevelIndex
     {
         get
@@ -45,6 +46,7 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
+    // real level count
     public int LevelCount
     {
         get

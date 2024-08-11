@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -45,8 +46,8 @@ public class LevelPanels : Panel
     private IEnumerator InitializeLevelSuccessPanel()
     {
         yield return new WaitForSeconds(1f);
-
-        if (RotateCells.isMapSucceed)
+      
+        if (RotateCells.Instance.isMapSucceed)
         {
             if (!IsBonusLevel())
             {
@@ -61,6 +62,7 @@ public class LevelPanels : Panel
         else
             InitializeLevelCompletedPanel();
         Debug.Log("level ended");
+        RotateCells.Instance.ResetMapSuccess();
     }
     [HideInInspector] public static Action OnBonusShowedUp;
 
@@ -113,6 +115,8 @@ public class LevelPanels : Panel
 
     private bool IsBonusLevel()
     {
+        if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer) return false;
+
         if (LevelManager.Instance.LevelIndex == 0)  // since the panels are initailized after bonus level ended, the index turns to 0 again.
             return true;
 

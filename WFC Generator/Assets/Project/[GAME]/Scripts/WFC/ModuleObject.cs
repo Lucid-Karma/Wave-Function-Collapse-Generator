@@ -109,25 +109,29 @@ public class ModuleObject: NetworkBehaviour, IModuleObject
     }
     public void RotateModule()
     {
-        //Debug.Log("rotating m object");
-        RotateCells.isRotating = true;
+        //Debug.Log($"RotateModule Role: IsHost={IsHost}");
+       
+        RotateCells.Instance.isRotating = true;
+
         transform.DORotate(new Vector3(0f, 90f, 0f), 0.4f, RotateMode.LocalAxisAdd)
             .SetEase(Ease.Unset)
-            .OnComplete(() => { RotateCells.isRotating = false;  UpdateMO_Angle(transform); 
-                                                                    if (IsAuthority()) { EventManager.OnClick.Invoke(); } });
+            .OnComplete(() => { RotateCells.Instance.isRotating = false;  UpdateMO_Angle(transform); 
+                                                                    if (IsAuthority()) { EventManager.OnClick.Invoke(); } 
+                EventManager.OnCollapseEnd.Invoke();
+            });
+
+        
         //modulePrefab.Rotate(Vector3.up, 90f);
     }
     [ServerRpc(RequireOwnership = false)]
     public void RotatePuzzlePieceServerRpc(ServerRpcParams rpcParams = default)
     {
-        //Debug.Log("server rpc module");
         RotatePuzzlePieceClientRpc();
     }
 
     [ClientRpc]
     private void RotatePuzzlePieceClientRpc()
     {
-        //Debug.Log("client rpc module");
         RotateModule();
     }
 
@@ -135,7 +139,7 @@ public class ModuleObject: NetworkBehaviour, IModuleObject
     {
         if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
         {
-            if(IsHost) return true;
+            if (IsHost) return true;
             return false;
         }
         return true;
