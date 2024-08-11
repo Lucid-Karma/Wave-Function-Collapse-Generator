@@ -17,8 +17,8 @@ public class DifficultyData : ScriptableObject
         }
         set
         {
-            if (value > RotateCells.rotatableCount)
-                value = RotateCells.rotatableCount;
+            if (value > RotateCells.Instance.rotatableCount)
+                value = RotateCells.Instance.rotatableCount;
         }
     }
 

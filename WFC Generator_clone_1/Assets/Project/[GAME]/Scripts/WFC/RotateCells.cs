@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using Unity.Netcode;
 using UnityEngine.EventSystems;
 
-public class RotateCells : NetworkBehaviour
+public class RotateCells : MultiplayerSingleton<RotateCells>
 {
     private List<ModuleObject> _candidateMOs = new();
     WfcGenerator generator;
@@ -17,25 +17,27 @@ public class RotateCells : NetworkBehaviour
     private List<float> _moduleAngles = new();
     private List<Transform> _rotatableTransforms = new();
     private int[] _desiredAngles = new int[3] {90, 180, 270};
-    [HideInInspector] public static bool isRotating = false;///////
-    [HideInInspector] public static bool isDrawCompleted;
-    [HideInInspector] public static int rotatableCount;
+    [HideInInspector] public bool isRotating = false;///////
+    [HideInInspector] public bool isDrawCompleted;
+    [HideInInspector] public int rotatableCount;
 
     [HideInInspector] public static UnityEvent OnGridCollapse = new();
     [HideInInspector] public static UnityEvent OnModulesRotate = new();
-    [HideInInspector] public static bool isMapSucceed { get; private set; }
+    [HideInInspector] public bool isMapSucceed { get; private set; }
 
     void OnEnable()
     {
         WfcGenerator.OnMapReady.AddListener(DrawCells);
         WfcGenerator.OnMapSolve.AddListener(RestoreMOsToOriginal);
         EventManager.OnClick.AddListener(UpdateAndCheckMap);
+        EventManager.OnCollapseEnd.AddListener(() => MultiplayerTurnManager.Instance.NumberOfMoves++ );
     }
     void OnDisable()
     {
         WfcGenerator.OnMapReady.RemoveListener(DrawCells);
         WfcGenerator.OnMapSolve.RemoveListener(RestoreMOsToOriginal);
         EventManager.OnClick.RemoveListener(UpdateAndCheckMap);
+        EventManager.OnCollapseEnd.RemoveListener(() => MultiplayerTurnManager.Instance.NumberOfMoves++ );
     }
 
     void Start()
@@ -48,7 +50,17 @@ public class RotateCells : NetworkBehaviour
     {
         if (!isDrawCompleted) return;
 
-        CheckInput();
+        if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
+        {
+            CheckInput();
+        }
+        else
+        {
+            if (MultiplayerTurnManager.Instance.canPlay && !isRotating)
+            {
+                CheckInput();
+            }
+        }
     }
 
     
@@ -96,8 +108,6 @@ public class RotateCells : NetworkBehaviour
                     moduleObject.UpdateMO_Angle(moduleTransform);
                 }
             }
-
-            //moduleTransform.GetComponent<ModuleObject>().RotateModuleForDrawn(randomIndex, randomRotation);
         }
     }
 
@@ -153,67 +163,55 @@ public class RotateCells : NetworkBehaviour
         {
             if (EventSystem.current.IsPointerOverGameObject()) return;
 
-            //Debug.Log("mouse button down");
             Vector3 mousePosition = Input.mousePosition;
             Ray ray = Camera.main.ScreenPointToRay(mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit))
             {
-                //Debug.Log("raycast hit");
                 Transform moduleTransform = hit.transform;
-                //Debug.Log(isRotating);
                 if (moduleTransform != null && !isRotating)
                 {
-                    //Debug.Log(moduleTransform.name + " module is not null");
+                    //Debug.Log($"CanPlay={DrawController.Instance.canPlay}, \nIsRotating={isRotating}");
                     AdaptGameMode(moduleTransform);
                 }
             }
         }
     }
-    private void AdaptGameMode(Transform moduleTransform)
+    public void AdaptGameMode(Transform moduleTransform)
     {
         if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
         {
             if (_rotatableTransforms.Contains(moduleTransform))
             {
-                //Debug.Log("rotatable contains the module");
                 moduleObject = moduleTransform.GetComponent<IModuleObject>();
                 if (moduleObject != null)
                 {
-                    //Debug.Log("m object is not null");
                     moduleTransform.GetComponent<ModuleObject>().RotateModule();
                 }
             }
         }
         else
-        {
-            //Debug.Log("rotate multiplayer mode");
-            //if (!IsOwner) return;
-
+        {  
             if (IsServer || IsHost)
             {
                 if (_rotatableTransforms.Contains(moduleTransform))
                 {
-                    //Debug.Log("rotatable contains the module");
                     moduleObject = moduleTransform.GetComponent<IModuleObject>();
                     if (moduleObject != null)
                     {
-                        //Debug.Log("m object is not null");
                         moduleTransform.GetComponent<ModuleObject>().RotateModule();
                     }
                 }
             }
             else if (IsClient)
             {
-                //Debug.Log("is client true");
                 if (moduleTransform.GetComponent<ModuleObject>().isRotatable)
                 {
-                    //Debug.Log("moduletransfrom is rotatable");
                     moduleObject = moduleTransform.GetComponent<IModuleObject>();
                     if (moduleObject != null)
                     {
-                        //Debug.Log("m object is not null");
+                        isRotating = true;
                         moduleTransform.GetComponent<ModuleObject>().RotatePuzzlePieceServerRpc();
                     }
                 }
@@ -261,15 +259,20 @@ public class RotateCells : NetworkBehaviour
 
         if (!isFail)
         {
-            //isMapSucceed = true;
-
             if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
             {
-                if (IsHost)
+                if (MultiplayerTurnManager.Instance.currentPlayer == MultiplayerTurnManager.Turn.HostTurn)
                 {
-                    //EndMultiplayerSession();
-                    //GameManager.OnMultiplayerGameFinish.Invoke();
+                    isMapSucceed = true;
+                    EventManager.OnLevelSuccess.Invoke();
                     EndChallengeClientRpc();
+                    return;
+                }
+                else if (MultiplayerTurnManager.Instance.currentPlayer == MultiplayerTurnManager.Turn.ClientTurn)
+                {
+
+                    EndChallengeWithWinClientRpc();
+                    return;
                 }
             }
             else
@@ -277,33 +280,44 @@ public class RotateCells : NetworkBehaviour
                 isMapSucceed = true;
                 EventManager.OnLevelSuccess.Invoke();
                 EndMap();
+                return;
             }
         }
     }
     [ClientRpc]
     private void EndChallengeClientRpc()
     {
+        RecreateLevel();
+
         GameManager.OnMultiplayerGameFinish.Invoke();
         EndMultiplayerSession();
-        
+
         generator.executingWfcGeneratorState = ExecutingWfcGeneratorState.Singleplayer;
         generator.SwitchState(generator.singleplayerPuzzleGenerator);
-        isMapSucceed = true;
-        EventManager.OnLevelSuccess.Invoke();
-        EndMap();
+    }
+    [ClientRpc]
+    private void EndChallengeWithWinClientRpc()
+    {
+        isMapSucceed = false;
+
+        if (!IsHost)
+        {
+            isMapSucceed = true;
+            EventManager.OnLevelSuccess.Invoke();
+        }
+        
+        EndChallengeClientRpc();
     }
     public void EndMultiplayerSession()
     {
         if (IsServer || IsHost)
         {
             NetworkManager.Singleton.Shutdown();
-            Debug.Log("session ended");
         }
     }
 
     private void EndMap()
     {
-        Debug.Log("WIN !!!");
         LevelManager.Instance.LevelIndex++;
         PlayerPrefs.SetInt("LastLevel", LevelManager.Instance.LevelIndex);
         RecreateLevel();
@@ -317,6 +331,10 @@ public class RotateCells : NetworkBehaviour
         lotTransforms.Clear();
         _moduleAngles.Clear();
         LevelManager.Instance.FinishLevel();
+    }
+    public void ResetMapSuccess()
+    {
+        isMapSucceed = false;
     }
 
     int _row;

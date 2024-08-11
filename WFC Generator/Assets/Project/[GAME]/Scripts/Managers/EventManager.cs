@@ -20,4 +20,6 @@ public static class EventManager
 
     public static UnityEvent OnClick = new();
     public static UnityEvent OnButtonClick = new();
+
+    public static UnityEvent OnCollapseEnd = new();
 }

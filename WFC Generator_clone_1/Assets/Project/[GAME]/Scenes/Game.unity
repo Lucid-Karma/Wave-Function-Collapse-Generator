@@ -2995,8 +2995,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.000015258789}
-  m_SizeDelta: {x: 540.7214, y: 492.938}
+  m_AnchoredPosition: {x: 0.000061035156, y: 0}
+  m_SizeDelta: {x: 2073.8289, y: 492.938}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &610201243
 MonoBehaviour:
@@ -3045,8 +3045,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 475.2
-  m_fontSizeBase: 475.2
+  m_fontSize: 312.5
+  m_fontSizeBase: 312.5
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -6018,6 +6018,7 @@ GameObject:
   - component: {fileID: 1139767045}
   - component: {fileID: 1139767044}
   - component: {fileID: 1139767043}
+  - component: {fileID: 1139767046}
   m_Layer: 0
   m_Name: MultiplayerManagers
   m_TagString: Untagged
@@ -6037,7 +6038,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09fb2d048e62562438111a30cdc70b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxPlayers: 2
 --- !u!114 &1139767044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6074,6 +6074,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1139767046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139767042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 105593ccf11160941bb4a1521e6cc665, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modulecountTxt: {fileID: 610201243}
+  canPlay: 0
 --- !u!1 &1178833531
 GameObject:
   m_ObjectHideFlags: 0

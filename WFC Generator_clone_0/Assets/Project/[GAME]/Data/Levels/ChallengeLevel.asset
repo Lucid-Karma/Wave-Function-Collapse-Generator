@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29133e66579031a4eb3ac0a3fe77bbed, type: 3}
+  m_Name: ChallengeLevel
+  m_EditorClassIdentifier: 
+  ThemeDatas:
+  - Theme: 5
+    ColorAtlasTexture: {fileID: 2800000, guid: 17b361a09fcf0734789e4c46bb078c9a, type: 3}
+    ThemeColor: {r: 0.3647059, g: 0.3529412, b: 0.3529412, a: 0}
+    roadColor: {r: 0.8078432, g: 0.37647063, b: 0.5803922, a: 0}
+    roadBorderColor: {r: 0.24705884, g: 0.23529413, b: 0.23529413, a: 0}
+  DifficultyData:
+  - {fileID: 11400000, guid: 4a7d6c906d86bce4ba4af5d84ed7f219, type: 2}
+  point: 150

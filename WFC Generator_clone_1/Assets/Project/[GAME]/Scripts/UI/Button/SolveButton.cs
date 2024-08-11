@@ -20,7 +20,7 @@ public class SolveButton : Button
 
     private void SolveLevel()
     {
-        if (!RotateCells.isDrawCompleted) return;
+        if (!RotateCells.Instance.isDrawCompleted) return;
 
         if (SolveTextController.SolveCount > 0)
         {

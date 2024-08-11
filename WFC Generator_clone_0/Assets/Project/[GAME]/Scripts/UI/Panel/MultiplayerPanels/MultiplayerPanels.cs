@@ -18,6 +18,7 @@ public class MultiplayerPanels : Panel
         //SuccessAnimController.OnSuccessWent.AddListener(InitializeLevelCompletedPanel);
         StartMatchmakingButton.OnMatchmakingRequest += InitializeWaitingPanel;
         LobbyManager.OnPlayersReady.AddListener(InitializeMatchPanel);
+        MultiplayerTurnManager.OnMatchStart.AddListener(HideAllPanels);
     }
 
     private void OnDisable()
@@ -27,14 +28,12 @@ public class MultiplayerPanels : Panel
         //SuccessAnimController.OnSuccessWent.RemoveListener(InitializeLevelCompletedPanel);
         StartMatchmakingButton.OnMatchmakingRequest -= InitializeWaitingPanel;
         LobbyManager.OnPlayersReady.RemoveListener(InitializeMatchPanel);
+        MultiplayerTurnManager.OnMatchStart.RemoveListener(HideAllPanels);
     }
 
     private void Start()
     {
-        WaitingPanel.HidePanel();
-        MatchPanel.HidePanel();
-        DrawPanel.HidePanel();
-        HowToPlayPanel.HidePanel();
+        HideAllPanels();
     }
 
     private void InitializeWaitingPanel()
@@ -46,5 +45,14 @@ public class MultiplayerPanels : Panel
     {
         WaitingPanel.HidePanel();
         MatchPanel.ShowPanel();
+        DrawPanel.ShowPanel();
+    }
+
+    private void HideAllPanels()
+    {
+        WaitingPanel.HidePanel();
+        MatchPanel.HidePanel();
+        DrawPanel.HidePanel();
+        HowToPlayPanel.HidePanel();
     }
 }
