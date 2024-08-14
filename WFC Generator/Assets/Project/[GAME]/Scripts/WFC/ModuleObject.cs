@@ -107,7 +107,7 @@ public class ModuleObject: NetworkBehaviour, IModuleObject
             UpdateMO_Angle(transform);
         }
     }
-    public void RotateModule()
+    public void RotateModule(bool isInitiator)
     {
         //Debug.Log($"RotateModule Role: IsHost={IsHost}");
        
@@ -116,8 +116,8 @@ public class ModuleObject: NetworkBehaviour, IModuleObject
         transform.DORotate(new Vector3(0f, 90f, 0f), 0.4f, RotateMode.LocalAxisAdd)
             .SetEase(Ease.Unset)
             .OnComplete(() => { RotateCells.Instance.isRotating = false;  UpdateMO_Angle(transform); 
-                                                                    if (IsAuthority()) { EventManager.OnClick.Invoke(); } 
-                EventManager.OnCollapseEnd.Invoke();
+                                                                    if (IsAuthority()) { EventManager.OnClick.Invoke(); }
+                if (isInitiator) EventManager.OnCollapseEnd.Invoke();
             });
 
         
@@ -132,7 +132,7 @@ public class ModuleObject: NetworkBehaviour, IModuleObject
     [ClientRpc]
     private void RotatePuzzlePieceClientRpc()
     {
-        RotateModule();
+        RotateModule(!IsAuthority());   //Ensure the initiator is not host, and trigger OnCollapseEnd event only for client.
     }
 
     private bool IsAuthority()

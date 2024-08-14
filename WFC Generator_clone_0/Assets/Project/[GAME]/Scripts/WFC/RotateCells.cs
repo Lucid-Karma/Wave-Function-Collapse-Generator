@@ -187,7 +187,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
                 moduleObject = moduleTransform.GetComponent<IModuleObject>();
                 if (moduleObject != null)
                 {
-                    moduleTransform.GetComponent<ModuleObject>().RotateModule();
+                    moduleTransform.GetComponent<ModuleObject>().RotateModule(false);
                 }
             }
         }
@@ -200,7 +200,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
                     moduleObject = moduleTransform.GetComponent<IModuleObject>();
                     if (moduleObject != null)
                     {
-                        moduleTransform.GetComponent<ModuleObject>().RotateModule();
+                        moduleTransform.GetComponent<ModuleObject>().RotateModule(true);
                     }
                 }
             }

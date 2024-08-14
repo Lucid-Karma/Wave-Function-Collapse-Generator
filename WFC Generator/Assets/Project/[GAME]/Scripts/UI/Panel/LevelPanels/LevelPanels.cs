@@ -61,7 +61,7 @@ public class LevelPanels : Panel
         }
         else
             InitializeLevelCompletedPanel();
-        Debug.Log("level ended");
+        //Debug.Log("level ended");
         RotateCells.Instance.ResetMapSuccess();
     }
     [HideInInspector] public static Action OnBonusShowedUp;
@@ -103,9 +103,7 @@ public class LevelPanels : Panel
         LevelCompletedPanel.HidePanel();
         BonusLevelPanel.HidePanel();
 
-        //ProcessLostNoticePanel.HidePanel();
-        //MultiplayerPanel.HidePanel() ;
-        Debug.Log("level started"); ;
+        //Debug.Log("level started"); ;
 
         if (LevelManager.Instance.LevelIndex >= bonusLevelIndex)
         {
