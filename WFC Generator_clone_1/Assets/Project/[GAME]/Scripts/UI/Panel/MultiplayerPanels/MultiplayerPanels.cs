@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
 
 public class MultiplayerPanels : Panel
 {
@@ -19,6 +14,7 @@ public class MultiplayerPanels : Panel
         StartMatchmakingButton.OnMatchmakingRequest += InitializeWaitingPanel;
         LobbyManager.OnPlayersReady.AddListener(InitializeMatchPanel);
         MultiplayerTurnManager.OnMatchStart.AddListener(HideAllPanels);
+        HelpButton.OnHelpRequest.AddListener(() => HowToPlayPanel.ShowPanel());
     }
 
     private void OnDisable()
@@ -29,6 +25,7 @@ public class MultiplayerPanels : Panel
         StartMatchmakingButton.OnMatchmakingRequest -= InitializeWaitingPanel;
         LobbyManager.OnPlayersReady.RemoveListener(InitializeMatchPanel);
         MultiplayerTurnManager.OnMatchStart.RemoveListener(HideAllPanels);
+        HelpButton.OnHelpRequest.RemoveListener(() => HowToPlayPanel.ShowPanel());
     }
 
     private void Start()
@@ -51,7 +48,7 @@ public class MultiplayerPanels : Panel
     private void HideAllPanels()
     {
         WaitingPanel.HidePanel();
-        MatchPanel.HidePanel();
+        //MatchPanel.HidePanel();
         DrawPanel.HidePanel();
         HowToPlayPanel.HidePanel();
     }

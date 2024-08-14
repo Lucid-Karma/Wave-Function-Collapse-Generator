@@ -261,19 +261,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         {
             if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
             {
-                if (MultiplayerTurnManager.Instance.currentPlayer == MultiplayerTurnManager.Turn.HostTurn)
-                {
-                    isMapSucceed = true;
-                    EventManager.OnLevelSuccess.Invoke();
-                    EndChallengeClientRpc();
-                    return;
-                }
-                else if (MultiplayerTurnManager.Instance.currentPlayer == MultiplayerTurnManager.Turn.ClientTurn)
-                {
-
-                    EndChallengeWithWinClientRpc();
-                    return;
-                }
+                EndMultiplayerMatch();
             }
             else
             {
@@ -284,6 +272,23 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
             }
         }
     }
+    public void EndMultiplayerMatch()
+    {
+        if (MultiplayerTurnManager.Instance.currentPlayer == MultiplayerTurnManager.Turn.HostTurn)
+        {
+            isMapSucceed = true;
+            EventManager.OnLevelSuccess.Invoke();
+            EndChallengeClientRpc();
+            return;
+        }
+        else if (MultiplayerTurnManager.Instance.currentPlayer == MultiplayerTurnManager.Turn.ClientTurn)
+        {
+
+            EndChallengeWithWinClientRpc();
+            return;
+        }
+    }
+
     [ClientRpc]
     private void EndChallengeClientRpc()
     {

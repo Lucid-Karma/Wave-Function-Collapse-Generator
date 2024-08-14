@@ -47,8 +47,6 @@ public class SimpleMatchmaking : MonoBehaviour
         await Authenticate();
 
         _connectedLobby = await QuickJoinLobby() ?? await CreateLobby();
-
-        //if (_connectedLobby != null) _buttons.SetActive(false);
     }
 
     private async Task Authenticate()
@@ -87,8 +85,7 @@ public class SimpleMatchmaking : MonoBehaviour
             
             // Join the game room as a client
             NetworkManager.Singleton.StartClient();
-            //if(NetworkManager.Singleton.IsClient)
-            //    LobbyManager.Instance.ClientsConnectedServerRpc();
+            
             Debug.Log("(client) players count is: " + lobby.Players.Count);
             return lobby;
         }
@@ -104,8 +101,6 @@ public class SimpleMatchmaking : MonoBehaviour
     {
         try
         {
-            //const int maxPlayers = 2;
-
             // Create a relay allocation and generate a join code to share with the lobby
             var a = await RelayService.Instance.CreateAllocationAsync(maxPlayers);
             var joinCode = await RelayService.Instance.GetJoinCodeAsync(a.AllocationId);

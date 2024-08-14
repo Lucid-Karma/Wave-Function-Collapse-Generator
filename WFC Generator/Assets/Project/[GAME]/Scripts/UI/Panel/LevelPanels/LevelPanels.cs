@@ -15,7 +15,9 @@ public class LevelPanels : Panel
     public Panel LevelCompletedPanel;
     public Panel BonusLevelPanel;
     public Panel ProcessLostNoticePanel;
+    //public Panel ChallengePanel;
     public Panel MultiplayerPanel;
+    public Panel SinglePlayerPanel;
 
     private void OnEnable()
     {
@@ -24,6 +26,7 @@ public class LevelPanels : Panel
         SuccessAnimController.OnSuccessWent.AddListener(InitializeLevelCompletedPanel);
         ChallengeManager.OnChallengeRequest += InitializeChallengeRequestPanel;
         StartMatchmakingButton.OnMatchmakingRequest += InitializeMultiplayerPanel;
+        //MultiplayerTurnManager.OnMatchStart.AddListener(InitializeMultiplayerPanel);
     }
 
     private void OnDisable()
@@ -33,6 +36,7 @@ public class LevelPanels : Panel
         SuccessAnimController.OnSuccessWent.RemoveListener(InitializeLevelCompletedPanel);
         ChallengeManager.OnChallengeRequest -= InitializeChallengeRequestPanel;
         StartMatchmakingButton.OnMatchmakingRequest -= InitializeMultiplayerPanel;
+        //MultiplayerTurnManager.OnMatchStart.RemoveListener(InitializeMultiplayerPanel);
     }
 
     private void Start()
@@ -61,7 +65,10 @@ public class LevelPanels : Panel
         }
         else
             InitializeLevelCompletedPanel();
-        //Debug.Log("level ended");
+        
+        MultiplayerPanel.HidePanel();
+        //ChallengePanel.ShowPanel();
+        SinglePlayerPanel.ShowPanel();
         RotateCells.Instance.ResetMapSuccess();
     }
     [HideInInspector] public static Action OnBonusShowedUp;
@@ -92,6 +99,8 @@ public class LevelPanels : Panel
     }
     private void InitializeMultiplayerPanel()
     {
+        //ChallengePanel.HidePanel();
+        SinglePlayerPanel.HidePanel();
         ProcessLostNoticePanel.HidePanel();
         MultiplayerPanel.ShowPanel();
     }

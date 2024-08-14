@@ -56,7 +56,7 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
         NumberOfMoves = 0;
     }
 
-    private void SwitchPlayer()
+    public void SwitchPlayer()
     {
         if (IsHost || IsServer)
         {
