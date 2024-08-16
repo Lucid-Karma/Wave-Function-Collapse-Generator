@@ -25,6 +25,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
     [HideInInspector] public static UnityEvent OnGridCollapse = new();
     [HideInInspector] public static UnityEvent OnModulesRotate = new();
     [HideInInspector] public bool isMapSucceed { get; private set; }
+    [HideInInspector] public bool isMismatch = false;
 
     void OnEnable()
     {
@@ -327,8 +328,14 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
 
         EndChallengeClientRpc();
     }
-    private void EndMatchDueToDisconnect()
+    public void EndMatchDueToDisconnect()
     {
+        if (isMismatch)
+        {
+            isMismatch = false;
+            return;
+        }  
+
         isMapSucceed = true;
         EventManager.OnLevelSuccess.Invoke(); 
 
@@ -339,6 +346,12 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
 
         generator.executingWfcGeneratorState = ExecutingWfcGeneratorState.Singleplayer;
         generator.SwitchState(generator.singleplayerPuzzleGenerator);
+    }
+    public void EndMatchDueToMismatch()
+    {
+        isMismatch = true;
+        RecreateLevel();
+        EndMultiplayerSession();
     }
 
     public void EndMultiplayerSession()

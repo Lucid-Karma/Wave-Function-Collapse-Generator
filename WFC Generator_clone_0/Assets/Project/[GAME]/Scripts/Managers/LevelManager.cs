@@ -89,12 +89,16 @@ public class LevelManager : Singleton<LevelManager>
             return;
 
         IsLevelStarted = false;
-
-        if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
+        var isMismatch = RotateCells.Instance.isMismatch;
+        if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer && !isMismatch)
         {
             LevelCount++;
             Debug.Log(LevelCount.ToString());
         }
+        //else if(isMismatch)
+        //{
+        //    RotateCells.Instance.isMismatch = false;
+        //}
             
         //PlayerPrefs.SetInt("LevelCount", LevelCount);
         EventManager.OnLevelFinish.Invoke();

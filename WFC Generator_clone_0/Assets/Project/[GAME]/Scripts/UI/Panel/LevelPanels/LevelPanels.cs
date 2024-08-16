@@ -27,7 +27,7 @@ public class LevelPanels : Panel
         SuccessAnimController.OnSuccessWent.AddListener(InitializeLevelCompletedPanel);
         ChallengeManager.OnChallengeRequest += InitializeChallengeRequestPanel;
         StartMatchmakingButton.OnMatchmakingRequest += InitializeMultiplayerPanel;
-        LobbyManager.OnClientDisconnect.AddListener(() => DisconnectPanel.ShowPanel());
+        LobbyManager.OnClientDisconnect.AddListener(InitializeDisconnectPanel);
         //MultiplayerTurnManager.OnMatchStart.AddListener(InitializeMultiplayerPanel);
     }
 
@@ -38,7 +38,7 @@ public class LevelPanels : Panel
         SuccessAnimController.OnSuccessWent.RemoveListener(InitializeLevelCompletedPanel);
         ChallengeManager.OnChallengeRequest -= InitializeChallengeRequestPanel;
         StartMatchmakingButton.OnMatchmakingRequest -= InitializeMultiplayerPanel;
-        LobbyManager.OnClientDisconnect.RemoveListener(() => DisconnectPanel.ShowPanel());
+        LobbyManager.OnClientDisconnect.RemoveListener(InitializeDisconnectPanel);
         //MultiplayerTurnManager.OnMatchStart.RemoveListener(InitializeMultiplayerPanel);
     }
 
@@ -100,6 +100,13 @@ public class LevelPanels : Panel
     private void InitializeChallengeRequestPanel()
     {
         ProcessLostNoticePanel.ShowPanel();
+    }
+    private void InitializeDisconnectPanel()
+    {
+        if(!RotateCells.Instance.isMismatch)
+        {
+            DisconnectPanel.ShowPanel();
+        }
     }
     private void InitializeMultiplayerPanel()
     {
