@@ -9,7 +9,7 @@ public class GiveUpButton : NetworkBehaviour
 
         if(IsHost || IsServer)
         {
-            RotateCells.Instance.EndMultiplayerMatch();
+            RotateCells.Instance.EndChallengeWithWinClientRpc();
         }
         else if (IsClient)
         {
@@ -17,7 +17,7 @@ public class GiveUpButton : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void EndMatchServerRpc()
     {
         EndMatchClientRpc();
@@ -26,6 +26,6 @@ public class GiveUpButton : NetworkBehaviour
     [ClientRpc]
     private void EndMatchClientRpc()
     {
-        RotateCells.Instance.EndMultiplayerMatch();
+        RotateCells.Instance.EndMatchClientRpc();
     }
 }

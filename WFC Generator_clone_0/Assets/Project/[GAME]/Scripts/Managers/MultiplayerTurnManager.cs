@@ -69,7 +69,7 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
             canPlay = false;
             ServerTurnServerRpc();
         }
-        Debug.Log($"SwitchPlayer: IsHost={IsHost}");
+        //Debug.Log($"SwitchPlayer: IsHost={IsHost}");
     }
     [ClientRpc]
     private void ClientTurnClientRpc()

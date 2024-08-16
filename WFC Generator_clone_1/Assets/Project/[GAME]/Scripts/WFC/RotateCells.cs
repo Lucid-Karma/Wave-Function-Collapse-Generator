@@ -272,7 +272,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
             }
         }
     }
-    public void EndMultiplayerMatch()
+    private void EndMultiplayerMatch()
     {
         if (MultiplayerTurnManager.Instance.currentPlayer == MultiplayerTurnManager.Turn.HostTurn)
         {
@@ -301,7 +301,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         generator.SwitchState(generator.singleplayerPuzzleGenerator);
     }
     [ClientRpc]
-    private void EndChallengeWithWinClientRpc()
+    public void EndChallengeWithWinClientRpc()
     {
         isMapSucceed = false;
 
@@ -311,6 +311,17 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
             EventManager.OnLevelSuccess.Invoke();
         }
         
+        EndChallengeClientRpc();
+    }
+    [ClientRpc]
+    public void EndMatchClientRpc() // GiveUp...makes host win when client give up.
+    {
+        if (IsHost)
+        {
+            isMapSucceed = true;
+            EventManager.OnLevelSuccess.Invoke();
+        }
+
         EndChallengeClientRpc();
     }
     public void EndMultiplayerSession()
