@@ -18,6 +18,7 @@ public class LevelPanels : Panel
     //public Panel ChallengePanel;
     public Panel MultiplayerPanel;
     public Panel SinglePlayerPanel;
+    public Panel DisconnectPanel;
 
     private void OnEnable()
     {
@@ -26,6 +27,7 @@ public class LevelPanels : Panel
         SuccessAnimController.OnSuccessWent.AddListener(InitializeLevelCompletedPanel);
         ChallengeManager.OnChallengeRequest += InitializeChallengeRequestPanel;
         StartMatchmakingButton.OnMatchmakingRequest += InitializeMultiplayerPanel;
+        LobbyManager.OnClientDisconnect.AddListener(() => DisconnectPanel.ShowPanel());
         //MultiplayerTurnManager.OnMatchStart.AddListener(InitializeMultiplayerPanel);
     }
 
@@ -36,6 +38,7 @@ public class LevelPanels : Panel
         SuccessAnimController.OnSuccessWent.RemoveListener(InitializeLevelCompletedPanel);
         ChallengeManager.OnChallengeRequest -= InitializeChallengeRequestPanel;
         StartMatchmakingButton.OnMatchmakingRequest -= InitializeMultiplayerPanel;
+        LobbyManager.OnClientDisconnect.RemoveListener(() => DisconnectPanel.ShowPanel());
         //MultiplayerTurnManager.OnMatchStart.RemoveListener(InitializeMultiplayerPanel);
     }
 
@@ -43,6 +46,7 @@ public class LevelPanels : Panel
     {
         bonusLevelIndex = LevelManager.Instance.LevelData.Levels.Count - 2;
         BonusLevelPanel.HidePanel();
+        DisconnectPanel.HidePanel();
         ProcessLostNoticePanel.HidePanel();
         MultiplayerPanel.HidePanel();
     }
@@ -111,6 +115,7 @@ public class LevelPanels : Panel
         LevelSuccessPanel.HidePanel();
         LevelCompletedPanel.HidePanel();
         BonusLevelPanel.HidePanel();
+        DisconnectPanel.HidePanel();
 
         //Debug.Log("level started"); ;
 

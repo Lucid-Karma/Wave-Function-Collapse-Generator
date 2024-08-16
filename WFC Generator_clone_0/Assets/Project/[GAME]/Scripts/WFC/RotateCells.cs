@@ -329,20 +329,16 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
     }
     private void EndMatchDueToDisconnect()
     {
-        if (IsHost || IsServer) 
-        { 
-            EndChallengeClientRpc(); 
-        }
-        else if(IsClient)
-        {
-            RecreateLevel();
+        isMapSucceed = true;
+        EventManager.OnLevelSuccess.Invoke(); 
 
-            GameManager.OnMultiplayerGameFinish.Invoke();
-            EndMultiplayerSession();
+        RecreateLevel();
 
-            generator.executingWfcGeneratorState = ExecutingWfcGeneratorState.Singleplayer;
-            generator.SwitchState(generator.singleplayerPuzzleGenerator);
-        }
+        GameManager.OnMultiplayerGameFinish.Invoke();
+        EndMultiplayerSession();
+
+        generator.executingWfcGeneratorState = ExecutingWfcGeneratorState.Singleplayer;
+        generator.SwitchState(generator.singleplayerPuzzleGenerator);
     }
 
     public void EndMultiplayerSession()
