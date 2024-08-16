@@ -3,9 +3,10 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class LobbyManager : NetworkBehaviour/*Singleton<LobbyManager>*/
+public class LobbyManager : NetworkBehaviour
 {
     [HideInInspector] public static UnityEvent OnPlayersReady = new();
+    [HideInInspector] public static UnityEvent OnClientDisconnect = new();
 
     //private NetworkVariable<int> currentPlayerCount = new NetworkVariable<int>(0, 
     //                                                    NetworkVariableReadPermission.Everyone);
@@ -17,14 +18,6 @@ public class LobbyManager : NetworkBehaviour/*Singleton<LobbyManager>*/
         NetworkManager.Singleton.OnConnectionEvent += OnClientConnected;
         GameManager.OnMultiplayerGameFinish.AddListener(UnsubscribeOnConnectionEvent);
     }
-    //private void OnEnable()
-    //{
-    //    NetworkManager.Singleton.OnConnectionEvent += OnClientConnected;
-    //}
-    //private void OnDestroy()
-    //{
-    //    NetworkManager.Singleton.OnConnectionEvent -= OnClientConnected;
-    //}
 
     private void OnClientConnected(NetworkManager manager, ConnectionEventData data)
     {
@@ -36,6 +29,10 @@ public class LobbyManager : NetworkBehaviour/*Singleton<LobbyManager>*/
                 Debug.Log("event triggered\n" + data.EventType + "\n" + data.ClientId);
                 CheckForMaxPlayers();
             }
+        }
+        else if(data.EventType == ConnectionEvent.ClientDisconnected)
+        {
+            OnClientDisconnect.Invoke();
         }
     }
 

@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine.Events;
 using Unity.Netcode;
 using UnityEngine.EventSystems;
+using Unity.VisualScripting;
 
 public class RotateCells : MultiplayerSingleton<RotateCells>
 {
@@ -31,6 +32,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         WfcGenerator.OnMapSolve.AddListener(RestoreMOsToOriginal);
         EventManager.OnClick.AddListener(UpdateAndCheckMap);
         EventManager.OnCollapseEnd.AddListener(() => MultiplayerTurnManager.Instance.NumberOfMoves++ );
+        LobbyManager.OnClientDisconnect.AddListener(EndMatchDueToDisconnect);
     }
     void OnDisable()
     {
@@ -38,6 +40,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         WfcGenerator.OnMapSolve.RemoveListener(RestoreMOsToOriginal);
         EventManager.OnClick.RemoveListener(UpdateAndCheckMap);
         EventManager.OnCollapseEnd.RemoveListener(() => MultiplayerTurnManager.Instance.NumberOfMoves++ );
+        LobbyManager.OnClientDisconnect.RemoveListener(EndMatchDueToDisconnect);
     }
 
     void Start()
@@ -324,6 +327,24 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
 
         EndChallengeClientRpc();
     }
+    private void EndMatchDueToDisconnect()
+    {
+        if (IsHost || IsServer) 
+        { 
+            EndChallengeClientRpc(); 
+        }
+        else if(IsClient)
+        {
+            RecreateLevel();
+
+            GameManager.OnMultiplayerGameFinish.Invoke();
+            EndMultiplayerSession();
+
+            generator.executingWfcGeneratorState = ExecutingWfcGeneratorState.Singleplayer;
+            generator.SwitchState(generator.singleplayerPuzzleGenerator);
+        }
+    }
+
     public void EndMultiplayerSession()
     {
         if (IsServer || IsHost)
