@@ -61,7 +61,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         }
         else
         {
-            if (MultiplayerTurnManager.Instance.canPlay && !isRotating)
+            if (MultiplayerTurnManager.Instance.CanPlay && !isRotating)
             {
                 CheckInput();
             }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using Unity.Netcode;
@@ -16,6 +17,7 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     public TextMeshProUGUI modulecountTxt;
     [HideInInspector] public int moduleCountForEachTurn;
     [HideInInspector] public static UnityEvent OnMatchStart = new();
+    [HideInInspector] public static Action<bool> OnTurnSwitch;
 
     private int numberOfMoves;
     public int NumberOfMoves { get { return numberOfMoves; } set { numberOfMoves = value; IncreaseMoveCount(value); } }
@@ -29,10 +31,14 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
         }
     }
 
-    public override void OnNetworkSpawn()
+    private void Awake()
     {
         LobbyManager.OnPlayersReady.AddListener(DecideModuleCount);
     }
+    //public override void OnNetworkSpawn()
+    //{
+    //    LobbyManager.OnPlayersReady.AddListener(DecideModuleCount);
+    //}
     public override void OnDestroy()
     {
         LobbyManager.OnPlayersReady.RemoveListener(DecideModuleCount);
@@ -61,12 +67,12 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
         if (IsHost || IsServer)
         {
             ClientTurnClientRpc();
-            canPlay = false;
+            CanPlay = false;
             currentPlayer = Turn.ClientTurn;
         }
         else if (IsClient)
         {
-            canPlay = false;
+            CanPlay = false;
             ServerTurnServerRpc();
         }
         //Debug.Log($"SwitchPlayer: IsHost={IsHost}");
@@ -74,19 +80,20 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     [ClientRpc]
     private void ClientTurnClientRpc()
     {
-        canPlay = true;
+        CanPlay = true;
         Debug.Log("client's turn");
     }
     [ServerRpc(RequireOwnership = false)]
     private void ServerTurnServerRpc()
     {
-        canPlay = true;
+        CanPlay = true;
         Debug.Log("server's turn");
         currentPlayer = Turn.HostTurn;  // !!!!
     }
 
     #region Starter Draw
-    [HideInInspector] public bool canPlay;
+    private bool canPlay;
+    public bool CanPlay { get { return canPlay; } set { canPlay = value; OnTurnSwitch.Invoke(value); } }
     int _drawResult;
 
     [ClientRpc]
@@ -119,26 +126,26 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     public void PlayHost()
     {
         NegativeBooleanClientRpc();
-        canPlay = true;
+        CanPlay = true;
         modulecountTxt.text = "You play first as host";
     }
     public void PlayClient()
     {
         PositiveBooleanClientRpc();
-        canPlay = false;
+        CanPlay = false;
         modulecountTxt.text = "Other player plays first";
     }
 
     [ClientRpc]
     private void NegativeBooleanClientRpc()
     {
-        canPlay = false;
+        CanPlay = false;
         modulecountTxt.text = "Other player plays first";
     }
     [ClientRpc]
     private void PositiveBooleanClientRpc()
     {
-        canPlay = true;
+        CanPlay = true;
         modulecountTxt.text = "You play first as client";
     }
 
@@ -150,7 +157,7 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
 
     private int Draw()
     {
-        _drawResult = Random.Range(1, 3);
+        _drawResult = UnityEngine.Random.Range(1, 3);
         return _drawResult;
     }
     #endregion
