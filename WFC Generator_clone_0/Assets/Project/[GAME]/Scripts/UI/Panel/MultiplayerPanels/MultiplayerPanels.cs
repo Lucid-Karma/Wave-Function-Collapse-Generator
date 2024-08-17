@@ -2,6 +2,7 @@
 public class MultiplayerPanels : Panel
 {
     public Panel WaitingPanel;
+    public Panel BackToSinglePlayerPanel;
     public Panel MatchPanel;
     public Panel DrawPanel;
     public Panel HowToPlayPanel;
@@ -12,6 +13,7 @@ public class MultiplayerPanels : Panel
         //EventManager.OnLevelFinish.AddListener(() => StartCoroutine(InitializeLevelSuccessPanel()));
         //SuccessAnimController.OnSuccessWent.AddListener(InitializeLevelCompletedPanel);
         StartMatchmakingButton.OnMatchmakingRequest += InitializeWaitingPanel;
+        SimpleMatchmaking.OnLobbyCreate.AddListener(() => BackToSinglePlayerPanel.ShowPanel());
         LobbyManager.OnPlayersReady.AddListener(InitializeMatchPanel);
         MultiplayerTurnManager.OnMatchStart.AddListener(HideAllPanels);
         HelpButton.OnHelpRequest.AddListener(() => HowToPlayPanel.ShowPanel());
@@ -23,6 +25,7 @@ public class MultiplayerPanels : Panel
         //EventManager.OnLevelFinish.RemoveListener(() => StartCoroutine(InitializeLevelSuccessPanel()));
         //SuccessAnimController.OnSuccessWent.RemoveListener(InitializeLevelCompletedPanel);
         StartMatchmakingButton.OnMatchmakingRequest -= InitializeWaitingPanel;
+        SimpleMatchmaking.OnLobbyCreate.RemoveListener(() => BackToSinglePlayerPanel.ShowPanel());
         LobbyManager.OnPlayersReady.RemoveListener(InitializeMatchPanel);
         MultiplayerTurnManager.OnMatchStart.RemoveListener(HideAllPanels);
         HelpButton.OnHelpRequest.RemoveListener(() => HowToPlayPanel.ShowPanel());
@@ -35,11 +38,14 @@ public class MultiplayerPanels : Panel
 
     private void InitializeWaitingPanel()
     {
+        MatchPanel.HidePanel();
+        HideAllPanels();
         WaitingPanel.ShowPanel();
     }
 
     private void InitializeMatchPanel()
     {
+        BackToSinglePlayerPanel.HidePanel();
         WaitingPanel.HidePanel();
         MatchPanel.ShowPanel();
         DrawPanel.ShowPanel();
@@ -47,8 +53,8 @@ public class MultiplayerPanels : Panel
 
     private void HideAllPanels()
     {
+        BackToSinglePlayerPanel.HidePanel();
         WaitingPanel.HidePanel();
-        //MatchPanel.HidePanel();
         DrawPanel.HidePanel();
         HowToPlayPanel.HidePanel();
     }

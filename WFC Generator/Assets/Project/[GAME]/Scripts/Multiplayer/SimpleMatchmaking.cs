@@ -121,6 +121,7 @@ public class SimpleMatchmaking : MonoBehaviour
             // Start the room. I'm doing this immediately, but maybe you want to wait for the lobby to fill up
             NetworkManager.Singleton.StartHost();
             Debug.Log("(host) players count is: " + lobby.Players.Count);
+            OnLobbyCreate.Invoke();
             return lobby;
         }
         catch (Exception e)

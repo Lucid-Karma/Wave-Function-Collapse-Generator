@@ -24,6 +24,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
 
     [HideInInspector] public static UnityEvent OnGridCollapse = new();
     [HideInInspector] public static UnityEvent OnModulesRotate = new();
+    [HideInInspector] public static UnityEvent OnNetworkShutdown = new();
     [HideInInspector] public bool isMapSucceed { get; private set; }
     [HideInInspector] public bool isMismatch = false;
 
@@ -353,11 +354,12 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         RecreateLevel();
         EndMultiplayerSession();
     }
-
+    
     public void EndMultiplayerSession()
     {
         if (IsServer || IsHost)
         {
+            OnNetworkShutdown.Invoke();
             NetworkManager.Singleton.Shutdown();
         }
     }

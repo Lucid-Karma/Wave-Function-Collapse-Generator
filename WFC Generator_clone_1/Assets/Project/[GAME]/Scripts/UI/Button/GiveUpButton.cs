@@ -5,13 +5,6 @@ public class GiveUpButton : NetworkBehaviour
 {
     public void GiveUpMatch()
     {
-        if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
-        {
-            RotateCells.Instance.EndMatchDueToMismatch();
-            return;
-        }
-        
-        
         MultiplayerTurnManager.Instance.SwitchPlayer();
 
         if(IsHost || IsServer)
