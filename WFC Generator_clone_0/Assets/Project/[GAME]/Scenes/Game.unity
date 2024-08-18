@@ -685,6 +685,12 @@ MonoBehaviour:
   grassMaterial: {fileID: 2100000, guid: fb045539f4b18a242aca8e57e88c5cd7, type: 2}
   roadMaterial: {fileID: 2100000, guid: 40a353f6117398145a3e785d9854de93, type: 2}
   roadBorderMaterial: {fileID: 2100000, guid: 31b29cea830e0e24da72018652e5ed31, type: 2}
+  MultiplayerThemeData:
+    Theme: 4
+    ColorAtlasTexture: {fileID: 2800000, guid: 4c8011ad979673844baee0dd87948d3e, type: 3}
+    ThemeColor: {r: 0.79607844, g: 0.18431373, b: 0.20392157, a: 1}
+    roadColor: {r: 0.0627451, g: 0.14509805, b: 0.09411765, a: 1}
+    roadBorderColor: {r: 0.13725491, g: 0.27450982, b: 0.18039216, a: 1}
 --- !u!4 &134548183
 Transform:
   m_ObjectHideFlags: 0
@@ -7183,7 +7189,6 @@ MonoBehaviour:
   currentPlayer: 0
   modulecountTxt: {fileID: 610201243}
   moduleCountForEachTurn: 0
-  canPlay: 0
 --- !u!1 &1178833531
 GameObject:
   m_ObjectHideFlags: 0
@@ -10521,6 +10526,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1774361085}
   - component: {fileID: 1774361086}
+  - component: {fileID: 1774361087}
   m_Layer: 5
   m_Name: SequenceNotifierPanel
   m_TagString: Untagged
@@ -10560,6 +10566,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3354cd139df7d74c943e71085be5384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!225 &1774361087
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1774361084}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1775052164
 GameObject:
   m_ObjectHideFlags: 0
@@ -11696,6 +11714,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6571dba1dfb9e114692b248eb5988f5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _multiplayerColor: {r: 0.2830189, g: 0.13189746, b: 0.14403617, a: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

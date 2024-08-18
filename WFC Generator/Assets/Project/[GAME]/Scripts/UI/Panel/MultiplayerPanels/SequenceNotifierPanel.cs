@@ -5,11 +5,13 @@ public class SequenceNotifierPanel : Panel
     {
         MultiplayerTurnManager.OnTurnSwitch += UpdateNotifierPanel;
         StartMatchmakingButton.OnMatchmakingRequest += () => this.HidePanel();
+        LobbyManager.OnClientDisconnect.AddListener(() => this.HidePanel());
     }
     private void OnDisable()
     {
         MultiplayerTurnManager.OnTurnSwitch -= UpdateNotifierPanel;
         StartMatchmakingButton.OnMatchmakingRequest -= () => this.HidePanel();
+        LobbyManager.OnClientDisconnect.RemoveListener(() => this.HidePanel());
     }
 
     private void UpdateNotifierPanel(bool canShown)

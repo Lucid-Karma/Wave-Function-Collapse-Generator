@@ -31,14 +31,14 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
         }
     }
 
-    private void Awake()
-    {
-        LobbyManager.OnPlayersReady.AddListener(DecideModuleCount);
-    }
-    //public override void OnNetworkSpawn()
+    //private void Awake()
     //{
     //    LobbyManager.OnPlayersReady.AddListener(DecideModuleCount);
     //}
+    public override void OnNetworkSpawn()
+    {
+        LobbyManager.OnPlayersReady.AddListener(DecideModuleCount);
+    }
     public override void OnDestroy()
     {
         LobbyManager.OnPlayersReady.RemoveListener(DecideModuleCount);

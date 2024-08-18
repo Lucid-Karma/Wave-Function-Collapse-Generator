@@ -13,11 +13,23 @@ public class LobbyManager : NetworkBehaviour
     private int currentPlayerCount = 0;
     public const int maxPlayers = 2;
 
-    private void Awake()
+    //private void Awake()
+    //{
+    //    NetworkManager.Singleton.OnConnectionEvent += OnClientConnected;
+    //    GameManager.OnMultiplayerGameFinish.AddListener(UnsubscribeOnConnectionEvent);
+    //    RotateCells.OnNetworkShutdown.AddListener(ResetPlayerCount);
+    //}
+
+    public override void OnNetworkSpawn()
     {
         NetworkManager.Singleton.OnConnectionEvent += OnClientConnected;
-        GameManager.OnMultiplayerGameFinish.AddListener(UnsubscribeOnConnectionEvent);
+        //GameManager.OnMultiplayerGameFinish.AddListener(UnsubscribeOnConnectionEvent);
         RotateCells.OnNetworkShutdown.AddListener(ResetPlayerCount);
+    }
+    public override void OnNetworkDespawn()
+    {
+        NetworkManager.Singleton.OnConnectionEvent -= OnClientConnected;
+        RotateCells.OnNetworkShutdown.RemoveListener(ResetPlayerCount);
     }
 
     private void OnClientConnected(NetworkManager manager, ConnectionEventData data)
