@@ -31,10 +31,6 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
         }
     }
 
-    //private void Awake()
-    //{
-    //    LobbyManager.OnPlayersReady.AddListener(DecideModuleCount);
-    //}
     public override void OnNetworkSpawn()
     {
         LobbyManager.OnPlayersReady.AddListener(DecideModuleCount);
@@ -43,7 +39,6 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     {
         LobbyManager.OnPlayersReady.RemoveListener(DecideModuleCount);
     }
-
 
     public void DecideModuleCount()
     {
@@ -159,6 +154,33 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     {
         _drawResult = UnityEngine.Random.Range(1, 3);
         return _drawResult;
+    }
+    #endregion
+
+    #region Timer
+    private float maxTime = 60f;
+    private float currentTime;
+    [SerializeField] private TextMeshProUGUI timerText;
+
+    private void Start()
+    {
+        currentTime = maxTime;
+    }
+
+    private void Update()
+    {
+        if (CanPlay)
+        {
+            currentTime -= Time.deltaTime;
+            timerText.text = string.Format("{0:0.0} s", currentTime).Replace(',', '.');
+
+            if (currentTime <= 0)
+            {
+                currentTime = maxTime;
+                SwitchPlayer();
+                Debug.Log("TIME IS UP!!");
+            }
+        }
     }
     #endregion
 }
