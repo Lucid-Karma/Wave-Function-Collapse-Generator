@@ -39,7 +39,7 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     {
         LobbyManager.OnPlayersReady.AddListener(DecideModuleCount);
     }
-    public override void OnDestroy()
+    public override void OnNetworkDespawn()
     {
         LobbyManager.OnPlayersReady.RemoveListener(DecideModuleCount);
     }

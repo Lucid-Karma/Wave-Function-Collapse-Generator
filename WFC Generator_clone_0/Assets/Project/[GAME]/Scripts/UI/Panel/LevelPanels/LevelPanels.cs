@@ -103,7 +103,7 @@ public class LevelPanels : Panel
     }
     private void InitializeDisconnectPanel()
     {
-        if(!RotateCells.Instance.isMismatch)
+        if(!RotateCells.Instance.isMismatch && RotateCells.Instance.isDrawCompleted )
         {
             DisconnectPanel.ShowPanel();
         }
