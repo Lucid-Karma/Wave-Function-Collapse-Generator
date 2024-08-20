@@ -9,11 +9,17 @@ public class StartMatchmakingButton : Button
     protected override void OnEnable()
     {
         base.OnEnable();
-        onClick.AddListener(() => OnMatchmakingRequest.Invoke() );
+        onClick.AddListener(StartMatchmaking);
     }
     protected override void OnDisable()
     {
         base.OnDisable();
-        onClick.RemoveListener(() => OnMatchmakingRequest.Invoke() );
+        onClick.RemoveListener(StartMatchmaking);
+    }
+
+    private void StartMatchmaking()
+    {
+        OnMatchmakingRequest.Invoke();
+        EventManager.OnButtonClick.Invoke();
     }
 }

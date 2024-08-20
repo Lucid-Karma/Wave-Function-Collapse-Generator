@@ -9,12 +9,12 @@ public class ProcessNoticeAnimController : MonoBehaviour
     {
         noticeAnimator = GetComponent<Animator>();
 
-        ChallengeManager.OnChallengeRequest += StartNoticePopUp;
+        RequestChallengeButton.OnChallengeRequest += StartNoticePopUp;
         StartMatchmakingButton.OnMatchmakingRequest += () => noticeAnimator.SetTrigger("close");
     }
     private void OnDisable()
     {
-        ChallengeManager.OnChallengeRequest -= StartNoticePopUp;
+        RequestChallengeButton.OnChallengeRequest -= StartNoticePopUp;
         StartMatchmakingButton.OnMatchmakingRequest -= () => noticeAnimator.SetTrigger("close");
     }
 

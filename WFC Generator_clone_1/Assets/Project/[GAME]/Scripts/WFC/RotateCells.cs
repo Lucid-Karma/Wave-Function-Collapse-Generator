@@ -359,6 +359,9 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
     {
         if (IsServer || IsHost)
         {
+            if (isMismatch)
+                isMismatch = false;
+
             OnNetworkShutdown.Invoke();
             NetworkManager.Singleton.Shutdown();
         }

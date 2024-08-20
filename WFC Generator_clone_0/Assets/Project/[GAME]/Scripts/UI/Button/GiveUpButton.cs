@@ -5,6 +5,7 @@ public class GiveUpButton : NetworkBehaviour
 {
     public void GiveUpMatch()
     {
+        EventManager.OnButtonClick.Invoke();
         MultiplayerTurnManager.Instance.SwitchPlayer();
 
         if(IsHost || IsServer)

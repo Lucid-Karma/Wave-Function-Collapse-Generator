@@ -7,5 +7,6 @@ public class CloseButton : MonoBehaviour
     public void ClosePanel()
     {
         panel.HidePanel();
+        EventManager.OnButtonClick.Invoke();
     }
 }

@@ -72,7 +72,7 @@ public class SimpleMatchmaking : MonoBehaviour
     {
         try
         {
-            ChallengeManager.OnPreChallenge.Invoke();
+            RequestChallengeButton.OnPreChallenge.Invoke();
             // Attempt to join a lobby in progress
             var lobby = await Lobbies.Instance.QuickJoinLobbyAsync();
 

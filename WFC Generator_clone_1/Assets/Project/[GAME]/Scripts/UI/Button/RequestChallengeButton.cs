@@ -1,12 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Netcode;
-using UnityEditor.PackageManager;
 using System;
 
-public class ChallengeManager : Button
+public class RequestChallengeButton : Button
 {
-    //public PuzzleManager puzzleManager; // Reference to your puzzle manager script
     [HideInInspector] public static Action OnPreChallenge;
     [HideInInspector] public static Action OnChallengeRequest;
 
@@ -14,12 +11,18 @@ public class ChallengeManager : Button
     {
         base.OnEnable();
         
-        onClick.AddListener(() => OnChallengeRequest.Invoke());
+        onClick.AddListener(RequestChallenge);
     }
     protected override void OnDisable()
     {
         base.OnDisable();
         
-        onClick.RemoveListener(() => OnChallengeRequest.Invoke());
+        onClick.RemoveListener(RequestChallenge);
+    }
+
+    private void RequestChallenge()
+    {
+        OnChallengeRequest.Invoke();
+        EventManager.OnButtonClick.Invoke();
     }
 }

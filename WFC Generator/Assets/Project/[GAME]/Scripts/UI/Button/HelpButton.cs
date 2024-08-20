@@ -8,5 +8,6 @@ public class HelpButton : MonoBehaviour
     public void Help()
     {
         OnHelpRequest.Invoke();
+        EventManager.OnButtonClick.Invoke();
     }
 }

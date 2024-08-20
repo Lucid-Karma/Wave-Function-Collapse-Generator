@@ -19,13 +19,14 @@ public class LevelPanels : Panel
     public Panel MultiplayerPanel;
     public Panel SinglePlayerPanel;
     public Panel DisconnectPanel;
+    public Panel MatchRequestClosedPanel;
 
     private void OnEnable()
     {
         EventManager.OnLevelStart.AddListener(HideLevelPanels);
         EventManager.OnLevelFinish.AddListener(() => StartCoroutine(InitializeLevelSuccessPanel()));
         SuccessAnimController.OnSuccessWent.AddListener(InitializeLevelCompletedPanel);
-        ChallengeManager.OnChallengeRequest += InitializeChallengeRequestPanel;
+        RequestChallengeButton.OnChallengeRequest += InitializeChallengeRequestPanel;
         StartMatchmakingButton.OnMatchmakingRequest += InitializeMultiplayerPanel;
         LobbyManager.OnClientDisconnect.AddListener(InitializeDisconnectPanel);
         //MultiplayerTurnManager.OnMatchStart.AddListener(InitializeMultiplayerPanel);
@@ -36,7 +37,7 @@ public class LevelPanels : Panel
         EventManager.OnLevelStart.RemoveListener(HideLevelPanels);
         EventManager.OnLevelFinish.RemoveListener(() => StartCoroutine(InitializeLevelSuccessPanel()));
         SuccessAnimController.OnSuccessWent.RemoveListener(InitializeLevelCompletedPanel);
-        ChallengeManager.OnChallengeRequest -= InitializeChallengeRequestPanel;
+        RequestChallengeButton.OnChallengeRequest -= InitializeChallengeRequestPanel;
         StartMatchmakingButton.OnMatchmakingRequest -= InitializeMultiplayerPanel;
         LobbyManager.OnClientDisconnect.RemoveListener(InitializeDisconnectPanel);
         //MultiplayerTurnManager.OnMatchStart.RemoveListener(InitializeMultiplayerPanel);
@@ -47,6 +48,7 @@ public class LevelPanels : Panel
         bonusLevelIndex = LevelManager.Instance.LevelData.Levels.Count - 2;
         BonusLevelPanel.HidePanel();
         DisconnectPanel.HidePanel();
+        MatchRequestClosedPanel.HidePanel();
         ProcessLostNoticePanel.HidePanel();
         MultiplayerPanel.HidePanel();
     }
@@ -54,7 +56,7 @@ public class LevelPanels : Panel
     private IEnumerator InitializeLevelSuccessPanel()
     {
         yield return new WaitForSeconds(1f);
-      
+
         if (RotateCells.Instance.isMapSucceed)
         {
             if (!IsBonusLevel())
@@ -68,12 +70,19 @@ public class LevelPanels : Panel
             }
         }
         else
-            InitializeLevelCompletedPanel();
-        
+            if(RotateCells.Instance.isMismatch) //???????
+            {
+                InitializeLevelCompletedPanel();
+            }
+            else
+                StartCoroutine(InitializeSinglePlayerPanel());
+
+
         MultiplayerPanel.HidePanel();
-        //ChallengePanel.ShowPanel();
-        SinglePlayerPanel.ShowPanel();
+        if (!RotateCells.Instance.isMismatch)   //??????
+            SinglePlayerPanel.ShowPanel();
         RotateCells.Instance.ResetMapSuccess();
+            
     }
     [HideInInspector] public static Action OnBonusShowedUp;
 
@@ -114,6 +123,20 @@ public class LevelPanels : Panel
         SinglePlayerPanel.HidePanel();
         ProcessLostNoticePanel.HidePanel();
         MultiplayerPanel.ShowPanel();
+    }
+
+    private IEnumerator InitializeSinglePlayerPanel()
+    {
+        MultiplayerPanel.HidePanel();
+        MatchRequestClosedPanel.ShowPanel();
+
+        yield return new WaitForSeconds(1f);
+
+        MatchRequestClosedPanel.HidePanel();
+        SinglePlayerPanel.ShowPanel();
+
+        EventManager.OnLevelInitialize.Invoke();
+        RotateCells.Instance.ResetMapSuccess();
     }
 
     private void HideLevelPanels()
