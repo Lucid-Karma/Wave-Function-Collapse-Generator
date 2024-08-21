@@ -95,10 +95,6 @@ public class LevelManager : Singleton<LevelManager>
             LevelCount++;
             Debug.Log(LevelCount.ToString());
         }
-        //else if(isMismatch)
-        //{
-        //    RotateCells.Instance.isMismatch = false;
-        //}
             
         //PlayerPrefs.SetInt("LevelCount", LevelCount);
         EventManager.OnLevelFinish.Invoke();

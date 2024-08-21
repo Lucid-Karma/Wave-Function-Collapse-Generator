@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: HardDifficultyData
   m_EditorClassIdentifier: 
   DifficulityMode: 2
+  DifficultyKey: HardDifficulty
   mO_CountToRotate: 6
   DefaultCountToRotate: 6

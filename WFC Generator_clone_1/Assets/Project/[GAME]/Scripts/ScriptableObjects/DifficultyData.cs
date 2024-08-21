@@ -8,17 +8,24 @@ public class DifficultyData : ScriptableObject
 {   
     [SerializeField]
     public DifficulityMode DifficulityMode = DifficulityMode.Easy;
+    public string DifficultyKey;
     public int mO_CountToRotate;
     public int MO_CountToRotate
     {
         get
         {
-            return mO_CountToRotate;
+            //return mO_CountToRotate;
+            return PlayerPrefs.GetInt(DifficultyKey, 0);
         }
-        set
+        private set
         {
             if (value > RotateCells.Instance.rotatableCount)
+            {
                 value = RotateCells.Instance.rotatableCount;
+                PlayerPrefs.SetInt(DifficultyKey, value);
+            }
+            else
+                PlayerPrefs.SetInt(DifficultyKey, value);
         }
     }
 
@@ -26,10 +33,12 @@ public class DifficultyData : ScriptableObject
 
     private void OnEnable()
     {
-        LevelManager.OnLoopComplete.AddListener(() => mO_CountToRotate += 2);
+        LevelManager.OnLoopComplete.AddListener(() => MO_CountToRotate += 2);
+        LoginManager.OnFirstLogin.AddListener(() => PlayerPrefs.SetInt(DifficultyKey, mO_CountToRotate));
     }
     private void OnDisable()
     {
-        LevelManager.OnLoopComplete.RemoveListener(() => mO_CountToRotate += 2);
+        LevelManager.OnLoopComplete.RemoveListener(() => MO_CountToRotate += 2);
+        LoginManager.OnFirstLogin.RemoveListener(() => PlayerPrefs.SetInt(DifficultyKey, mO_CountToRotate));
     }
 }

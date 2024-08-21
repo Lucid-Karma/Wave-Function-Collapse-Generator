@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: EasyDifficultyData
   m_EditorClassIdentifier: Assembly-CSharp::DifficulityData
   DifficulityMode: 0
+  DifficultyKey: EasyDifficulty
   mO_CountToRotate: 2
   DefaultCountToRotate: 2

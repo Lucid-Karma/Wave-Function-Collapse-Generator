@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: OnBoardingDifficultyData
   m_EditorClassIdentifier: 
   DifficulityMode: 3
+  DifficultyKey: OnBoardingDifficulty
   mO_CountToRotate: 5
   DefaultCountToRotate: 5

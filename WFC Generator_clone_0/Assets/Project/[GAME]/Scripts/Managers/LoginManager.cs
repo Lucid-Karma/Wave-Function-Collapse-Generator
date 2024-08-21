@@ -1,7 +1,9 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LoginManager : MonoBehaviour
 {
+    [HideInInspector] public static UnityEvent OnFirstLogin = new();
     public int LoginCount
     {
         get
@@ -20,6 +22,7 @@ public class LoginManager : MonoBehaviour
         {
             LevelManager.Instance.LevelCount++;
             PlayerPrefs.SetInt("LevelCount", LevelManager.Instance.LevelCount);
+            OnFirstLogin.Invoke();
         }
 
         IncreaseLoginCount();

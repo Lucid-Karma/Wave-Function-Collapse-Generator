@@ -168,6 +168,8 @@ public class SimpleMatchmaking : MonoBehaviour
             Debug.Log($"Error shutting down lobby: {e}");
         }
         Debug.Log("proccess ended");
-        AuthenticationService.Instance.SignOut();
+
+        if (UnityServices.State == ServicesInitializationState.Initialized)
+            AuthenticationService.Instance.SignOut();
     }
 }

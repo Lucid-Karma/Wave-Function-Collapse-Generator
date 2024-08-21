@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: MediumDifficultyData
   m_EditorClassIdentifier: 
   DifficulityMode: 1
+  DifficultyKey: MediumDifficulty
   mO_CountToRotate: 4
   DefaultCountToRotate: 4
