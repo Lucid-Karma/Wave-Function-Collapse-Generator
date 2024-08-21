@@ -119,7 +119,6 @@ public class LevelPanels : Panel
     }
     private void InitializeMultiplayerPanel()
     {
-        //ChallengePanel.HidePanel();
         SinglePlayerPanel.HidePanel();
         ProcessLostNoticePanel.HidePanel();
         MultiplayerPanel.ShowPanel();

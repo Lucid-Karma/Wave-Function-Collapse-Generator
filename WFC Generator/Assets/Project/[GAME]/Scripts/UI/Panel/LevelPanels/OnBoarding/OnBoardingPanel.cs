@@ -14,6 +14,7 @@ public class OnBoardingPanel : MonoBehaviour
         EventManager.OnLevelStart.AddListener(() => StartCoroutine(ShowCamInstructions()));
         EventManager.OnLevelSuccess.AddListener(DestroyPanel);
         EventManager.OnLevelFinish.AddListener(DeactivateInst);
+        StartMatchmakingButton.OnMatchmakingRequest += DeactivateInst;
     }
     private void OnDisable()
     {
@@ -23,6 +24,7 @@ public class OnBoardingPanel : MonoBehaviour
         EventManager.OnLevelStart.RemoveListener(() => StartCoroutine(ShowCamInstructions()));
         EventManager.OnLevelSuccess.RemoveListener(DestroyPanel);
         EventManager.OnLevelFinish.RemoveListener(DeactivateInst);
+        StartMatchmakingButton.OnMatchmakingRequest -= DeactivateInst;
     }
 
     private void Start()

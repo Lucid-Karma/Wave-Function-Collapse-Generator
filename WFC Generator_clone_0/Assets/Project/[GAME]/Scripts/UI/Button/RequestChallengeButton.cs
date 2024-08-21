@@ -22,6 +22,8 @@ public class RequestChallengeButton : Button
 
     private void RequestChallenge()
     {
+        if (!RotateCells.Instance.isDrawCompleted) return;
+
         OnChallengeRequest.Invoke();
         EventManager.OnButtonClick.Invoke();
     }

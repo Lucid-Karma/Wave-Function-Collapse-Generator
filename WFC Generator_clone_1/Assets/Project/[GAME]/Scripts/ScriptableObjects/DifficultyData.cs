@@ -9,12 +9,12 @@ public class DifficultyData : ScriptableObject
     [SerializeField]
     public DifficulityMode DifficulityMode = DifficulityMode.Easy;
     public string DifficultyKey;
+
     public int mO_CountToRotate;
     public int MO_CountToRotate
     {
         get
         {
-            //return mO_CountToRotate;
             return PlayerPrefs.GetInt(DifficultyKey, 0);
         }
         private set
