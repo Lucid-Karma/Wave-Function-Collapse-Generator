@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class MuteButton : Button
 {
-    private bool isMusicOn = true;
+    private static bool isMusicOn = true;
 
     protected override void OnEnable()
     {
