@@ -15,7 +15,10 @@ public class DifficultyData : ScriptableObject
     {
         get
         {
-            return PlayerPrefs.GetInt(DifficultyKey, 0);
+            if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
+                return PlayerPrefs.GetInt(DifficultyKey, 0);
+            else
+                return MultiplayerTurnManager.Instance._drawResult;
         }
         private set
         {

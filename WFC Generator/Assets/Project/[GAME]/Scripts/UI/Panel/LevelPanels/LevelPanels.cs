@@ -77,8 +77,7 @@ public class LevelPanels : Panel
             else
                 StartCoroutine(InitializeSinglePlayerPanel());
 
-
-        MultiplayerPanel.HidePanel();
+            MultiplayerPanel.HidePanel();
         if (!RotateCells.Instance.isMismatch)   //??????
             SinglePlayerPanel.ShowPanel();
         RotateCells.Instance.ResetMapSuccess();
@@ -127,6 +126,10 @@ public class LevelPanels : Panel
     private IEnumerator InitializeSinglePlayerPanel()
     {
         MultiplayerPanel.HidePanel();
+        //MatchRequestClosedPanel.ShowPanel();
+
+        yield return new WaitForSeconds(1f);
+
         MatchRequestClosedPanel.ShowPanel();
 
         yield return new WaitForSeconds(1f);

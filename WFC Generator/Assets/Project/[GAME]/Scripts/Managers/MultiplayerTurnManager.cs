@@ -89,7 +89,7 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     #region Starter Draw
     private bool canPlay;
     public bool CanPlay { get { return canPlay; } set { canPlay = value; OnTurnSwitch.Invoke(value); } }
-    int _drawResult;
+    [HideInInspector] public int _drawResult;
 
     [ClientRpc]
     private void AnnounceMatchStartClientRpc()
