@@ -3,21 +3,21 @@ WFC generator is created as a solid example of a fully architectured system. Bel
 This approach ensures a modular, efficient, and expandable system for procedural level generation.
 
 ## Table of Contents
-- [Key Characteristics of The WFC System](#KeyCharacteristicsofTheWFCSystem)
-- [Code Explanation (WfcGenerator)](#CodeExplanation(WfcGenerator))
-  - [Class and Variables Setup](#ClassandVariablesSetup)
-  - [Event Listeners Setup](#EventListenersSetup)
-  - [Level Recreation](#LevelRecreation)
-  - [Grid Generation and Initialization](#GridGenerationandInitialization)
-  - [Starting the Wave Function Collapse](#StartingtheWaveFunctionCollapse)
-  - [Finding and Collapsing the Grid Cells](#FindingandCollapsingtheGridCells)
-  - [Updating Cells and Matching Modules](#UpdatingCellsandMatchingModules)
-  - [Finalizing the Collapse](#FinalizingtheCollapse)
-- [Other Scripts](#OtherScripts)
-  - [CellSO](#CellSO)
-  - [ModuleSO](#ModuleSO)
-  - [EventManager](#EventManager)
-- [Gallery](#Gallery)
+- [Key Characteristics of The WFC System](#keyCharacteristicsofTheWFCSystem)
+- [Code Explanation (WfcGenerator)](#codeExplanation(WfcGenerator))
+  - [Class and Variables Setup](#classandVariablesSetup)
+  - [Event Listeners Setup](#eventListenersSetup)
+  - [Level Recreation](#levelRecreation)
+  - [Grid Generation and Initialization](#gridGenerationandInitialization)
+  - [Starting the Wave Function Collapse](#startingtheWaveFunctionCollapse)
+  - [Finding and Collapsing the Grid Cells](#findingandCollapsingtheGridCells)
+  - [Updating Cells and Matching Modules](#updatingCellsandMatchingModules)
+  - [Finalizing the Collapse](#finalizingtheCollapse)
+- [Other Scripts](#otherScripts)
+  - [CellSO](#cellSO)
+  - [ModuleSO](#moduleSO)
+  - [EventManager](#eventManager)
+- [Gallery](#gallery)
 
 ## Key Characteristics of The WFC System
 
