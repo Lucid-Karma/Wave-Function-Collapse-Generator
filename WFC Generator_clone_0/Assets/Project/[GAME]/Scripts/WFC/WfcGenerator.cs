@@ -25,7 +25,7 @@ public class WfcGenerator : FSMBase<WfcGenerator>
     [SerializeField] private CellSO Cell; //.......................A CellSO reference with modules defined.
     public int _width;
     public int _length;
-    [SerializeField] private int _moduleSize;
+    [SerializeField] private float _moduleSize;
 
 
     private int firstCollapse; //................The index of the first cell to be created in the list.

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 34b541349d1fc5b4db2f64322a1df85a
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _MainTex: {instanceID: 0}
+  - _StipplingNoise: {fileID: 2800000, guid: 29d5abc79d5baf9479ddb793e9110345, type: 3}
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 29080
+  packageName: LOD Billboards
+  packageVersion: 1.10
+  assetPath: Assets/PVC_StandinGeo/Material/StandInGeoShader.shader
+  uploadId: 53728

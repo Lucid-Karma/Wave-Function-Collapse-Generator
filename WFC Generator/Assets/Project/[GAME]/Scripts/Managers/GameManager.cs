@@ -12,15 +12,15 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public static UnityEvent OnMultiplayerGameStart = new();
     [HideInInspector] public static UnityEvent OnMultiplayerGameFinish = new();
 
-    //void Awake()
-    //{
-    //    PlayerPrefs.SetInt("LastLevel", 0);
-    //    PlayerPrefs.SetInt("LevelCount", 0);
-    //    PlayerPrefs.SetInt("RewardAmount", 0);
-    //    PlayerPrefs.SetInt("SolveCount", 0);
-    //    PlayerPrefs.SetInt("LoginCount", 0);
-    //    PlayerPrefs.SetInt("LastLevelDifficultyIndex", 0);
-    //}
+    void Awake()
+    {
+        PlayerPrefs.SetInt("LastLevel", 0);
+        PlayerPrefs.SetInt("LevelCount", 0);
+        PlayerPrefs.SetInt("RewardAmount", 0);
+        PlayerPrefs.SetInt("SolveCount", 0);
+        PlayerPrefs.SetInt("LoginCount", 0);
+        PlayerPrefs.SetInt("LastLevelDifficultyIndex", 0);
+    }
 
     public void StartGame()
     {

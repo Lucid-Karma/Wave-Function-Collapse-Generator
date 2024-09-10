@@ -14,11 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ThemeDatas:
   - Theme: 5
-    ColorAtlasTexture: {fileID: 2800000, guid: 17b361a09fcf0734789e4c46bb078c9a, type: 3}
+    ColorAtlasTexture: {fileID: 2800000, guid: 066a547865805da41b553f217d39fcd5, type: 3}
     ThemeColor: {r: 0.3647059, g: 0.3529412, b: 0.3529412, a: 0}
     roadColor: {r: 0.8078432, g: 0.37647063, b: 0.5803922, a: 0}
     roadBorderColor: {r: 0.24705884, g: 0.23529413, b: 0.23529413, a: 0}
   DifficultyData:
   - {fileID: 11400000, guid: 4a7d6c906d86bce4ba4af5d84ed7f219, type: 2}
   point: 50
-  bonusPoint: 50

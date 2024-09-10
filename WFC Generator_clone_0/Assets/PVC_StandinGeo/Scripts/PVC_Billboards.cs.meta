@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 16238dcb6dd501944b777cd3346dec40
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 29080
+  packageName: LOD Billboards
+  packageVersion: 1.10
+  assetPath: Assets/PVC_StandinGeo/Scripts/PVC_Billboards.cs
+  uploadId: 53728

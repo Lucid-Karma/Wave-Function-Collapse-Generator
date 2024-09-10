@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9cf9aa21a4465664e9757cd8f1e49378
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 29080
+  packageName: LOD Billboards
+  packageVersion: 1.10
+  assetPath: Assets/PVC_StandinGeo/Material/StandInGeoMat.mat
+  uploadId: 53728
