@@ -62,14 +62,14 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         EventManager.OnLevelInitialize.AddListener(() => CreatePuzzle(currentState));
         EventManager.OnLevelStart.AddListener(GenerateWFC);
         RequestChallengeButton.OnPreChallenge += DestroyMO_Objects;
-        LobbyManager.OnPlayersReady.AddListener(CreateMatch);
+        MultiplayerTurnManager.OnMatchStart.AddListener(CreateMatch);
     }
     public  void OnDisable()
     {
         EventManager.OnLevelInitialize.RemoveListener(() => CreatePuzzle(currentState));
         EventManager.OnLevelStart.RemoveListener(GenerateWFC);
         RequestChallengeButton.OnPreChallenge -= DestroyMO_Objects;
-        LobbyManager.OnPlayersReady.RemoveListener(CreateMatch);
+        MultiplayerTurnManager.OnMatchStart.RemoveListener(CreateMatch);
     }
 
     private void CreateMatch()
