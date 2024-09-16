@@ -29,7 +29,7 @@ public class GameModeManager : Singleton<GameModeManager>
     public void StartMultiplayer()
     {
         CurrentGameMode = GameMode.Multiplayer;
-        GameManager.OnMultiplayerGameStart.Invoke();    //?????
+        GameManager.OnMultiplayerGameStart.Invoke();    
 
         IsMultiplayer = true;
     }

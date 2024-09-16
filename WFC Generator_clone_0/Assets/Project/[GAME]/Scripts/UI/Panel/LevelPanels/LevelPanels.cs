@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -15,6 +14,7 @@ public class LevelPanels : Panel
     public Panel LevelCompletedPanel;
     public Panel BonusLevelPanel;
     public Panel ProcessLostNoticePanel;
+    public Panel HowToPlayPanel;
     //public Panel ChallengePanel;
     public Panel MultiplayerPanel;
     public Panel SinglePlayerPanel;
@@ -29,6 +29,7 @@ public class LevelPanels : Panel
         RequestChallengeButton.OnChallengeRequest += InitializeChallengeRequestPanel;
         StartMatchmakingButton.OnMatchmakingRequest += InitializeMultiplayerPanel;
         LobbyManager.OnClientDisconnect.AddListener(InitializeDisconnectPanel);
+        HelpButton.OnHelpRequest.AddListener(InitializeHowToPlayPanel);
         //MultiplayerTurnManager.OnMatchStart.AddListener(InitializeMultiplayerPanel);
     }
 
@@ -40,6 +41,7 @@ public class LevelPanels : Panel
         RequestChallengeButton.OnChallengeRequest -= InitializeChallengeRequestPanel;
         StartMatchmakingButton.OnMatchmakingRequest -= InitializeMultiplayerPanel;
         LobbyManager.OnClientDisconnect.RemoveListener(InitializeDisconnectPanel);
+        HelpButton.OnHelpRequest.RemoveListener(InitializeHowToPlayPanel);
         //MultiplayerTurnManager.OnMatchStart.RemoveListener(InitializeMultiplayerPanel);
     }
 
@@ -50,6 +52,7 @@ public class LevelPanels : Panel
         DisconnectPanel.HidePanel();
         MatchRequestClosedPanel.HidePanel();
         ProcessLostNoticePanel.HidePanel();
+        HowToPlayPanel.HidePanel();
         MultiplayerPanel.HidePanel();
     }
 
@@ -70,19 +73,26 @@ public class LevelPanels : Panel
             }
         }
         else
-            if(RotateCells.Instance.isMismatch) //???????
+        {
+            if(!RotateCells.Instance.isMismatch) 
             {
                 InitializeLevelCompletedPanel();
             }
             else
+            {
                 StartCoroutine(InitializeSinglePlayerPanel());
+            }
+        }
 
+        if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
+        {
             MultiplayerPanel.HidePanel();
-        if (!RotateCells.Instance.isMismatch)   //??????
             SinglePlayerPanel.ShowPanel();
+        }
+
         RotateCells.Instance.ResetMapSuccess();
-            
     }
+
     [HideInInspector] public static Action OnBonusShowedUp;
 
     [HideInInspector] public static Action OnLevelCShowed;
@@ -109,6 +119,11 @@ public class LevelPanels : Panel
     {
         ProcessLostNoticePanel.ShowPanel();
     }
+    private void InitializeHowToPlayPanel()
+    {
+        ProcessLostNoticePanel.HidePanel();
+        HowToPlayPanel.ShowPanel();
+    }
     private void InitializeDisconnectPanel()
     {
         if(!RotateCells.Instance.isMismatch && RotateCells.Instance.isDrawCompleted )
@@ -126,7 +141,6 @@ public class LevelPanels : Panel
     private IEnumerator InitializeSinglePlayerPanel()
     {
         MultiplayerPanel.HidePanel();
-        //MatchRequestClosedPanel.ShowPanel();
 
         yield return new WaitForSeconds(1f);
 
@@ -138,7 +152,7 @@ public class LevelPanels : Panel
         SinglePlayerPanel.ShowPanel();
 
         EventManager.OnLevelInitialize.Invoke();
-        RotateCells.Instance.ResetMapSuccess();
+        RotateCells.Instance.isMismatch = false;
     }
 
     private void HideLevelPanels()

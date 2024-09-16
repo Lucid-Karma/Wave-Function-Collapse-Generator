@@ -1,6 +1,7 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.Events;
+using Unity.Netcode;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -24,6 +25,8 @@ public class GameManager : Singleton<GameManager>
 
     public void StartGame()
     {
+        NetworkManager.Singleton.Shutdown();
+
         if (IsGameStarted)
             return;
 

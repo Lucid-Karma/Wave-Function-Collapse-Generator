@@ -57,7 +57,13 @@ public class OnBoardingPanel : MonoBehaviour
 
     private void DestroyPanel()
     {
-        if(LevelManager.Instance.LevelIndex == 2)
+        if(LevelManager.Instance.LevelIndex == 1)
             Destroy(gameObject);
+    }
+
+    private void Update()
+    {
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+            DeactivateInst();
     }
 }

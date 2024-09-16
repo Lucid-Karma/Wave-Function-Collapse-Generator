@@ -145,31 +145,12 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
     void CheckInput()
     {
         #region Mobile
-        // if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-        // {
-        //     Vector3 touchPosition = Input.GetTouch(0).position;
-        //     Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-        //     RaycastHit hit;
-
-        //     if (Physics.Raycast(ray, out hit))
-        //     {
-        //         Transform moduleTransform = hit.transform.GetComponent<Transform>();
-
-        //         if (moduleTransform != null)
-        //         {
-        //             RotateModule(moduleTransform);
-        //             EventManager.OnClick.Invoke();
-        //         }
-        //     }
-        // }
-        #endregion
-
-        if (Input.GetMouseButtonDown(0))
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
-            if (EventSystem.current.IsPointerOverGameObject()) return;
+            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
 
-            Vector3 mousePosition = Input.mousePosition;
-            Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+            Vector3 touchPosition = Input.GetTouch(0).position;
+            Ray ray = Camera.main.ScreenPointToRay(touchPosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit))
@@ -177,11 +158,30 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
                 Transform moduleTransform = hit.transform;
                 if (moduleTransform != null && !isRotating)
                 {
-                    //Debug.Log($"CanPlay={DrawController.Instance.canPlay}, \nIsRotating={isRotating}");
                     AdaptGameMode(moduleTransform);
                 }
             }
         }
+        #endregion
+
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    if (EventSystem.current.IsPointerOverGameObject()) return;
+
+        //    Vector3 mousePosition = Input.mousePosition;
+        //    Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+        //    RaycastHit hit;
+
+        //    if (Physics.Raycast(ray, out hit))
+        //    {
+        //        Transform moduleTransform = hit.transform;
+        //        if (moduleTransform != null && !isRotating)
+        //        {
+        //            //Debug.Log($"CanPlay={DrawController.Instance.canPlay}, \nIsRotating={isRotating}");
+        //            AdaptGameMode(moduleTransform);
+        //        }
+        //    }
+        //}
     }
     public void AdaptGameMode(Transform moduleTransform)
     {
@@ -359,8 +359,8 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
     {
         if (IsServer || IsHost)
         {
-            if (isMismatch)
-                isMismatch = false;
+            //if (isMismatch)
+            //    isMismatch = false;
 
             OnNetworkShutdown.Invoke();
             NetworkManager.Singleton.Shutdown();
