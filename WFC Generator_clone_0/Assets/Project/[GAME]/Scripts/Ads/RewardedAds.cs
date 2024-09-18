@@ -22,7 +22,7 @@ adUnitId = iosAdUnitId;
         Advertisement.Load(adUnitId, this);
     }
 
-    public void ShowInterstitialAd()
+    public void ShowRewardedAd()
     {
         Advertisement.Show(adUnitId, this);
         LoadRewardedAd();

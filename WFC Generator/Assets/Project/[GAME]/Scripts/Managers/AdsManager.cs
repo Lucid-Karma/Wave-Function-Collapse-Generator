@@ -19,12 +19,14 @@ public class AdsManager : Singleton<AdsManager>
         EventManager.OnLevelStart.AddListener(() => bannerAds.ShowBannerAd());
         EventManager.OnLevelFinish.AddListener(() => bannerAds.HideBannerAd());
         SolveButton.OnSolveBtnUse.AddListener(ShowInterstitialAd);
+        ClaimButton.OnRewardClaimRequest.AddListener(() => rewardedAds.ShowRewardedAd());
     }
     private void OnDisable()
     {
         EventManager.OnLevelStart.RemoveListener(() => bannerAds.ShowBannerAd());
         EventManager.OnLevelFinish.RemoveListener(() => bannerAds.HideBannerAd());
         SolveButton.OnSolveBtnUse.RemoveListener(ShowInterstitialAd);
+        ClaimButton.OnRewardClaimRequest.RemoveListener(() => rewardedAds.ShowRewardedAd());
     }
 
     int solveCount = 0;
