@@ -27,12 +27,14 @@ public class PlayerCoinController : MonoBehaviour
         EventManager.OnLevelSuccess.AddListener(IncreaseCoinAmount);
         BuyButton.OnSolutionBuy.AddListener(DecreaseCoinAmount);
         CollectButton.OnCoinCollect.AddListener(AddBonusCoinToAmount);
+        RewardedAds.OnRewardedAdComplete.AddListener(AddBonusCoinToAmount);
     }
     private void OnDisable()
     {
         EventManager.OnLevelSuccess.RemoveListener(IncreaseCoinAmount);
         BuyButton.OnSolutionBuy.RemoveListener(DecreaseCoinAmount);
         CollectButton.OnCoinCollect.RemoveListener(AddBonusCoinToAmount);
+        RewardedAds.OnRewardedAdComplete.RemoveListener(AddBonusCoinToAmount);
     }
 
     private void IncreaseCoinAmount()
