@@ -1,8 +1,11 @@
 using UnityEngine;
 using UnityEngine.Advertisements;
+using UnityEngine.Events;
 
 public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowListener
 {
+    [HideInInspector] public static UnityEvent OnRewardedAdComplete = new();
+
     [SerializeField] private string androidAdUnitId;
     [SerializeField] private string iosAdUnitId;
 
@@ -63,6 +66,8 @@ adUnitId = iosAdUnitId;
         if(placementId == adUnitId && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
         {
             Debug.Log("Rewarded ad COMPLETED. Time for Reward..");
+            OnRewardedAdComplete.Invoke();
+            AdsManager.Instance.bannerAds.ShowBannerAd();
         }
     }
     #endregion

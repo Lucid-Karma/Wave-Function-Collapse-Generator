@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class ClaimButton : Button
 {
-    [HideInInspector] public static UnityEvent OnRewardClaimRequest = new();
+    [HideInInspector] public static UnityEvent OnRewardClaim = new();
 
     protected override void OnEnable()
     {
@@ -24,7 +24,7 @@ public class ClaimButton : Button
 
         //if (SolveTextController.SolveCount > 0)
         //{
-            OnRewardClaimRequest.Invoke();
+            OnRewardClaim.Invoke();
             EventManager.OnButtonClick.Invoke();
         //}
     }
