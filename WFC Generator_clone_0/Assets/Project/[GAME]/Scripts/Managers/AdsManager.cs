@@ -33,6 +33,7 @@ public class AdsManager : Singleton<AdsManager>
         solveCount++;
         if(solveCount >= 3)
         {
+            bannerAds.HideBannerAd();
             interstitialAds.ShowInterstitialAd();
             solveCount = 0;
         }
