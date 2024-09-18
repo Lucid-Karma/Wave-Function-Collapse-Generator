@@ -22,10 +22,10 @@ public class ClaimButton : Button
     {
         if (!RotateCells.Instance.isDrawCompleted) return;
 
-        //if (SolveTextController.SolveCount > 0)
-        //{
+        if (!ClaimTimerTextController.isActive)
+        {
             OnRewardClaim.Invoke();
             EventManager.OnButtonClick.Invoke();
-        //}
+        }
     }
 }

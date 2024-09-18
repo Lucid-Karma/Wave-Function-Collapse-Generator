@@ -11,6 +11,8 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
 
     private string adUnitId;
 
+    [SerializeField] private GameObject timer;
+
     private void Awake()
     {
 #if UNITY_IOS
@@ -67,6 +69,7 @@ adUnitId = iosAdUnitId;
         {
             Debug.Log("Rewarded ad COMPLETED. Time for Reward..");
             OnRewardedAdComplete.Invoke();
+            timer.SetActive(true);
             AdsManager.Instance.bannerAds.ShowBannerAd();
         }
     }
