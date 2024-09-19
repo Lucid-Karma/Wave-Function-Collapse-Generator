@@ -884,6 +884,7 @@ GameObject:
   m_Component:
   - component: {fileID: 134548183}
   - component: {fileID: 134548182}
+  - component: {fileID: 134548184}
   m_Layer: 0
   m_Name: Controllers
   m_TagString: Untagged
@@ -928,6 +929,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &134548184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134548181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39387030dd10f38468222c09d9725753, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterCam: {fileID: 349668553}
 --- !u!1 &138363029
 GameObject:
   m_ObjectHideFlags: 0
@@ -2983,7 +2997,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: 1
+  m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 64
@@ -16301,6 +16315,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4338623221319677256}
+  - component: {fileID: 4338623221328874099}
   - component: {fileID: 4338623221328874098}
   m_Layer: 6
   m_Name: Character_Female_Shirt_01
@@ -17560,7 +17575,7 @@ Animator:
   m_GameObject: {fileID: 4338623221319465610}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 16c4b6c36252ce14e8083291c9e774fd, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2df539c60e1ec35428136d9ca667ac3a, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -17572,6 +17587,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4338623221328874099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4338623221319465610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 975b90392bc198b489d9388010707a62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!137 &4338623221333132402
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
@@ -18065,7 +18092,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
