@@ -40,12 +40,10 @@ public class PlayerCoinController : MonoBehaviour
     private void IncreaseCoinAmount()
     {
         RewardAmount += LevelManager.Instance.CurrentLevel.point;
-        PlayerPrefs.SetInt("RewardAmount", RewardAmount);
     }
     private void AddBonusCoinToAmount()
     {
         RewardAmount += 50;
-        PlayerPrefs.SetInt("RewardAmount", RewardAmount);
         OnBonusAdded.Invoke();
     }
 
@@ -54,7 +52,6 @@ public class PlayerCoinController : MonoBehaviour
         if (RewardAmount >= 50)
         {
             RewardAmount -= 50;
-            PlayerPrefs.SetInt("RewardAmount", RewardAmount);
         }
     }
 }
