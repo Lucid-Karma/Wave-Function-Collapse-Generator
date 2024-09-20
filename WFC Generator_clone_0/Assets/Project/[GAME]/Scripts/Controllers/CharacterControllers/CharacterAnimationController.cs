@@ -7,24 +7,45 @@ public class CharacterAnimationController : MonoBehaviour
 
     private void OnEnable()
     {
-        EventManager.OnGameStart.AddListener(PlayGreetAnimation);
+        EventManager.OnGameStart.AddListener(() => InvokeTrigger("Greet"));
         RotateCells.OnModulesRotate.AddListener(() => InvokeTrigger("Request"));
         EventManager.OnLevelFinish.AddListener(() => InvokeTrigger("Clap"));
-        EventManager.OnMusicOn.AddListener(() => InvokeTrigger("ListeningIdle"));
-        EventManager.OnMusicOff.AddListener(() => InvokeTrigger("Idle"));
+        EventManager.OnMusicOn.AddListener(() => UpdateIdleVersion("ListeningIdle", true));
+        EventManager.OnMusicOff.AddListener(() => UpdateIdleVersion("Idle", false));
+        MultiplayerTurnManager.OnTurnSwitch += UpdateMultiplayerCharacterAnim;
+        EventManager.OnLevelSuccess.AddListener(EndMultiplayerCharacterAnim);
     }
     private void OnDisable()
     {
-        EventManager.OnGameStart.RemoveListener(PlayGreetAnimation);
+        EventManager.OnGameStart.RemoveListener(() => InvokeTrigger("Greet"));
         RotateCells.OnModulesRotate.RemoveListener(() => InvokeTrigger("Request"));
         EventManager.OnLevelFinish.RemoveListener(() => InvokeTrigger("Clap"));
-        EventManager.OnMusicOn.RemoveListener(() => InvokeTrigger("ListeningIdle"));
-        EventManager.OnMusicOff.RemoveListener(() => InvokeTrigger("Idle"));
+        EventManager.OnMusicOn.RemoveListener(() => UpdateIdleVersion("ListeningIdle", true));
+        EventManager.OnMusicOff.RemoveListener(() => UpdateIdleVersion("Idle", false));
+        MultiplayerTurnManager.OnTurnSwitch -= UpdateMultiplayerCharacterAnim;
+        EventManager.OnLevelSuccess.RemoveListener(EndMultiplayerCharacterAnim);
     }
 
-    private void PlayGreetAnimation()
+    private void Start()
     {
-        InvokeTrigger("Greet");
+        Animator.SetBool("isMusicPlaying", true);
+    }
+
+    private void UpdateIdleVersion(string trigger, bool isMusicPlaying)
+    {
+        InvokeTrigger(trigger);
+        Animator.SetBool("isMusicPlaying", isMusicPlaying);
+    }
+
+    private void UpdateMultiplayerCharacterAnim(bool canShown)
+    {
+        if (canShown)
+            InvokeTrigger("Yell");
+    }
+    private void EndMultiplayerCharacterAnim()
+    {
+        if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
+            InvokeTrigger("Victory");
     }
 
     private void InvokeTrigger(string trigger)
