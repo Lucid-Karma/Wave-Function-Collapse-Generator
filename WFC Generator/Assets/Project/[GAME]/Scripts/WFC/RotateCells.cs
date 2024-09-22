@@ -28,6 +28,9 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
     [HideInInspector] public bool isMapSucceed { get; private set; }
     [HideInInspector] public bool isMismatch = false;
 
+    private float tapInputDownTime;
+    private float tapDuration;
+
     void OnEnable()
     {
         WfcGenerator.OnMapReady.AddListener(DrawCells);
@@ -144,45 +147,43 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
 
     void CheckInput()
     {
-        #region Mobile
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        if (Input.touchCount > 0)
         {
-            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
+            Touch touch = Input.GetTouch(0);
 
-            Vector3 touchPosition = Input.GetTouch(0).position;
-            Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-            RaycastHit hit;
+            if (EventSystem.current.IsPointerOverGameObject(touch.fingerId)) return;
 
-            if (Physics.Raycast(ray, out hit))
+            switch (touch.phase)
             {
-                Transform moduleTransform = hit.transform;
-                if (moduleTransform != null && !isRotating)
-                {
-                    AdaptGameMode(moduleTransform);
-                }
+                case TouchPhase.Began:
+                    tapInputDownTime = Time.time;
+                    break;
+                case TouchPhase.Ended:
+                    tapDuration = Mathf.Abs(tapInputDownTime - Time.time);
+
+                    if (tapDuration < 0.2f)
+                    {
+                        Vector3 touchPosition = touch.position;
+                        Ray ray = Camera.main.ScreenPointToRay(touchPosition);
+                        RaycastHit hit;
+
+                        if (Physics.Raycast(ray, out hit))
+                        {
+                            Transform moduleTransform = hit.transform;
+                            if (moduleTransform != null && !isRotating)
+                            {
+                                AdaptGameMode(moduleTransform);
+                            }
+                        }
+                    }
+                    tapDuration = 0;
+                    break;
+                default:
+                    break;
             }
         }
-        #endregion
-
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    if (EventSystem.current.IsPointerOverGameObject()) return;
-
-        //    Vector3 mousePosition = Input.mousePosition;
-        //    Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-        //    RaycastHit hit;
-
-        //    if (Physics.Raycast(ray, out hit))
-        //    {
-        //        Transform moduleTransform = hit.transform;
-        //        if (moduleTransform != null && !isRotating)
-        //        {
-        //            //Debug.Log($"CanPlay={DrawController.Instance.canPlay}, \nIsRotating={isRotating}");
-        //            AdaptGameMode(moduleTransform);
-        //        }
-        //    }
-        //}
     }
+
     public void AdaptGameMode(Transform moduleTransform)
     {
         if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
