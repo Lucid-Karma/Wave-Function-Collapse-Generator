@@ -122,7 +122,7 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     {
         NegativeBooleanClientRpc();
         CanPlay = true;
-        modulecountTxt.text = "You play first as host";
+        modulecountTxt.text = "You play first!";    // as Host
     }
     public void PlayClient()
     {
@@ -141,7 +141,7 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     private void PositiveBooleanClientRpc()
     {
         CanPlay = true;
-        modulecountTxt.text = "You play first as client";
+        modulecountTxt.text = "Go Go Go!";    // as Client
     }
 
     private bool IsHostPlaysFirst()
