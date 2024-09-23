@@ -17,6 +17,7 @@ public class MultiplayerPanels : Panel
         LobbyManager.OnPlayersReady.AddListener(InitializeMatchPanel);
         MultiplayerTurnManager.OnMatchStart.AddListener(HideAllPanels);
         HelpButton.OnHelpRequest.AddListener(() => HowToPlayPanel.ShowPanel());
+        CloseButton.OnHelpClose.AddListener(() => HowToPlayPanel.HidePanel());
     }
 
     private void OnDisable()
@@ -29,6 +30,7 @@ public class MultiplayerPanels : Panel
         LobbyManager.OnPlayersReady.RemoveListener(InitializeMatchPanel);
         MultiplayerTurnManager.OnMatchStart.RemoveListener(HideAllPanels);
         HelpButton.OnHelpRequest.RemoveListener(() => HowToPlayPanel.ShowPanel());
+        CloseButton.OnHelpClose.RemoveListener(() => HowToPlayPanel.HidePanel());
     }
 
     private void Start()

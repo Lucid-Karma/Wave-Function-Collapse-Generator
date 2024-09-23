@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CloseButton : MonoBehaviour
 {
-    [SerializeField] private Panel panel;
+    [HideInInspector] public static UnityEvent OnHelpClose = new();
 
     public void ClosePanel()
     {
-        panel.HidePanel();
+        OnHelpClose.Invoke();
         EventManager.OnButtonClick.Invoke();
     }
 }

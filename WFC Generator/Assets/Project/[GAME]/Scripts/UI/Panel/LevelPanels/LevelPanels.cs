@@ -30,6 +30,7 @@ public class LevelPanels : Panel
         StartMatchmakingButton.OnMatchmakingRequest += InitializeMultiplayerPanel;
         LobbyManager.OnClientDisconnect.AddListener(InitializeDisconnectPanel);
         HelpButton.OnHelpRequest.AddListener(InitializeHowToPlayPanel);
+        CloseButton.OnHelpClose.AddListener(() => HowToPlayPanel.HidePanel());
         //MultiplayerTurnManager.OnMatchStart.AddListener(InitializeMultiplayerPanel);
     }
 
@@ -42,6 +43,7 @@ public class LevelPanels : Panel
         StartMatchmakingButton.OnMatchmakingRequest -= InitializeMultiplayerPanel;
         LobbyManager.OnClientDisconnect.RemoveListener(InitializeDisconnectPanel);
         HelpButton.OnHelpRequest.RemoveListener(InitializeHowToPlayPanel);
+        CloseButton.OnHelpClose.RemoveListener(() => HowToPlayPanel.HidePanel());
         //MultiplayerTurnManager.OnMatchStart.RemoveListener(InitializeMultiplayerPanel);
     }
 
