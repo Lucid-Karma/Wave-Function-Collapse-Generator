@@ -62,7 +62,7 @@ public class LevelPanels : Panel
     {
         yield return new WaitForSeconds(1f);
 
-        if (RotateCells.Instance.isMapSucceed)
+        if (RotateCells.Instance.isMapSucceed && !LobbyManager.IsDisconnect)
         {
             if (!IsBonusLevel())
             {
@@ -86,6 +86,7 @@ public class LevelPanels : Panel
             }
         }
 
+        print("Iss: " + LobbyManager.IsDisconnect);
         if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
         {
             MultiplayerPanel.HidePanel();
@@ -100,6 +101,8 @@ public class LevelPanels : Panel
     [HideInInspector] public static Action OnLevelCShowed;
     private void InitializeLevelCompletedPanel()
     {
+        DisconnectPanel.HidePanel();    
+
         LevelSuccessPanel.HidePanel();
         LevelCompletedPanel.ShowPanel();
         OnLevelCShowed.Invoke();
@@ -128,7 +131,7 @@ public class LevelPanels : Panel
     }
     private void InitializeDisconnectPanel()
     {
-        if(!RotateCells.Instance.isMismatch && RotateCells.Instance.isDrawCompleted )
+        if(!RotateCells.Instance.isMismatch && RotateCells.Instance.isDrawCompleted && !RotateCells.Instance.isMapSucceed)
         {
             DisconnectPanel.ShowPanel();
         }

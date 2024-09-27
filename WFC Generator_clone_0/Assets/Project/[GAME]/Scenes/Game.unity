@@ -1439,8 +1439,8 @@ RectTransform:
   - {fileID: 492222336}
   - {fileID: 1123746885}
   - {fileID: 2075119001}
-  - {fileID: 544545365}
   - {fileID: 612122970}
+  - {fileID: 544545365}
   - {fileID: 1804006690}
   m_Father: {fileID: 1316771608}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2415,6 +2415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fc5d525971b68440836c9682aca9fff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  panel: {fileID: 255967590}
 --- !u!1 &269484364
 GameObject:
   m_ObjectHideFlags: 0
@@ -2522,6 +2523,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fc5d525971b68440836c9682aca9fff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  panel: {fileID: 162916559}
 --- !u!114 &269484368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4961,7 +4963,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 1024
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -5281,7 +5283,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '"Swipe to move" and "Pinch to zoom"'
+  m_text: '"Swipe to move" \n "Pinch to zoom"'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4e5974faef0c1494b808ab5eeb518758, type: 2}
   m_sharedMaterial: {fileID: -7580180292926479999, guid: 4e5974faef0c1494b808ab5eeb518758, type: 2}
@@ -6575,7 +6577,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: ec98ee64ba02e634fa18f155899086bb, type: 3}
   m_Resource: {fileID: 8300000, guid: ec98ee64ba02e634fa18f155899086bb, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -10964,6 +10966,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fc5d525971b68440836c9682aca9fff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  panel: {fileID: 1591803880}
 --- !u!114 &1340998150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18366,11 +18369,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 660994039}
-  radius: 107
-  rotationSpeed: 0.1
   zoomSpeed: 2
-  minRadius: 5
-  maxRadius: 107
+  rotationSpeed: 5
+  minYAngle: 10
+  maxYAngle: 90
+  minZoomDistance: 5
+  maxZoomDistance: 107
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
