@@ -1,5 +1,4 @@
 using UnityEngine;
-using static MultiplayerTurnManager;
 
 public class CharacterAnimationController : MonoBehaviour
 {
@@ -40,11 +39,13 @@ public class CharacterAnimationController : MonoBehaviour
 
     private void UpdateMultiplayerCharacterAnim(bool canShown)
     {
+        if (!GameModeManager.Instance.IsMultiplayer) return;
+
         if (canShown)
             InvokeTrigger("Yell");
         else
         {
-            if(MultiplayerTurnManager.Instance.currentPlayer == Turn.HostTurn)  // ..since the enum changes after CanShow boolean.
+            if(MultiplayerTurnManager.Instance.currentPlayer == MultiplayerTurnManager.Turn.HostTurn)  // ..since the enum changes after CanShow boolean.
                 InvokeTrigger("Idle");  // ???????
         }  
     }

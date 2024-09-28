@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.Audio;
-using UnityEngine.UIElements;
 
 public class Audio : MonoBehaviour
 {
@@ -56,8 +54,11 @@ public class Audio : MonoBehaviour
     {
         background.clip = multiplayerBackground;
 
-        if(MuteButton.IsMusicOn)
+        if (MuteButton.IsMusicOn)
+        {
+            background.volume = 0.5f;
             background.Play();
+        } 
     }
 
     private void PlaySinglePlayer()
@@ -65,6 +66,9 @@ public class Audio : MonoBehaviour
         background.clip = singlePlayerBackground;
 
         if (MuteButton.IsMusicOn)
+        {
+            background.volume = 1f;
             background.Play();
+        } 
     }
 }

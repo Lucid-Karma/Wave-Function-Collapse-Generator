@@ -1,6 +1,10 @@
 
+using UnityEngine;
+
 public class SequenceNotifierPanel : Panel
 {
+    Animator animator;
+
     private void OnEnable()
     {
         MultiplayerTurnManager.OnTurnSwitch += UpdateNotifierPanel;
@@ -17,8 +21,16 @@ public class SequenceNotifierPanel : Panel
     private void UpdateNotifierPanel(bool canShown)
     {
         if (canShown)
+        {
             this.ShowPanel();
+            animator.SetTrigger("yourTurn");
+        }
         else
             this.HidePanel();
+    }
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
     }
 }
