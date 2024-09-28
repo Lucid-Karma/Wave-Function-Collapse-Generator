@@ -86,7 +86,6 @@ public class LevelPanels : Panel
             }
         }
 
-        print("Iss: " + LobbyManager.IsDisconnect);
         if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
         {
             MultiplayerPanel.HidePanel();

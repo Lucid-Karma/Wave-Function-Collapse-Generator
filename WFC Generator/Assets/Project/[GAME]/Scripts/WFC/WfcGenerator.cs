@@ -63,6 +63,7 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         EventManager.OnLevelStart.AddListener(GenerateWFC);
         RequestChallengeButton.OnPreChallenge += DestroyMO_Objects;
         MultiplayerTurnManager.OnMatchStart.AddListener(CreateMatch);
+        LobbyManager.OnPlayersReady.AddListener(ResetData);
     }
     public  void OnDisable()
     {
@@ -70,6 +71,7 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         EventManager.OnLevelStart.RemoveListener(GenerateWFC);
         RequestChallengeButton.OnPreChallenge -= DestroyMO_Objects;
         MultiplayerTurnManager.OnMatchStart.RemoveListener(CreateMatch);
+        LobbyManager.OnPlayersReady.RemoveListener(ResetData);
     }
 
     private void CreateMatch()
@@ -82,7 +84,10 @@ public class WfcGenerator : FSMBase<WfcGenerator>
     public virtual void RecreateLevel()
     {
         DestroyMO_Objects();
-
+        ResetData();
+    }
+    private void ResetData()
+    {
         cells.Clear();
         candidateCells.Clear();
         rotatableObjectTs.Clear();

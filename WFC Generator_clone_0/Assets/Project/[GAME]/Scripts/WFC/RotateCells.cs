@@ -38,6 +38,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         EventManager.OnClick.AddListener(UpdateAndCheckMap);
         EventManager.OnCollapseEnd.AddListener(() => MultiplayerTurnManager.Instance.NumberOfMoves++ );
         LobbyManager.OnClientDisconnect.AddListener(EndMatchDueToDisconnect);
+        LobbyManager.OnPlayersReady.AddListener(ResetData);
     }
     void OnDisable()
     {
@@ -46,6 +47,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         EventManager.OnClick.RemoveListener(UpdateAndCheckMap);
         EventManager.OnCollapseEnd.RemoveListener(() => MultiplayerTurnManager.Instance.NumberOfMoves++ );
         LobbyManager.OnClientDisconnect.RemoveListener(EndMatchDueToDisconnect);
+        LobbyManager.OnPlayersReady.RemoveListener(ResetData);
     }
 
     void Start()
@@ -90,6 +92,8 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         
         cellCountToRotate = LevelManager.Instance.DifficultyData.MO_CountToRotate;
 
+        print("LOT_TRANSFORM COUNT: " + lotTransforms.Count);
+        print("cellCountToRotate COUNT: " + cellCountToRotate);
         for (int i = 0; i < cellCountToRotate; i++)
         {
             randomTIndex = Random.Range(0, lotTransforms.Count - 1);
@@ -378,11 +382,16 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
     private void RecreateLevel()
     {
         isDrawCompleted = false;
+        ResetData();
+        LevelManager.Instance.FinishLevel();
+    }
+    private void ResetData()
+    {
+        
         _candidateMOs.Clear();
         _rotatableTransforms.Clear();
         lotTransforms.Clear();
         _moduleAngles.Clear();
-        LevelManager.Instance.FinishLevel();
     }
     public void ResetMapSuccess()
     {

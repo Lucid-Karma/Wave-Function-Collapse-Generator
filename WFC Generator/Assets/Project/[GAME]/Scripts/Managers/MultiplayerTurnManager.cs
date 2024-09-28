@@ -187,7 +187,7 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
         {
             currentTime -= Time.deltaTime;
             timerText.text = string.Format("{0:0.0} s", currentTime).Replace(',', '.');
-            print(currentPlayer + " " + currentTime);
+            
             if (currentTime <= 0)
             {
                 currentTime = maxTime;

@@ -29,7 +29,7 @@ public class MultiplayerPuzzleGenerator : WfcGeneratorStates
         generator.GenerateWFC();
 
         yield return null;
-        generator.Invoke("AnnounceMapReady", 2f);
+        //generator.Invoke("AnnounceMapReady", 2f);
     }
 
     private void NetworkSpawnPuzzle(WfcGenerator generator)
