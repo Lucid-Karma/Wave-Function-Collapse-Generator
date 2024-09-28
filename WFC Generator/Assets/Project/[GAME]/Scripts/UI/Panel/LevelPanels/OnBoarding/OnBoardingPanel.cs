@@ -5,10 +5,11 @@ public class OnBoardingPanel : MonoBehaviour
 {
     public GameObject TapInstruction;
     public GameObject CameraInstruction;
+    public GameObject ChallengeButton;
 
     private void OnEnable()
     {
-        if (PlayerPrefs.GetInt("LoginCount") > 1) return;
+        if (PlayerPrefs.GetInt("LevelCount") > 2) return;
 
         EventManager.OnGameStart.AddListener(() => StartCoroutine(ShowTapInstructions()));
         EventManager.OnLevelStart.AddListener(() => StartCoroutine(ShowCamInstructions()));
@@ -18,7 +19,7 @@ public class OnBoardingPanel : MonoBehaviour
     }
     private void OnDisable()
     {
-        if (PlayerPrefs.GetInt("LoginCount") > 1) return;
+        if (PlayerPrefs.GetInt("LevelCount") > 2) return;
 
         EventManager.OnGameStart.RemoveListener(() => StartCoroutine(ShowTapInstructions()));
         EventManager.OnLevelStart.RemoveListener(() => StartCoroutine(ShowCamInstructions()));
@@ -29,7 +30,12 @@ public class OnBoardingPanel : MonoBehaviour
 
     private void Start()
     {
+        if (PlayerPrefs.GetInt("LevelCount") > 2) Destroy(gameObject);
+
         DeactivateInst();
+
+        if (PlayerPrefs.GetInt("LevelCount") <= 2)
+            ChallengeButton.SetActive(false);
     }
 
     private IEnumerator ShowTapInstructions()
@@ -45,6 +51,7 @@ public class OnBoardingPanel : MonoBehaviour
         {
             yield return new WaitForSeconds(3.2f);
 
+            TapInstruction.SetActive(false);
             CameraInstruction.SetActive(true);
         } 
     }
@@ -58,7 +65,10 @@ public class OnBoardingPanel : MonoBehaviour
     private void DestroyPanel()
     {
         if(LevelManager.Instance.LevelIndex == 1)
+        {
+            ChallengeButton.SetActive(true);
             Destroy(gameObject);
+        }
     }
 
     private void Update()

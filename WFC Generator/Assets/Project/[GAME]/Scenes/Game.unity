@@ -4502,6 +4502,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TapInstruction: {fileID: 1422735175}
   CameraInstruction: {fileID: 1272439649}
+  ChallengeButton: {fileID: 885548369}
 --- !u!1 &562547538
 GameObject:
   m_ObjectHideFlags: 0
