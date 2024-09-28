@@ -1,0 +1,189 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GameUIAtlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 4
+      m_BuildTarget: Android
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 50
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: e52a2d819370e8f4a97d8bb64ddcadef, type: 3}
+    - {fileID: 2800000, guid: cf5a4400a96a71e4ba36c36a6ae9fea9, type: 3}
+    - {fileID: 2800000, guid: d20f4eeb1b447d1499e429b658a44b36, type: 3}
+    - {fileID: 2800000, guid: c2bef668fb80d68409f18f2c39a2786a, type: 3}
+    - {fileID: 2800000, guid: c9fc3715f988fa74a807841e2946fef2, type: 3}
+    - {fileID: 2800000, guid: 916a87d54e3edfc489ac53ab172d38e3, type: 3}
+    - {fileID: 2800000, guid: 772cb3611a6ede640a77aa07c7911a75, type: 3}
+    - {fileID: 2800000, guid: fe7dd23e084eb8c41a29ff2afdd6f0ef, type: 3}
+    - {fileID: 2800000, guid: f58f106c786eac24184f3afb3e682218, type: 3}
+    - {fileID: 2800000, guid: 227658fedeb26d446999487620ef9b60, type: 3}
+    - {fileID: 2800000, guid: 2abd3219df2b7a147b9fb828570f49f2, type: 3}
+    - {fileID: 2800000, guid: 518f3c5bc302f9a49be4b511015be881, type: 3}
+    - {fileID: 2800000, guid: 184766bacb104494a97e79a236190b9f, type: 3}
+    - {fileID: 2800000, guid: 153a32b68098c0c40803d618873b8ed7, type: 3}
+    - {fileID: 2800000, guid: a2a7fee556dd3be4691690ac6df71aa2, type: 3}
+    - {fileID: 2800000, guid: 1b1ca44e7a8997f43aaa8f6c8dd6eedd, type: 3}
+    - {fileID: 2800000, guid: 54bfb586a887bbf41b1b28082b321cbe, type: 3}
+    - {fileID: 2800000, guid: 49556a4ddf7ddb94fa0de7c4906bdf19, type: 3}
+    - {fileID: 2800000, guid: ead6216073c3f4c4eadd8bd96363777e, type: 3}
+    - {fileID: 2800000, guid: 8998b94c24c419c448b6d7c54ebb312d, type: 3}
+    - {fileID: 2800000, guid: 063195fc4dd0f2c49a6a015ce19f2e91, type: 3}
+    - {fileID: 2800000, guid: 9fb6c4472c89a19418b75e2b21ce2155, type: 3}
+    - {fileID: 2800000, guid: e82522ccddab3124c8a8953b4855b51b, type: 3}
+    - {fileID: 2800000, guid: f5d20f2d1d2181b45be25784df9b65c9, type: 3}
+    - {fileID: 2800000, guid: f23a303bec1753c46aa0fed6698e651a, type: 3}
+    - {fileID: 2800000, guid: 66b5c247d59f74947bfa31afa48660d8, type: 3}
+    - {fileID: 2800000, guid: 4e98ce9c7e124bf4d9701b5bb5814476, type: 3}
+    - {fileID: 2800000, guid: 8757f8da62bf81c49aafe027b42e76bb, type: 3}
+    - {fileID: 2800000, guid: bd99ed8fab8924f4f92cd4f4d7c58374, type: 3}
+    - {fileID: 2800000, guid: 2227ce2428180544cb2dced369caf65d, type: 3}
+    - {fileID: 2800000, guid: cc2186f4331d08446b7f594a897e65fd, type: 3}
+    - {fileID: 2800000, guid: 7cd628b94e51a194eb68086314ad01b6, type: 3}
+    - {fileID: 2800000, guid: 4533e38045a2c0549bfb3263e4880771, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - cf5a4400a96a71e4ba36c36a6ae9fea9: 21300000
+    - ead6216073c3f4c4eadd8bd96363777e: 21300000
+    - 4533e38045a2c0549bfb3263e4880771: 21300000
+    - 772cb3611a6ede640a77aa07c7911a75: 21300000
+    - e52a2d819370e8f4a97d8bb64ddcadef: 21300000
+    - 2227ce2428180544cb2dced369caf65d: 21300000
+    - cc2186f4331d08446b7f594a897e65fd: 21300000
+    - c9fc3715f988fa74a807841e2946fef2: 21300000
+    - 916a87d54e3edfc489ac53ab172d38e3: 21300000
+    - a2a7fee556dd3be4691690ac6df71aa2: 21300000
+    - 54bfb586a887bbf41b1b28082b321cbe: 21300000
+    - 153a32b68098c0c40803d618873b8ed7: 21300000
+    - 66b5c247d59f74947bfa31afa48660d8: 21300000
+    - 9fb6c4472c89a19418b75e2b21ce2155: 21300000
+    - c2bef668fb80d68409f18f2c39a2786a: 21300000
+    - 2abd3219df2b7a147b9fb828570f49f2: 21300000
+    - 7cd628b94e51a194eb68086314ad01b6: 21300000
+    - 184766bacb104494a97e79a236190b9f: 21300000
+    - 8757f8da62bf81c49aafe027b42e76bb: 21300000
+    - f23a303bec1753c46aa0fed6698e651a: 21300000
+    - 518f3c5bc302f9a49be4b511015be881: 21300000
+    - d20f4eeb1b447d1499e429b658a44b36: 21300000
+    - 8998b94c24c419c448b6d7c54ebb312d: 21300000
+    - f58f106c786eac24184f3afb3e682218: 21300000
+    - 4e98ce9c7e124bf4d9701b5bb5814476: 21300000
+    - e82522ccddab3124c8a8953b4855b51b: 21300000
+    - 063195fc4dd0f2c49a6a015ce19f2e91: 21300000
+    - f5d20f2d1d2181b45be25784df9b65c9: 21300000
+    - 49556a4ddf7ddb94fa0de7c4906bdf19: 21300000
+    - fe7dd23e084eb8c41a29ff2afdd6f0ef: 21300000
+    - 1b1ca44e7a8997f43aaa8f6c8dd6eedd: 21300000
+    - 227658fedeb26d446999487620ef9b60: 21300000
+    - bd99ed8fab8924f4f92cd4f4d7c58374: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: cf5a4400a96a71e4ba36c36a6ae9fea9, type: 3}
+  - {fileID: 21300000, guid: ead6216073c3f4c4eadd8bd96363777e, type: 3}
+  - {fileID: 21300000, guid: 4533e38045a2c0549bfb3263e4880771, type: 3}
+  - {fileID: 21300000, guid: 772cb3611a6ede640a77aa07c7911a75, type: 3}
+  - {fileID: 21300000, guid: e52a2d819370e8f4a97d8bb64ddcadef, type: 3}
+  - {fileID: 21300000, guid: 2227ce2428180544cb2dced369caf65d, type: 3}
+  - {fileID: 21300000, guid: cc2186f4331d08446b7f594a897e65fd, type: 3}
+  - {fileID: 21300000, guid: c9fc3715f988fa74a807841e2946fef2, type: 3}
+  - {fileID: 21300000, guid: 916a87d54e3edfc489ac53ab172d38e3, type: 3}
+  - {fileID: 21300000, guid: a2a7fee556dd3be4691690ac6df71aa2, type: 3}
+  - {fileID: 21300000, guid: 54bfb586a887bbf41b1b28082b321cbe, type: 3}
+  - {fileID: 21300000, guid: 153a32b68098c0c40803d618873b8ed7, type: 3}
+  - {fileID: 21300000, guid: 66b5c247d59f74947bfa31afa48660d8, type: 3}
+  - {fileID: 21300000, guid: 9fb6c4472c89a19418b75e2b21ce2155, type: 3}
+  - {fileID: 21300000, guid: c2bef668fb80d68409f18f2c39a2786a, type: 3}
+  - {fileID: 21300000, guid: 2abd3219df2b7a147b9fb828570f49f2, type: 3}
+  - {fileID: 21300000, guid: 7cd628b94e51a194eb68086314ad01b6, type: 3}
+  - {fileID: 21300000, guid: 184766bacb104494a97e79a236190b9f, type: 3}
+  - {fileID: 21300000, guid: 8757f8da62bf81c49aafe027b42e76bb, type: 3}
+  - {fileID: 21300000, guid: f23a303bec1753c46aa0fed6698e651a, type: 3}
+  - {fileID: 21300000, guid: 518f3c5bc302f9a49be4b511015be881, type: 3}
+  - {fileID: 21300000, guid: d20f4eeb1b447d1499e429b658a44b36, type: 3}
+  - {fileID: 21300000, guid: 8998b94c24c419c448b6d7c54ebb312d, type: 3}
+  - {fileID: 21300000, guid: f58f106c786eac24184f3afb3e682218, type: 3}
+  - {fileID: 21300000, guid: 4e98ce9c7e124bf4d9701b5bb5814476, type: 3}
+  - {fileID: 21300000, guid: e82522ccddab3124c8a8953b4855b51b, type: 3}
+  - {fileID: 21300000, guid: 063195fc4dd0f2c49a6a015ce19f2e91, type: 3}
+  - {fileID: 21300000, guid: f5d20f2d1d2181b45be25784df9b65c9, type: 3}
+  - {fileID: 21300000, guid: 49556a4ddf7ddb94fa0de7c4906bdf19, type: 3}
+  - {fileID: 21300000, guid: fe7dd23e084eb8c41a29ff2afdd6f0ef, type: 3}
+  - {fileID: 21300000, guid: 1b1ca44e7a8997f43aaa8f6c8dd6eedd, type: 3}
+  - {fileID: 21300000, guid: 227658fedeb26d446999487620ef9b60, type: 3}
+  - {fileID: 21300000, guid: bd99ed8fab8924f4f92cd4f4d7c58374, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Amazing
+  - GreyButton
+  - Success
+  - BuyButton
+  - 50c
+  - Square
+  - Square_C_F
+  - Black&WhiteButton
+  - BonusSquare
+  - CollectButton
+  - ElipseYellow
+  - Coin
+  - ProgressBarInGame
+  - Key
+  - BackToSPButton
+  - Civic Connect Logo
+  - SquareYellow
+  - Close
+  - RoadLogo
+  - PopupGreen
+  - Claim
+  - AreYouSure
+  - HelpButton
+  - ChallengeButton
+  - RadialShine
+  - LevelCompleted
+  - Info
+  - PlayButton
+  - GiveUpButton
+  - CaseLevel
+  - ElipseWhite
+  - Circle
+  - Sound
+  m_RenderDataMap: {}
+  m_Tag: GameUIAtlas
+  m_IsVariant: 0
