@@ -3,43 +3,90 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    private float _rotationSpeed = 5.0f;
+    //private float _rotationSpeed = 5.0f;
 
-    float rotationX, rotationY;
+    //float rotationX, rotationY;
+
+    //void Update()
+    //{
+    //    if (Input.GetMouseButton(1))
+    //    {
+    //        rotationY += Input.GetAxis("Mouse X") * _rotationSpeed;
+    //        rotationX += Input.GetAxis("Mouse Y") * -1 * _rotationSpeed;
+
+    //        transform.localEulerAngles = new Vector3(rotationX, rotationY, 0);
+    //    }
+    //}
+
+    public Transform target; // Kameranýn bakacaðý merkez (hedef)
+    public float zoomSpeed = 2.0f; // Zoom hýzý
+    public float rotationSpeed = 200.0f; // Rotasyon hýzý
+    public float minYAngle = 10f; // Minimum y ekseni açýsý (kürenin altýna inmemek için)
+    public float maxYAngle = 90f; // Maksimum y ekseni açýsý (tam yukarý bakmak için)
+    public float minZoomDistance = 5f; // Minimum zoom mesafesi
+    public float maxZoomDistance = 20f; // Maksimum zoom mesafesi
+
+    private float distance; // Hedefe olan mesafe (zoom)
+    private float currentX = 0f; // X ekseni rotasyonu
+    private float currentY = 45f; // Y ekseni rotasyonu (baþlangýç açýsý)
+
+    private Vector2 lastTouchPos; // Son dokunmatik pozisyonu
+
+    void Start()
+    {
+        // Baþlangýçta kameranýn hedefe olan mesafesini ayarla
+        distance = Vector3.Distance(transform.position, target.position);
+
+        // Kamerayý baþlangýç konumuna ayarla (90 derece merkezden yukarý bakacak)
+        currentY = maxYAngle;
+    }
 
     void Update()
     {
-        if (Input.GetMouseButton(1))
+        // Tek dokunuþla kameranýn rotasyonunu kontrol et
+        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
         {
-            rotationY += Input.GetAxis("Mouse X") * _rotationSpeed;
-            rotationX += Input.GetAxis("Mouse Y") * -1 * _rotationSpeed;
+            Vector2 touchDelta = Input.GetTouch(0).deltaPosition;
 
-            transform.localEulerAngles = new Vector3(rotationX, rotationY, 0);
+            // Rotasyon hareketini uygula
+            currentX += touchDelta.x * rotationSpeed * Time.deltaTime;
+            currentY -= touchDelta.y * rotationSpeed * Time.deltaTime;
+
+            // Y ekseni sýnýrlarýný uygula (sadece üst yarýda kalacak þekilde)
+            currentY = Mathf.Clamp(currentY, minYAngle, maxYAngle);
+        }
+
+        // Ýki dokunuþla zoom kontrolü yap
+        if (Input.touchCount == 2)
+        {
+            Touch touchZero = Input.GetTouch(0);
+            Touch touchOne = Input.GetTouch(1);
+
+            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+
+            // Ýki dokunuþ arasýndaki mesafe deðiþikliðine göre zoom yap
+            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+            distance += deltaMagnitudeDiff * zoomSpeed * Time.deltaTime;
+
+            // Zoom mesafesini sýnýrla
+            distance = Mathf.Clamp(distance, minZoomDistance, maxZoomDistance);
         }
     }
 
-    //private void OnEnable()
-    //{
-    //    //EventManager.OnGameStart.AddListener(LookPuzzle);
-    //    EventManager.OnLevelFinish.AddListener(LookCity);
-    //    RotateCells.OnModulesRotate.AddListener(LookPuzzle);
-    //}
-    //private void OnDisable()
-    //{
-    //    //EventManager.OnGameStart.RemoveListener(LookPuzzle);
-    //    EventManager.OnLevelFinish.RemoveListener(LookCity);
-    //    RotateCells.OnModulesRotate.RemoveListener(LookPuzzle);
-    //}
+    void LateUpdate()
+    {
+        // Kameranýn yeni pozisyonunu ve rotasyonunu hesapla
+        Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
+        Vector3 direction = new Vector3(0, 0, -distance);
+        transform.position = target.position + rotation * direction;
 
-    //void LookCity()
-    //{
-    //    transform.DORotate(new Vector3(-72.5f, 29f, 0f), 1f, RotateMode.WorldAxisAdd)
-    //            .SetEase(Ease.OutQuad);
-    //}
+        // Her zaman hedefe bak
+        transform.LookAt(target);
+    }
 
-    //void LookPuzzle()
-    //{
-    //    transform.DORotate(new Vector3(72.5f, -29f, 0f), 1f, RotateMode.WorldAxisAdd)
-    //            .SetEase(Ease.OutQuad);
-    //}
 }

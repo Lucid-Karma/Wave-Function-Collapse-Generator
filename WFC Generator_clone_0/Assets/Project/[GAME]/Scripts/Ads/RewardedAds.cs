@@ -1,0 +1,77 @@
+using UnityEngine;
+using UnityEngine.Advertisements;
+using UnityEngine.Events;
+
+public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowListener
+{
+    [HideInInspector] public static UnityEvent OnRewardedAdComplete = new();
+
+    [SerializeField] private string androidAdUnitId;
+    [SerializeField] private string iosAdUnitId;
+
+    private string adUnitId;
+
+    [SerializeField] private GameObject timer;
+
+    private void Awake()
+    {
+#if UNITY_IOS
+adUnitId = iosAdUnitId;
+#elif UNITY_ANDROID
+        adUnitId = androidAdUnitId;
+#endif
+    }
+
+    public void LoadRewardedAd()
+    {
+        Advertisement.Load(adUnitId, this);
+    }
+
+    public void ShowRewardedAd()
+    {
+        Advertisement.Show(adUnitId, this);
+        LoadRewardedAd();
+    }
+
+
+
+    #region LoadCallbacks
+    public void OnUnityAdsAdLoaded(string placementId)
+    {
+        Debug.Log("Rewarded Ad Loaded");
+    }
+
+    public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
+    {
+
+    }
+    #endregion
+
+    #region ShowCallbacks
+    public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
+    {
+
+    }
+
+    public void OnUnityAdsShowStart(string placementId)
+    {
+
+    }
+
+    public void OnUnityAdsShowClick(string placementId)
+    {
+
+    }
+
+    public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
+    {
+        if(placementId == adUnitId && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
+        {
+            Debug.Log("Rewarded ad COMPLETED. Time for Reward..");
+            OnRewardedAdComplete.Invoke();
+            timer.SetActive(true);
+            AdsManager.Instance.bannerAds.ShowBannerAd();
+        }
+    }
+    #endregion
+}

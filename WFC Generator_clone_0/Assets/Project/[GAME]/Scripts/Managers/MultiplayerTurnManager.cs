@@ -34,10 +34,17 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     public override void OnNetworkSpawn()
     {
         LobbyManager.OnPlayersReady.AddListener(DecideModuleCount);
+        GameManager.OnSingleplayerGameStart.AddListener(() => { 
+            currentTime = maxTime; 
+            isMp = GameModeManager.Instance.IsMultiplayer; });
     }
     public override void OnNetworkDespawn()
     {
         LobbyManager.OnPlayersReady.RemoveListener(DecideModuleCount);
+        GameManager.OnSingleplayerGameStart.RemoveListener(() => {
+            currentTime = maxTime;
+            isMp = GameModeManager.Instance.IsMultiplayer;
+        });
     }
 
     public void DecideModuleCount()
@@ -70,6 +77,8 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
             CanPlay = false;
             ServerTurnServerRpc();
         }
+
+        currentTime = maxTime;
         //Debug.Log($"SwitchPlayer: IsHost={IsHost}");
     }
     [ClientRpc]
@@ -100,6 +109,7 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     {
         yield return new WaitForSeconds(1.5f);
         OnMatchStart.Invoke();
+        isMp = GameModeManager.Instance.IsMultiplayer;
     }
 
     public void StartFirstPlayer()
@@ -122,26 +132,26 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
     {
         NegativeBooleanClientRpc();
         CanPlay = true;
-        modulecountTxt.text = "You play first as host";
+        modulecountTxt.text = "You play first!";    // as Host
     }
     public void PlayClient()
     {
         PositiveBooleanClientRpc();
         CanPlay = false;
-        modulecountTxt.text = "Other player plays first";
+        modulecountTxt.text = "Opponent plays first";
     }
 
     [ClientRpc]
     private void NegativeBooleanClientRpc()
     {
         CanPlay = false;
-        modulecountTxt.text = "Other player plays first";
+        modulecountTxt.text = "Opponent plays first";
     }
     [ClientRpc]
     private void PositiveBooleanClientRpc()
     {
         CanPlay = true;
-        modulecountTxt.text = "You play first as client";
+        modulecountTxt.text = "Go Go Go!";    // as Client
     }
 
     private bool IsHostPlaysFirst()
@@ -167,13 +177,17 @@ public class MultiplayerTurnManager : MultiplayerSingleton<MultiplayerTurnManage
         currentTime = maxTime;
     }
 
+    bool isMp;
+
     private void Update()
     {
+        if (!isMp) return;   // ?????
+
         if (CanPlay)
         {
             currentTime -= Time.deltaTime;
             timerText.text = string.Format("{0:0.0} s", currentTime).Replace(',', '.');
-
+            
             if (currentTime <= 0)
             {
                 currentTime = maxTime;

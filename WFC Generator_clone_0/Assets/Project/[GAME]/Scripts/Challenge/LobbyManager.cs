@@ -8,16 +8,20 @@ public class LobbyManager : NetworkBehaviour
     [HideInInspector] public static UnityEvent OnPlayersReady = new();
     [HideInInspector] public static UnityEvent OnClientDisconnect = new();
 
+    private static bool isDisconnect;
+    public static bool IsDisconnect { get => isDisconnect; private set => isDisconnect = value; }
     //private NetworkVariable<int> currentPlayerCount = new NetworkVariable<int>(0, 
     //                                                    NetworkVariableReadPermission.Everyone);
     private int currentPlayerCount = 0;
     public const int maxPlayers = 2;
+
 
     public override void OnNetworkSpawn()
     {
         NetworkManager.Singleton.OnConnectionEvent += OnClientConnected;
         GameManager.OnMultiplayerGameFinish.AddListener(UnsubscribeOnConnectionEvent);
         RotateCells.OnNetworkShutdown.AddListener(ResetPlayerCount);
+        GameManager.OnSingleplayerGameStart.AddListener(() => IsDisconnect = false);
     }
     public override void OnNetworkDespawn()
     {
@@ -28,6 +32,7 @@ public class LobbyManager : NetworkBehaviour
 
         GameManager.OnMultiplayerGameFinish.AddListener(UnsubscribeOnConnectionEvent);
         RotateCells.OnNetworkShutdown.RemoveListener(ResetPlayerCount);
+        GameManager.OnSingleplayerGameStart.RemoveListener(() => IsDisconnect = false);
     }
 
     private void OnClientConnected(NetworkManager manager, ConnectionEventData data)
@@ -43,6 +48,7 @@ public class LobbyManager : NetworkBehaviour
         }
         else if(data.EventType == ConnectionEvent.ClientDisconnected)
         {
+            IsDisconnect = true;
             OnClientDisconnect.Invoke();
         }
     }

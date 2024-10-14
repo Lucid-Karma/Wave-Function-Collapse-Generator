@@ -21,7 +21,7 @@ using ParrelSync;
 public class SimpleMatchmaking : MonoBehaviour
 {
     [HideInInspector] public static UnityEvent OnLobbyCreate = new();
-    [HideInInspector] public static UnityEvent OnPlayersMatch = new();
+    //[HideInInspector] public static UnityEvent OnPlayersMatch = new();
 
     private Lobby _connectedLobby;
     private QueryResponse _lobbies;

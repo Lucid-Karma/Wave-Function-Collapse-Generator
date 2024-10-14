@@ -27,23 +27,23 @@ public class PlayerCoinController : MonoBehaviour
         EventManager.OnLevelSuccess.AddListener(IncreaseCoinAmount);
         BuyButton.OnSolutionBuy.AddListener(DecreaseCoinAmount);
         CollectButton.OnCoinCollect.AddListener(AddBonusCoinToAmount);
+        RewardedAds.OnRewardedAdComplete.AddListener(AddBonusCoinToAmount);
     }
     private void OnDisable()
     {
         EventManager.OnLevelSuccess.RemoveListener(IncreaseCoinAmount);
         BuyButton.OnSolutionBuy.RemoveListener(DecreaseCoinAmount);
         CollectButton.OnCoinCollect.RemoveListener(AddBonusCoinToAmount);
+        RewardedAds.OnRewardedAdComplete.RemoveListener(AddBonusCoinToAmount);
     }
 
     private void IncreaseCoinAmount()
     {
         RewardAmount += LevelManager.Instance.CurrentLevel.point;
-        PlayerPrefs.SetInt("RewardAmount", RewardAmount);
     }
     private void AddBonusCoinToAmount()
     {
         RewardAmount += 50;
-        PlayerPrefs.SetInt("RewardAmount", RewardAmount);
         OnBonusAdded.Invoke();
     }
 
@@ -52,7 +52,6 @@ public class PlayerCoinController : MonoBehaviour
         if (RewardAmount >= 50)
         {
             RewardAmount -= 50;
-            PlayerPrefs.SetInt("RewardAmount", RewardAmount);
         }
     }
 }

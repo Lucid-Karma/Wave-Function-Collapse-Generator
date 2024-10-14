@@ -25,7 +25,7 @@ public class WfcGenerator : FSMBase<WfcGenerator>
     [SerializeField] private CellSO Cell; //.......................A CellSO reference with modules defined.
     public int _width;
     public int _length;
-    [SerializeField] private int _moduleSize;
+    [SerializeField] private float _moduleSize;
 
 
     private int firstCollapse; //................The index of the first cell to be created in the list.
@@ -62,14 +62,16 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         EventManager.OnLevelInitialize.AddListener(() => CreatePuzzle(currentState));
         EventManager.OnLevelStart.AddListener(GenerateWFC);
         RequestChallengeButton.OnPreChallenge += DestroyMO_Objects;
-        LobbyManager.OnPlayersReady.AddListener(CreateMatch);
+        MultiplayerTurnManager.OnMatchStart.AddListener(CreateMatch);
+        LobbyManager.OnPlayersReady.AddListener(ResetData);
     }
     public  void OnDisable()
     {
         EventManager.OnLevelInitialize.RemoveListener(() => CreatePuzzle(currentState));
         EventManager.OnLevelStart.RemoveListener(GenerateWFC);
         RequestChallengeButton.OnPreChallenge -= DestroyMO_Objects;
-        LobbyManager.OnPlayersReady.RemoveListener(CreateMatch);
+        MultiplayerTurnManager.OnMatchStart.RemoveListener(CreateMatch);
+        LobbyManager.OnPlayersReady.RemoveListener(ResetData);
     }
 
     private void CreateMatch()
@@ -82,7 +84,10 @@ public class WfcGenerator : FSMBase<WfcGenerator>
     public virtual void RecreateLevel()
     {
         DestroyMO_Objects();
-
+        ResetData();
+    }
+    private void ResetData()
+    {
         cells.Clear();
         candidateCells.Clear();
         rotatableObjectTs.Clear();

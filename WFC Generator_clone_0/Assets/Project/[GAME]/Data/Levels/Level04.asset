@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ThemeDatas:
   - Theme: 3
-    ColorAtlasTexture: {fileID: 2800000, guid: 1589ecff4d8681943a4f1c43f0fb2f0c, type: 3}
+    ColorAtlasTexture: {fileID: 2800000, guid: 355a5be1e52f2a640b2600673640983a, type: 3}
     ThemeColor: {r: 0.21568629, g: 0.28235295, b: 0.48235297, a: 0}
     roadColor: {r: 0.13725491, g: 0.27450982, b: 0.18039216, a: 0}
     roadBorderColor: {r: 0.7960785, g: 0.18431373, b: 0.20392159, a: 0}

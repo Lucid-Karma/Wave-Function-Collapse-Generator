@@ -28,6 +28,9 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
     [HideInInspector] public bool isMapSucceed { get; private set; }
     [HideInInspector] public bool isMismatch = false;
 
+    private float tapInputDownTime;
+    private float tapDuration;
+
     void OnEnable()
     {
         WfcGenerator.OnMapReady.AddListener(DrawCells);
@@ -35,6 +38,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         EventManager.OnClick.AddListener(UpdateAndCheckMap);
         EventManager.OnCollapseEnd.AddListener(() => MultiplayerTurnManager.Instance.NumberOfMoves++ );
         LobbyManager.OnClientDisconnect.AddListener(EndMatchDueToDisconnect);
+        LobbyManager.OnPlayersReady.AddListener(ResetData);
     }
     void OnDisable()
     {
@@ -43,6 +47,7 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         EventManager.OnClick.RemoveListener(UpdateAndCheckMap);
         EventManager.OnCollapseEnd.RemoveListener(() => MultiplayerTurnManager.Instance.NumberOfMoves++ );
         LobbyManager.OnClientDisconnect.RemoveListener(EndMatchDueToDisconnect);
+        LobbyManager.OnPlayersReady.RemoveListener(ResetData);
     }
 
     void Start()
@@ -87,6 +92,8 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
         
         cellCountToRotate = LevelManager.Instance.DifficultyData.MO_CountToRotate;
 
+        print("LOT_TRANSFORM COUNT: " + lotTransforms.Count);
+        print("cellCountToRotate COUNT: " + cellCountToRotate);
         for (int i = 0; i < cellCountToRotate; i++)
         {
             randomTIndex = Random.Range(0, lotTransforms.Count - 1);
@@ -144,45 +151,43 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
 
     void CheckInput()
     {
-        #region Mobile
-        // if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-        // {
-        //     Vector3 touchPosition = Input.GetTouch(0).position;
-        //     Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-        //     RaycastHit hit;
-
-        //     if (Physics.Raycast(ray, out hit))
-        //     {
-        //         Transform moduleTransform = hit.transform.GetComponent<Transform>();
-
-        //         if (moduleTransform != null)
-        //         {
-        //             RotateModule(moduleTransform);
-        //             EventManager.OnClick.Invoke();
-        //         }
-        //     }
-        // }
-        #endregion
-
-        if (Input.GetMouseButtonDown(0))
+        if (Input.touchCount > 0)
         {
-            if (EventSystem.current.IsPointerOverGameObject()) return;
+            Touch touch = Input.GetTouch(0);
 
-            Vector3 mousePosition = Input.mousePosition;
-            Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-            RaycastHit hit;
+            if (EventSystem.current.IsPointerOverGameObject(touch.fingerId)) return;
 
-            if (Physics.Raycast(ray, out hit))
+            switch (touch.phase)
             {
-                Transform moduleTransform = hit.transform;
-                if (moduleTransform != null && !isRotating)
-                {
-                    //Debug.Log($"CanPlay={DrawController.Instance.canPlay}, \nIsRotating={isRotating}");
-                    AdaptGameMode(moduleTransform);
-                }
+                case TouchPhase.Began:
+                    tapInputDownTime = Time.time;
+                    break;
+                case TouchPhase.Ended:
+                    tapDuration = Mathf.Abs(tapInputDownTime - Time.time);
+
+                    if (tapDuration < 0.2f)
+                    {
+                        Vector3 touchPosition = touch.position;
+                        Ray ray = Camera.main.ScreenPointToRay(touchPosition);
+                        RaycastHit hit;
+
+                        if (Physics.Raycast(ray, out hit))
+                        {
+                            Transform moduleTransform = hit.transform;
+                            if (moduleTransform != null && !isRotating)
+                            {
+                                AdaptGameMode(moduleTransform);
+                            }
+                        }
+                    }
+                    tapDuration = 0;
+                    break;
+                default:
+                    break;
             }
         }
     }
+
     public void AdaptGameMode(Transform moduleTransform)
     {
         if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
@@ -359,8 +364,8 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
     {
         if (IsServer || IsHost)
         {
-            if (isMismatch)
-                isMismatch = false;
+            //if (isMismatch)
+            //    isMismatch = false;
 
             OnNetworkShutdown.Invoke();
             NetworkManager.Singleton.Shutdown();
@@ -377,11 +382,16 @@ public class RotateCells : MultiplayerSingleton<RotateCells>
     private void RecreateLevel()
     {
         isDrawCompleted = false;
+        ResetData();
+        LevelManager.Instance.FinishLevel();
+    }
+    private void ResetData()
+    {
+        
         _candidateMOs.Clear();
         _rotatableTransforms.Clear();
         lotTransforms.Clear();
         _moduleAngles.Clear();
-        LevelManager.Instance.FinishLevel();
     }
     public void ResetMapSuccess()
     {

@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class MuteButton : Button
 {
-    private static bool isMusicOn = true;
+    private static bool isMusicOn;
+
+    public static bool IsMusicOn { get => isMusicOn; private set => isMusicOn = value; }
 
     protected override void OnEnable()
     {
@@ -19,18 +21,23 @@ public class MuteButton : Button
         onClick.RemoveListener(MusicOnOff);
     }
 
+    protected override void Start()
+    {
+        IsMusicOn = true;
+    }
+
     private void MusicOnOff()
     {
         EventManager.OnButtonClick.Invoke();
-        if (isMusicOn)
+        if (IsMusicOn)
         {
             EventManager.OnMusicOff.Invoke();
-            isMusicOn = false;
+            IsMusicOn = false;
         }
         else
         {
             EventManager.OnMusicOn.Invoke();
-            isMusicOn = true;
+            IsMusicOn = true;
         }
     }
 }

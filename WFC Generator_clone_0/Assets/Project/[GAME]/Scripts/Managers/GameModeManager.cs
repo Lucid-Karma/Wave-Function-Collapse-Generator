@@ -22,14 +22,16 @@ public class GameModeManager : Singleton<GameModeManager>
     public void StartSinglePlayer()
     {
         CurrentGameMode = GameMode.SinglePlayer;
-
+        
         IsMultiplayer = false;
+
+        GameManager.OnSingleplayerGameStart.Invoke();
     }
 
     public void StartMultiplayer()
     {
         CurrentGameMode = GameMode.Multiplayer;
-        GameManager.OnMultiplayerGameStart.Invoke();    //?????
+        GameManager.OnMultiplayerGameStart.Invoke();    
 
         IsMultiplayer = true;
     }
