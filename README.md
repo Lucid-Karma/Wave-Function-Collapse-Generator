@@ -3,11 +3,11 @@
 ## About the Game
 
 Civic Connect is an engaging puzzle game developed with Unity3D. Inspired by the classic "pipes" game, players rotate road pieces to connect roads and create a functioning city. The game features seven different color-coded levels, each with a unique map generated using the "wave function collapse algorithm". With <b>unlimited levels</b> of increasing difficulty, challenging bonus levels, and a <b>turn-based multiplayer</b> mode, PuzzleGame offers endless fun and excitement. <br><br>
-**Gameplay Video:** https://youtu.be/HRqVr3ROf8U
+[Gameplay Video](https://youtu.be/KvdMCXDDKfA)
 <br>
-**Gameplay Video Old Single Player:** https://youtu.be/6NFHPpTAlf4
+[Gameplay Video Old Single Player](https://youtu.be/6NFHPpTAlf4)
 <br>
-**Play the Game** https://lucid-karma.github.io/github-portfolio/PlayCivicConnect.html
+[Play the Game](https://lucid-karma.github.io/github-portfolio/PlayCivicConnect.html)
 
 ![image_014_0000](https://github.com/Lucid-Karma/Wave-Function-Collapse-Generator/assets/88732917/ef25e57e-d642-4a37-bf1e-259d7d1bb544)
 
