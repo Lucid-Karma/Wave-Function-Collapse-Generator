@@ -24,6 +24,6 @@ public class BonusWinAnimController : MonoBehaviour
     }
     public void InitializeNewLevel()
     {
-        EventManager.OnLevelInitialize.Invoke();
+        EventManager.OnLvlEndPanelFinish.Invoke();
     }
 }

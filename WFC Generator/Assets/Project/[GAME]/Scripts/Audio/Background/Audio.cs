@@ -28,17 +28,11 @@ public class Audio : MonoBehaviour
     {
         EventManager.OnMusicOn.AddListener(PlayMusic);
         EventManager.OnMusicOff.AddListener(PauseMusic);
-
-        LobbyManager.OnPlayersReady.AddListener(PlayMultiplayer);
-        GameManager.OnMultiplayerGameFinish.AddListener(PlaySinglePlayer);
     }
     void OnDisable()
     {
         EventManager.OnMusicOn.RemoveListener(PlayMusic);
         EventManager.OnMusicOff.RemoveListener(PauseMusic);
-
-        LobbyManager.OnPlayersReady.RemoveListener(PlayMultiplayer);
-        GameManager.OnMultiplayerGameFinish.RemoveListener(PlaySinglePlayer);
     }
 
     public void PlayMusic()

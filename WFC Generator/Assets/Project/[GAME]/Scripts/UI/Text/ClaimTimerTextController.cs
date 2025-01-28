@@ -30,8 +30,12 @@ public class ClaimTimerTextController : MonoBehaviour
 
     private void Start()
     {
-        currentTime = maxTime;
-        DeactivateTimer();
+        currentTime = PlayerPrefs.GetFloat("CurrentTime");
+        if (currentTime <= 0)
+        {
+            currentTime = maxTime;
+            DeactivateTimer();
+        }
     }
 
     private void Update()
@@ -55,5 +59,10 @@ public class ClaimTimerTextController : MonoBehaviour
     {
         isActive = false;
         parent.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        PlayerPrefs.SetFloat("CurrentTime", currentTime);
     }
 }

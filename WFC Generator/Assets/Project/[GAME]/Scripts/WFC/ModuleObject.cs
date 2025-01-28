@@ -1,8 +1,10 @@
 using DG.Tweening;
-using Unity.Netcode;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class ModuleObject: NetworkBehaviour, IModuleObject
+public class ModuleObject: MonoBehaviour, IModuleObject
 {
     public bool isChecked = false;
     public int Row;
@@ -18,6 +20,9 @@ public class ModuleObject: NetworkBehaviour, IModuleObject
     GameObject _cityPart;
 
     public bool isRotatable;
+    public bool isRoad;
+
+    [SerializeField] private GameObject smokeParticlePrefab;
 
 
     void OnEnable()
@@ -26,15 +31,17 @@ public class ModuleObject: NetworkBehaviour, IModuleObject
            _cityPart = gameObject.transform.GetChild(0).gameObject;
         ActivateCity();
 
-        RotateCells.OnGridCollapse.AddListener(() => isChecked = false);
-        RotateCells.OnModulesRotate.AddListener(DeactivateCity);
+        CharacterBase.OnGridCollapse.AddListener(() => isChecked = false);
+        CharacterBase.OnModulesRotate.AddListener(DeactivateCity);
         EventManager.OnLevelFinish.AddListener(ActivateCity);
+        WfcGenerator.OnMapReady.AddListener(SpawnCar);
     }
     void OnDisable()
     {
-        RotateCells.OnGridCollapse.RemoveListener(() => isChecked = false);
-        RotateCells.OnModulesRotate.RemoveListener(DeactivateCity);
+        CharacterBase.OnGridCollapse.RemoveListener(() => isChecked = false);
+        CharacterBase.OnModulesRotate.RemoveListener(DeactivateCity);
         EventManager.OnLevelFinish.RemoveListener(ActivateCity);
+        WfcGenerator.OnMapReady.RemoveListener(SpawnCar);
 
         isChecked = false;
 
@@ -65,84 +72,92 @@ public class ModuleObject: NetworkBehaviour, IModuleObject
     {
         if (_cityPart != null)
         {
-            _cityPart.SetActive(true);
+            ShowCity();
         }
     }
-
-    #region City Network Activation
     private void DeactivateCity()
     {
         if (_cityPart != null)
         {
-            if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
-            {
-                _cityPart.SetActive(false);
-            }
-            else
-            {
-                if (NetworkManager.IsHost)
-                {
-                    //_cityPart.SetActive(false);
-                    DeactivateCityClientRpc();
-                }
-            }
-            
+            HideCity();
         }
     }
-
-    [ClientRpc]
-    private void DeactivateCityClientRpc()
-    {
-        _cityPart.SetActive(false);
-    }
-    #endregion
 
     #region RotateProcess
-    public void RotateModuleForDrawn(int randomIndex, int randomRotation)
+    //public void RotateModuleForDrawn(int randomIndex, int randomRotation)
+    //{
+    //    transform.DORotate(new Vector3(0f, 0f, (float)randomRotation), 1f, RotateMode.LocalAxisAdd)
+    //            .SetEase(Ease.OutQuad);
+    //    for (int i = 0; i < randomIndex + 1; i++)
+    //    {
+    //        UpdateMO_Angle(transform);
+    //    }
+    //}
+    public void RotateModule()
     {
-        transform.DORotate(new Vector3(0f, (float)randomRotation, 0f), 1f, RotateMode.LocalAxisAdd)
-                .SetEase(Ease.OutQuad);
-        for (int i = 0; i < randomIndex + 1; i++)
-        {
-            UpdateMO_Angle(transform);
-        }
-    }
-    public void RotateModule(bool isInitiator)
-    {
-        //Debug.Log($"RotateModule Role: IsHost={IsHost}");
-       
-        RotateCells.Instance.isRotating = true;
+        CharacterBase.Instance.isRotating = true;
 
-        transform.DORotate(new Vector3(0f, 90f, 0f), 0.4f, RotateMode.LocalAxisAdd)
-            .SetEase(Ease.Unset)
-            .OnComplete(() => { RotateCells.Instance.isRotating = false;  UpdateMO_Angle(transform); 
-                                                                    if (IsAuthority()) { EventManager.OnClick.Invoke(); }
-                if (isInitiator) EventManager.OnCollapseEnd.Invoke();
+        //GameObject particle = Instantiate(smokeParticlePrefab, transform.position + new Vector3(0, -1f, 0), Quaternion.identity);
+        //Destroy(particle, 1.5f);
+
+        transform.DOMove(new Vector3(transform.position.x, 1, transform.position.z), 0.2f).SetEase(Ease.Unset/*OutBounce*/)
+            .OnComplete(() =>
+            {
+                transform.DOMove(new Vector3(transform.position.x, 0, transform.position.z), 0.2f).SetEase(Ease.InBack);
             });
+        transform.DORotate(new Vector3(0f, 0f, 90f), 0.4f, RotateMode.LocalAxisAdd)
+                .SetEase(Ease.Unset)
+                .OnComplete(() =>
+                {
+                    CharacterBase.Instance.isRotating = false; UpdateMO_Angle(transform);
+                    EventManager.OnClick.Invoke();
+                });
 
         
         //modulePrefab.Rotate(Vector3.up, 90f);
     }
-    [ServerRpc(RequireOwnership = false)]
-    public void RotatePuzzlePieceServerRpc(ServerRpcParams rpcParams = default)
+    #endregion
+    #region Traffic
+    [SerializeField] private Transform[] back;
+    [SerializeField] private Transform[] forward;
+    
+    [HideInInspector] public List<Transform> Waypoints = new();
+    public void SpawnCar()
     {
-        RotatePuzzlePieceClientRpc();
-    }
-
-    [ClientRpc]
-    private void RotatePuzzlePieceClientRpc()
-    {
-        RotateModule(!IsAuthority());   //Ensure the initiator is not host, and trigger OnCollapseEnd event only for client.
-    }
-
-    private bool IsAuthority()
-    {
-        if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
+        if(isRotatable)
         {
-            if (IsHost) return true;
-            return false;
+            var direction = (Random.Range(0, 2) == 1)? back: forward;
+            var drawResult = direction[0];//direction[Random.Range(0, 2)];
+            GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], drawResult.position, Quaternion.identity);
+            Vehicle vehicle = obj.GetComponent<Vehicle>();
+            if(vehicle != null)
+            {
+                var list = WfcGenerator.Instance.destinationsList.Find(x => x.Contains(this));
+                for (int i = 0; i < list.Count; i++)
+                {
+                    vehicle.SetPath(list[i].Waypoints);
+                }
+                
+            }
+            obj.SetActive(true);
+            //vehicle._path.Dequeue();
+            vehicle.CanMove = true;
+            print(obj.transform.position);
+            // call car pool to get one.
         }
-        return true;
+    }
+    #endregion
+    #region Animation
+    public void ShowCity()
+    {
+        _cityPart.SetActive(true);
+        _cityPart.transform.localScale = Vector3.zero;
+        _cityPart.transform.DOScale(new Vector3(0.0066f, 0.0066f, 0.0066f), 1f).SetEase(Ease.OutBounce);
+    }
+
+    public void HideCity()
+    {
+        _cityPart.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InBack).OnComplete(() => _cityPart.SetActive(false));
     }
     #endregion
 }

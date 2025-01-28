@@ -8,21 +8,19 @@ public class CharacterAnimationController : MonoBehaviour
     private void OnEnable()
     {
         EventManager.OnGameStart.AddListener(() => InvokeTrigger("Greet"));
-        RotateCells.OnModulesRotate.AddListener(() => InvokeTrigger("Request"));
+        CharacterBase.OnModulesRotate.AddListener(() => InvokeTrigger("Request"));
         EventManager.OnLevelFinish.AddListener(() => InvokeTrigger("Clap"));
         EventManager.OnMusicOn.AddListener(() => UpdateIdleVersion("ListeningIdle", true));
         EventManager.OnMusicOff.AddListener(() => UpdateIdleVersion("Idle", false));
-        MultiplayerTurnManager.OnTurnSwitch += UpdateMultiplayerCharacterAnim;
         EventManager.OnLevelSuccess.AddListener(EndMultiplayerCharacterAnim);
     }
     private void OnDisable()
     {
         EventManager.OnGameStart.RemoveListener(() => InvokeTrigger("Greet"));
-        RotateCells.OnModulesRotate.RemoveListener(() => InvokeTrigger("Request"));
+        CharacterBase.OnModulesRotate.RemoveListener(() => InvokeTrigger("Request"));
         EventManager.OnLevelFinish.RemoveListener(() => InvokeTrigger("Clap"));
         EventManager.OnMusicOn.RemoveListener(() => UpdateIdleVersion("ListeningIdle", true));
         EventManager.OnMusicOff.RemoveListener(() => UpdateIdleVersion("Idle", false));
-        MultiplayerTurnManager.OnTurnSwitch -= UpdateMultiplayerCharacterAnim;
         EventManager.OnLevelSuccess.RemoveListener(EndMultiplayerCharacterAnim);
     }
 
@@ -39,19 +37,15 @@ public class CharacterAnimationController : MonoBehaviour
 
     private void UpdateMultiplayerCharacterAnim(bool canShown)
     {
-        if (!GameModeManager.Instance.IsMultiplayer) return;
-
         if (canShown)
             InvokeTrigger("Yell");
         else
         {
-            if(MultiplayerTurnManager.Instance.currentPlayer == MultiplayerTurnManager.Turn.HostTurn)  // ..since the enum changes after CanShow boolean.
                 InvokeTrigger("Idle");  // ???????
         }  
     }
     private void EndMultiplayerCharacterAnim()
     {
-        if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
             InvokeTrigger("Victory");
     }
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LevelCompletedAnimController : MonoBehaviour
 {
@@ -25,6 +26,6 @@ public class LevelCompletedAnimController : MonoBehaviour
 
     public void InitializeNewLevel()
     {
-        EventManager.OnLevelInitialize.Invoke();
+        EventManager.OnLvlEndPanelFinish.Invoke();
     }
 }

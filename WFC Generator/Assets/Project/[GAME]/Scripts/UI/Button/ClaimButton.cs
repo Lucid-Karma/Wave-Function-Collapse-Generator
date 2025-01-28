@@ -20,8 +20,6 @@ public class ClaimButton : Button
 
     private void ClaimReward()
     {
-        if (!RotateCells.Instance.isDrawCompleted) return;
-
         if (!ClaimTimerTextController.isActive)
         {
             OnRewardClaim.Invoke();

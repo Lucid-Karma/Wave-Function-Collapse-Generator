@@ -16,19 +16,23 @@ public class AdsManager : Singleton<AdsManager>
 
     private void OnEnable()
     {
-        EventManager.OnLevelStart.AddListener(() => bannerAds.ShowBannerAd());
+        EventManager.OnLvlEndPanelFinish.AddListener(() => bannerAds.ShowBannerAd());
         EventManager.OnLevelFinish.AddListener(() => bannerAds.HideBannerAd());
         SolveButton.OnSolveBtnUse.AddListener(() => solveCount ++);
-        RotateCells.OnModulesRotate.AddListener(ShowInterstitialAd);
+        CharacterBase.OnModulesRotate.AddListener(ShowInterstitialAd);
         ClaimButton.OnRewardClaim.AddListener(ShowRewardedAd);
+        Screenshot.OnScreenshotStart.AddListener(() => bannerAds.HideBannerAd());
+        Screenshot.OnScreenshotEnd.AddListener(() => bannerAds.ShowBannerAd());
     }
     private void OnDisable()
     {
-        EventManager.OnLevelStart.RemoveListener(() => bannerAds.ShowBannerAd());
+        EventManager.OnLvlEndPanelFinish.RemoveListener(() => bannerAds.ShowBannerAd());
         EventManager.OnLevelFinish.RemoveListener(() => bannerAds.HideBannerAd());
         SolveButton.OnSolveBtnUse.RemoveListener(() => solveCount++);
-        RotateCells.OnModulesRotate.RemoveListener(ShowInterstitialAd);
+        CharacterBase.OnModulesRotate.RemoveListener(ShowInterstitialAd);
         ClaimButton.OnRewardClaim.RemoveListener(ShowRewardedAd);
+        Screenshot.OnScreenshotStart.RemoveListener(() => bannerAds.HideBannerAd());
+        Screenshot.OnScreenshotEnd.RemoveListener(() => bannerAds.ShowBannerAd());
     }
 
     int solveCount = 0;

@@ -11,19 +11,19 @@ public class SolveButton : Button
     {
         base.OnEnable();
         onClick.AddListener(SolveLevel);
-        EventManager.OnLevelStart.AddListener(() => isButtonUsed = false);
+        EventManager.OnLevelStart.AddListener(ResetButtonState);
     }
 
     protected override void OnDisable()
     {
         base.OnEnable();
         onClick.RemoveListener(SolveLevel);
-        EventManager.OnLevelStart.RemoveListener(() => isButtonUsed = false);
+        EventManager.OnLevelStart.RemoveListener(ResetButtonState);
     }
 
     private void SolveLevel()
     {
-        if (!RotateCells.Instance.isDrawCompleted) return;
+        if (!CharacterBase.Instance.isDrawCompleted) return;
         if (isButtonUsed) return;
 
         if (SolveTextController.SolveCount > 0)
@@ -33,5 +33,10 @@ public class SolveButton : Button
             EventManager.OnButtonClick.Invoke();
             isButtonUsed = true;
         }
+    }
+
+    private void ResetButtonState()
+    {
+        isButtonUsed = false;
     }
 }

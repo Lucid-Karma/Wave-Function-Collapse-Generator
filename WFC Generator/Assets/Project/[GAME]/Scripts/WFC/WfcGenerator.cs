@@ -1,24 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
-using Unity.Netcode;
 
-public enum ExecutingWfcGeneratorState
+public class WfcGenerator : Singleton<WfcGenerator>
 {
-    Singleplayer,
-    Multiplayer
-}
-public class WfcGenerator : FSMBase<WfcGenerator>
-{
-    #region FSM
-    public ExecutingWfcGeneratorState executingWfcGeneratorState;
-
-    public SingleplayerPuzzleGenerator singleplayerPuzzleGenerator = new SingleplayerPuzzleGenerator();
-    public MultiplayerPuzzleGenerator multiplayerPuzzleGenerator = new MultiplayerPuzzleGenerator();
-    #endregion
-
     [HideInInspector]
     public List<CellSO> cells = new List<CellSO> ();
     private List<CellSO> candidateCells = new List<CellSO>();
@@ -38,7 +24,7 @@ public class WfcGenerator : FSMBase<WfcGenerator>
     int randomModule; //.........................Selected cell's random module index to Get_Definite_State.
 
     [HideInInspector]
-    public GameObject gridHolder; //.............Game object for destroying them at once.
+    public GameObject gridHolder; //.............Game object for centering the position of the grid.
     [SerializeField] 
     private GameObject emptyObject;
     [HideInInspector] public List<Transform> rotatableObjectTs = new();
@@ -52,39 +38,25 @@ public class WfcGenerator : FSMBase<WfcGenerator>
     private void Start()
     {
         moduleObjects.Clear();
-
-        //executingWfcGeneratorState = ExecutingWfcGeneratorState.Singleplayer;
-        StartState(singleplayerPuzzleGenerator);
     }
 
     public void OnEnable()
     {
-        EventManager.OnLevelInitialize.AddListener(() => CreatePuzzle(currentState));
+        EventManager.OnLevelInitialize.AddListener(RecreateLevel);
         EventManager.OnLevelStart.AddListener(GenerateWFC);
-        RequestChallengeButton.OnPreChallenge += DestroyMO_Objects;
-        MultiplayerTurnManager.OnMatchStart.AddListener(CreateMatch);
-        LobbyManager.OnPlayersReady.AddListener(ResetData);
     }
     public  void OnDisable()
     {
-        EventManager.OnLevelInitialize.RemoveListener(() => CreatePuzzle(currentState));
+        EventManager.OnLevelInitialize.RemoveListener(RecreateLevel);
         EventManager.OnLevelStart.RemoveListener(GenerateWFC);
-        RequestChallengeButton.OnPreChallenge -= DestroyMO_Objects;
-        MultiplayerTurnManager.OnMatchStart.RemoveListener(CreateMatch);
-        LobbyManager.OnPlayersReady.RemoveListener(ResetData);
-    }
-
-    private void CreateMatch()
-    {
-        //DestroyMO_Objects();
-        //executingWfcGeneratorState = ExecutingWfcGeneratorState.Multiplayer;
-        StartState(multiplayerPuzzleGenerator);
     }
 
     public virtual void RecreateLevel()
     {
-        DestroyMO_Objects();
+        //DestroyMO_Objects();
         ResetData();
+        Destroy(gridHolder);
+        LevelManager.Instance.StartLevel();
     }
     private void ResetData()
     {
@@ -92,6 +64,7 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         candidateCells.Clear();
         rotatableObjectTs.Clear();
         moduleObjects.Clear();
+        RotatableRegionIndexList.Clear();
     }
     private void DestroyMO_Objects()
     {
@@ -99,19 +72,6 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         {
             if (moduleObjects[i] != null)
             {
-                if(GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.Multiplayer)
-                {
-                    if (IsHost)
-                    {
-                        if(moduleObjects[i].GetComponent<NetworkObject>() != null)
-                        {
-                            moduleObjects[i].GetComponent<NetworkObject>().Despawn();  // Ensure network despawn
-                            //Debug.Log(moduleObjects[i].name + " despwaned");
-                            //Destroy(moduleObjects[i].gameObject);
-                        }
-                        
-                    }
-                }
                 Destroy(moduleObjects[i].gameObject);
             }
             //else
@@ -147,7 +107,11 @@ public class WfcGenerator : FSMBase<WfcGenerator>
             moduleObjects.Add(moduleObject);
         }
 
-        ListRotatableMOTransforms(cells[firstCollapse].modules[0], obj.transform);
+        ListRotatableMOTransforms(cells[firstCollapse], cells[firstCollapse].modules[0], obj.transform);
+
+        gridHolder = (GameObject)Instantiate(emptyObject);
+        gridHolder.transform.position = obj.transform.position;
+        obj.transform.SetParent(gridHolder.transform);
     }
 
     private void Generate()
@@ -167,6 +131,10 @@ public class WfcGenerator : FSMBase<WfcGenerator>
                 cells.Add(cell);
             }
         }
+
+        centerCellIndex = cells.Count / 2;
+        starterIndex = centerCellIndex - 4 - (_length * 2);
+        CalculateRotatableRegion();
         //Debug.Log("Grid generated. Cell count: " + cells.Count);
     }
     
@@ -344,15 +312,16 @@ public class WfcGenerator : FSMBase<WfcGenerator>
             //Debug.Log(moduleObject.name + moduleObjects.Count);
         }
         
-        ListRotatableMOTransforms(nextCell.modules[0], obj.transform);
+        ListRotatableMOTransforms(nextCell, nextCell.modules[0], obj.transform);
 
-        //obj.transform.SetParent(gridHolder.transform);
+        obj.transform.SetParent(gridHolder.transform);
         //Debug.Log("cell index is: " + candidateCells.IndexOf(nextCell));
         candidateCells.Remove(nextCell);
         
         //Debug.Log("Cell collapsed. CandidateCells count: " + candidateCells.Count);
 
         FindNeighbors(nextCell);
+        ListRoadPatterns(moduleObject);
     }
     private void CollapseGrid()
     {
@@ -374,14 +343,17 @@ public class WfcGenerator : FSMBase<WfcGenerator>
                 break;
             }
         }
-        //Debug.Log(moduleObjects.Count + " map end");
-        //gridHolder.transform.position = Vector3.zero;
+
+        gridHolder.transform.position = Vector3.zero;
+        print("R COUNT: " + rotatableObjectTs.Count);
         Invoke("AnnounceMapReady", 2f);
     }
 
     #region Utility Methods
-    void ListRotatableMOTransforms(ModuleSO module, Transform moduleTransform)
-    {   
+    void ListRotatableMOTransforms(CellSO cell, ModuleSO module, Transform moduleTransform)
+    {
+        if (!RotatableRegionIndexList.Contains(cells.IndexOf(cell))) return;
+
         if (module.north == module.south && module.south == module.east && module.east == module.west)
         {
             
@@ -389,8 +361,71 @@ public class WfcGenerator : FSMBase<WfcGenerator>
         else
         {
             rotatableObjectTs.Add(moduleTransform);
+            //print("CANDIDATE NO: " + cells.IndexOf(cell));
         }
     }
+    List<int> RotatableRegionIndexList = new List<int>();
+    int centerCellIndex;
+    int starterIndex;
+    private void CalculateRotatableRegion()
+    {
+        int cellIndex = starterIndex;
+       
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                RotatableRegionIndexList.Add(cellIndex);
+                cellIndex ++;
+
+            }
+            starterIndex += _length;
+            cellIndex = starterIndex;
+        }
+    }
+
+    [HideInInspector] public List<List<ModuleObject>> destinationsList = new();
+    private void ListRoadPatterns(ModuleObject moduleWithRoad)
+    {
+        if (moduleWithRoad.isRoad)
+        {
+            if (destinationsList.Count == 0 || destinationsList.Last() == null)
+            {
+                destinationsList.Add(new List<ModuleObject>());
+            }
+
+            destinationsList.Last().Add(moduleWithRoad);
+        }
+    }
+    public void CallCars()
+    {
+        for (int i = 0; i < destinationsList.Count; i++)
+        {
+            var roadPattern = destinationsList[i];
+            for (int j = 0; j < roadPattern.Count; j++)
+            {
+                foreach (var item in roadPattern)
+                {
+                    item.SpawnCar();
+                }
+            }
+        }
+    }
+
+    //private int MapSize = 15;
+    //private float NormalizedMapSize { get { return 1f / (float)MapSize; } }
+    //private Vector4 CalculateSquareRegion(int squareId)
+    //{
+    //    float y = squareId / MapSize;
+    //    float x = squareId - (y * MapSize);
+
+    //    x *= NormalizedMapSize;
+    //    y *= NormalizedMapSize;
+
+    //    y = 1f - y - NormalizedMapSize;
+
+    //    return new Vector4(x, y, x + NormalizedMapSize, y + NormalizedMapSize);
+    //}
 
     void AnnounceMapReady()
     {

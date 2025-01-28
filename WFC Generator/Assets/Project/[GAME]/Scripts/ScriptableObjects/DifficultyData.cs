@@ -15,16 +15,13 @@ public class DifficultyData : ScriptableObject
     {
         get
         {
-            if (GameModeManager.Instance.CurrentGameMode == GameModeManager.GameMode.SinglePlayer)
-                return PlayerPrefs.GetInt(DifficultyKey, 0);
-            else
-                return MultiplayerTurnManager.Instance._drawResult;
+            return PlayerPrefs.GetInt(DifficultyKey, 0);
         }
         private set
         {
-            if (value > RotateCells.Instance.rotatableCount)
+            if (value > CharacterBase.Instance.rotatableCount)
             {
-                value = RotateCells.Instance.rotatableCount;
+                value = CharacterBase.Instance.rotatableCount;
                 PlayerPrefs.SetInt(DifficultyKey, value);
             }
             else

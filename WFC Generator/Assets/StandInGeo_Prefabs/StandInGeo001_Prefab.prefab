@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5918598053566938590}
-  - component: {fileID: 1738110513818572405}
-  - component: {fileID: 7291692301249187557}
-  - component: {fileID: 3676612604427857668}
+  - component: {fileID: 7147589100167981659}
+  - component: {fileID: 5488637716309823959}
+  - component: {fileID: 3179221472803807103}
   m_Layer: 0
   m_Name: StandInGeo001_Prefab
   m_TagString: Untagged
@@ -28,13 +28,13 @@ Transform:
   m_GameObject: {fileID: 6105358299801669130}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 261, z: -0.00000035762787}
+  m_LocalPosition: {x: 43.5, y: 85.87868, z: -22.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1738110513818572405
+--- !u!33 &7147589100167981659
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6105358299801669130}
   m_Mesh: {fileID: 4300000, guid: 1efc92af7e8f26d4e84d1d71424ed8c9, type: 2}
---- !u!23 &7291692301249187557
+--- !u!23 &5488637716309823959
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,7 +87,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3676612604427857668
+--- !u!114 &3179221472803807103
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -6,14 +6,10 @@ public class CharacterCameraController : MonoBehaviour
 
     private void OnEnable()
     {
-        StartMatchmakingButton.OnMatchmakingRequest += DeactivateCam;
-        LobbyManager.OnPlayersReady.AddListener(ActivateCam);
         EventManager.OnLevelStart.AddListener(ActivateCam);
     }
     private void OnDisable()
     {
-        StartMatchmakingButton.OnMatchmakingRequest -= DeactivateCam;
-        LobbyManager.OnPlayersReady.RemoveListener(ActivateCam);
         EventManager.OnLevelStart.RemoveListener(ActivateCam);
     }
 

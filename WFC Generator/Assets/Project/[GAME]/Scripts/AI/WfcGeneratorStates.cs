@@ -9,7 +9,7 @@ public abstract class WfcGeneratorStates : IStates<WfcGenerator>
 
     public void OnNetworkSpawn(WfcGenerator fsm)
     {
-        fsm?.OnNetworkSpawn();
+        //fsm?.OnNetworkSpawn();
     }
 
     public void OnDestroy(WfcGenerator fsm)
