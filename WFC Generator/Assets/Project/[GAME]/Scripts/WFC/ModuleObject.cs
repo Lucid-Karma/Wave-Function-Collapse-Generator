@@ -1,7 +1,5 @@
 using DG.Tweening;
-using NUnit.Framework;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class ModuleObject: MonoBehaviour, IModuleObject
@@ -19,11 +17,10 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     GameObject _cityPart;
 
-    public bool isRotatable;
+    public bool isStraightRoad;
     public bool isRoad;
 
     [SerializeField] private GameObject smokeParticlePrefab;
-
 
     void OnEnable()
     {
@@ -32,16 +29,16 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         ActivateCity();
 
         CharacterBase.OnGridCollapse.AddListener(() => isChecked = false);
-        CharacterBase.OnModulesRotate.AddListener(DeactivateCity);
+        //CharacterBase.OnModulesRotate.AddListener(DeactivateCity);
         EventManager.OnLevelFinish.AddListener(ActivateCity);
-        WfcGenerator.OnMapReady.AddListener(SpawnCar);
+        WfcGenerator.OnMapPreReady.AddListener(SpawnCar);
     }
     void OnDisable()
     {
         CharacterBase.OnGridCollapse.RemoveListener(() => isChecked = false);
-        CharacterBase.OnModulesRotate.RemoveListener(DeactivateCity);
+        //CharacterBase.OnModulesRotate.RemoveListener(DeactivateCity);
         EventManager.OnLevelFinish.RemoveListener(ActivateCity);
-        WfcGenerator.OnMapReady.RemoveListener(SpawnCar);
+        WfcGenerator.OnMapPreReady.RemoveListener(SpawnCar);
 
         isChecked = false;
 
@@ -73,6 +70,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         if (_cityPart != null)
         {
             ShowCity();
+            ShowVehicle();
         }
     }
     private void DeactivateCity()
@@ -80,6 +78,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         if (_cityPart != null)
         {
             HideCity();
+            //HideVehicle();
         }
     }
 
@@ -117,36 +116,48 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         //modulePrefab.Rotate(Vector3.up, 90f);
     }
     #endregion
+
     #region Traffic
-    [SerializeField] private Transform[] back;
-    [SerializeField] private Transform[] forward;
-    
-    [HideInInspector] public List<Transform> Waypoints = new();
+    [SerializeField] private Vector3 spawnPoint;
+    private GameObject vehicle;
     public void SpawnCar()
     {
-        if(isRotatable)
+        if (isStraightRoad)
         {
-            var direction = (Random.Range(0, 2) == 1)? back: forward;
-            var drawResult = direction[0];//direction[Random.Range(0, 2)];
-            GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], drawResult.position, Quaternion.identity);
-            Vehicle vehicle = obj.GetComponent<Vehicle>();
-            if(vehicle != null)
-            {
-                var list = WfcGenerator.Instance.destinationsList.Find(x => x.Contains(this));
-                for (int i = 0; i < list.Count; i++)
-                {
-                    vehicle.SetPath(list[i].Waypoints);
-                }
-                
-            }
+            //Debug.Log($"Waypoint Local Pos: {spawnPoint.localPosition}");
+            //Debug.Log($"Waypoint Global Pos: {spawnPoint.position}");
+
+            Vector3 spawnPosition = gameObject.transform.position + spawnPoint;
+            Debug.Log($"Waypoint position: {spawnPosition}");
+            GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], /*spawnPosition + Vector3.up * -0.091f*/ spawnPosition /*forward[0].position + (Vector3.up * -0.091f)*/, Quaternion.identity);
+            Debug.Log($"Vehicle spawned at: {obj.transform.position}");
             obj.SetActive(true);
-            //vehicle._path.Dequeue();
-            vehicle.CanMove = true;
-            print(obj.transform.position);
-            // call car pool to get one.
+
+            vehicle = obj;
+            //vehicle.SetActive(true);
         }
     }
+    private void HideVehicle()
+    {
+        if (!isStraightRoad) return;
+        if (vehicle == null) { print("null to hide"); return; }
+        vehicle.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InBack).OnComplete(() => vehicle.SetActive(false));
+        vehicle.GetComponent<Vehicle>().CanMove = false;
+        //print("Hide");
+    }
+    private void ShowVehicle()
+    {
+        if (!isStraightRoad) return;
+        if (vehicle == null) { /*print("null to show");*/ return; }
+
+        vehicle.SetActive(true);
+        vehicle.transform.localScale = Vector3.zero;
+        vehicle.transform.DOScale(new Vector3(0.1f, 0.1f, 0.1f), 1f).SetEase(Ease.OutBounce);
+        vehicle.GetComponent<Vehicle>().CanMove = true;
+        //print("Heyyy");
+    }
     #endregion
+
     #region Animation
     public void ShowCity()
     {

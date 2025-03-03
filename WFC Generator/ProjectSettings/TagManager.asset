@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Waypoint
+  - Car
   layers:
   - Default
   - TransparentFX
@@ -12,8 +14,8 @@ TagManager:
   - Water
   - UI
   - Character
-  - 
-  - 
+  - trackLayer
+  - WaypointLayer
   - 
   - 
   - 

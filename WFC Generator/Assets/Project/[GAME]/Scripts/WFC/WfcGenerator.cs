@@ -34,6 +34,7 @@ public class WfcGenerator : Singleton<WfcGenerator>
 
     [HideInInspector] public static UnityEvent OnMapReady = new();
     [HideInInspector] public static UnityEvent OnMapSolve = new();
+    [HideInInspector] public static UnityEvent OnMapPreReady = new();
 
     private void Start()
     {
@@ -50,9 +51,11 @@ public class WfcGenerator : Singleton<WfcGenerator>
         EventManager.OnLevelInitialize.RemoveListener(RecreateLevel);
         EventManager.OnLevelStart.RemoveListener(GenerateWFC);
     }
-
+    [SerializeField] private GameObject carPrefab;
+    private List<GameObject> cars = new List<GameObject>();
     public virtual void RecreateLevel()
     {
+        //DestroyCars();
         //DestroyMO_Objects();
         ResetData();
         Destroy(gridHolder);
@@ -321,7 +324,6 @@ public class WfcGenerator : Singleton<WfcGenerator>
         //Debug.Log("Cell collapsed. CandidateCells count: " + candidateCells.Count);
 
         FindNeighbors(nextCell);
-        ListRoadPatterns(moduleObject);
     }
     private void CollapseGrid()
     {
@@ -343,8 +345,9 @@ public class WfcGenerator : Singleton<WfcGenerator>
                 break;
             }
         }
-
+       
         gridHolder.transform.position = Vector3.zero;
+        OnMapPreReady.Invoke();
         print("R COUNT: " + rotatableObjectTs.Count);
         Invoke("AnnounceMapReady", 2f);
     }
@@ -381,34 +384,6 @@ public class WfcGenerator : Singleton<WfcGenerator>
             }
             starterIndex += _length;
             cellIndex = starterIndex;
-        }
-    }
-
-    [HideInInspector] public List<List<ModuleObject>> destinationsList = new();
-    private void ListRoadPatterns(ModuleObject moduleWithRoad)
-    {
-        if (moduleWithRoad.isRoad)
-        {
-            if (destinationsList.Count == 0 || destinationsList.Last() == null)
-            {
-                destinationsList.Add(new List<ModuleObject>());
-            }
-
-            destinationsList.Last().Add(moduleWithRoad);
-        }
-    }
-    public void CallCars()
-    {
-        for (int i = 0; i < destinationsList.Count; i++)
-        {
-            var roadPattern = destinationsList[i];
-            for (int j = 0; j < roadPattern.Count; j++)
-            {
-                foreach (var item in roadPattern)
-                {
-                    item.SpawnCar();
-                }
-            }
         }
     }
 
