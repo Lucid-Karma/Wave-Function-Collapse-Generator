@@ -15,6 +15,7 @@ public class NormalDriving : IVehicleBehavior
         vehicle.MoveForward();
         vehicle.AdjustSteering();
         vehicle.FindIntersectionWaypoint();
+        vehicle.CheckOtherVehicles();
     }
 }
 
@@ -23,6 +24,15 @@ public class IntersectionDriving : IVehicleBehavior
     public void Drive(Vehicle vehicle)
     {
         vehicle.MoveTowardsWaypoint();
+        vehicle.CheckOtherVehicles();
+    }
+}
+
+public class CarefulDriving : IVehicleBehavior
+{
+    public void Drive(Vehicle vehicle)
+    {
+        vehicle.CarefulDrive();
     }
 }
 
@@ -35,6 +45,11 @@ public class StopForTrafficLight : IVehicleBehavior
         //else
             //vehicle.FollowPath();
     }
+}
+
+public class StopForDraw : IVehicleBehavior
+{
+    public void Drive(Vehicle vehicle) { }
 }
 
 public class Vehicle : MonoBehaviour
@@ -171,6 +186,16 @@ public class Vehicle : MonoBehaviour
     {
         CanMove = true;
         IdentifyGuardrailDistance();
+
+        rayDirections = new Vector3[3];
+        hits = new RaycastHit[3];
+        //WfcGenerator.OnMapReady.AddListener(WaitForPlay);
+        EventManager.OnLevelFinish.AddListener(MoveAfterWin);
+    }
+    private void OnDisable()
+    {
+        //WfcGenerator.OnMapReady.RemoveListener(WaitForPlay);
+        EventManager.OnLevelFinish.RemoveListener(MoveAfterWin);
     }
 
     Vector3 rayOrigin;
@@ -207,8 +232,77 @@ public class Vehicle : MonoBehaviour
             transform.Rotate(0, -correction * steeringSensitivity, 0);
             noTrackDetectedTime = 0;
         }
+        else
+            DestroyVehicle();
+    }
+
+    private IVehicleBehavior _previousbehavior;
+    #region CarefulDriving
+    private Vector3[] rayDirections;
+    private RaycastHit[] hits;
+    public void CheckOtherVehicles()
+    {
+        UpdateSensors();
+        // Analyze sensor hits
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.collider != null)
+            {
+                _previousbehavior = _behavior;
+                SetBehavior(new CarefulDriving());
+            }
+        }
+        //if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out RaycastHit carHit, 0.5f, carLayer))
+        //{
+        //    _previousbehavior = _behavior;
+        //    rayDirections = new Vector3[3];
+        //    hits = new RaycastHit[3];
+        //    SetBehavior(new CarefulDriving());
+        //}
+    }
+    public void CarefulDrive()
+    {
+        UpdateSensors();
+        // Analyze sensor hits
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.collider != null) { }
+            else SetBehavior(_previousbehavior);
+        }
+        //if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out RaycastHit carHit, 0.5f, carLayer))
+        //{
+
+        //}
         //else
-        //    DestroyVehicle();
+        //    SetBehavior(_previousbehavior);
+    }
+    void UpdateSensors()
+    {
+        // Main forward ray
+        rayDirections[0] = transform.forward;
+
+        // Angled rays for corner detection
+        rayDirections[1] = (transform.forward + transform.right * 0.5f).normalized;
+        rayDirections[2] = (transform.forward - transform.right * 0.5f).normalized;
+
+        for (int i = 0; i < rayDirections.Length; i++)
+        {
+            Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, rayDirections[i], out hits[i], 0.5f, carLayer);
+        }
+    }
+
+    #endregion
+
+    private void WaitForPlay()
+    {
+        transform.SetParent(hit.transform.parent);
+        _previousbehavior = _behavior;
+        SetBehavior(new StopForDraw());
+    }
+    private void MoveAfterWin()
+    {
+        transform.SetParent(null);
+        SetBehavior(_previousbehavior);
     }
 
     private float noTrackDetectedTime = 0f;

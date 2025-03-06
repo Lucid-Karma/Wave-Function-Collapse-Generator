@@ -78,7 +78,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         if (_cityPart != null)
         {
             HideCity();
-            //HideVehicle();
+            HideVehicle();
         }
     }
 
@@ -124,17 +124,13 @@ public class ModuleObject: MonoBehaviour, IModuleObject
     {
         if (isStraightRoad)
         {
-            //Debug.Log($"Waypoint Local Pos: {spawnPoint.localPosition}");
-            //Debug.Log($"Waypoint Global Pos: {spawnPoint.position}");
-
             Vector3 spawnPosition = gameObject.transform.position + spawnPoint;
-            Debug.Log($"Waypoint position: {spawnPosition}");
+            //Debug.Log($"Waypoint position: {spawnPosition}");
             GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], /*spawnPosition + Vector3.up * -0.091f*/ spawnPosition /*forward[0].position + (Vector3.up * -0.091f)*/, Quaternion.identity);
-            Debug.Log($"Vehicle spawned at: {obj.transform.position}");
+            //Debug.Log($"Vehicle spawned at: {obj.transform.position}");
             obj.SetActive(true);
-
+            ShowVehicle();
             vehicle = obj;
-            //vehicle.SetActive(true);
         }
     }
     private void HideVehicle()
