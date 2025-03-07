@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5664391411037010577}
   - component: {fileID: 4671342979091950167}
   - component: {fileID: 2121030571519503839}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Vehicle
   m_TagString: Car
   m_Icon: {fileID: 0}
@@ -131,7 +131,7 @@ MonoBehaviour:
   frontOffset: 0.5
   carLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   trafficLightLayer:
     serializedVersion: 2
     m_Bits: 0

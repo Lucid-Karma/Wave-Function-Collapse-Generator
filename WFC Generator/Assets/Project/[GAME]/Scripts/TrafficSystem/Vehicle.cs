@@ -60,6 +60,7 @@ public class Vehicle : MonoBehaviour
     public bool IsAtTrafficLight { get; private set; }
     public bool CanPassTrafficLight { get; private set; }
     public bool CanMove { get; set; }
+    public int Priority { get; private set; }
 
     public void SetBehavior(IVehicleBehavior behavior) => _behavior = behavior;
 
@@ -186,9 +187,8 @@ public class Vehicle : MonoBehaviour
     {
         CanMove = true;
         IdentifyGuardrailDistance();
+        SetVehiclePriority();
 
-        rayDirections = new Vector3[3];
-        hits = new RaycastHit[3];
         //WfcGenerator.OnMapReady.AddListener(WaitForPlay);
         EventManager.OnLevelFinish.AddListener(MoveAfterWin);
     }
@@ -196,6 +196,12 @@ public class Vehicle : MonoBehaviour
     {
         //WfcGenerator.OnMapReady.RemoveListener(WaitForPlay);
         EventManager.OnLevelFinish.RemoveListener(MoveAfterWin);
+    }
+    private void SetVehiclePriority()
+    {
+        int p = VehicleManager.Instance.vehiclePriority++;
+        Priority = p;
+        print(Priority);
     }
 
     Vector3 rayOrigin;
@@ -238,57 +244,31 @@ public class Vehicle : MonoBehaviour
 
     private IVehicleBehavior _previousbehavior;
     #region CarefulDriving
-    private Vector3[] rayDirections;
-    private RaycastHit[] hits;
     public void CheckOtherVehicles()
     {
-        UpdateSensors();
-        // Analyze sensor hits
-        foreach (RaycastHit hit in hits)
+        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out RaycastHit carHit, 0.5f, carLayer))
         {
-            if (hit.collider != null)
+            int otherPriorityValue = carHit.collider.gameObject.GetComponent<Vehicle>().Priority;
+            if (otherPriorityValue > Priority)
             {
                 _previousbehavior = _behavior;
                 SetBehavior(new CarefulDriving());
             }
         }
-        //if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out RaycastHit carHit, 0.5f, carLayer))
-        //{
-        //    _previousbehavior = _behavior;
-        //    rayDirections = new Vector3[3];
-        //    hits = new RaycastHit[3];
-        //    SetBehavior(new CarefulDriving());
-        //}
     }
     public void CarefulDrive()
     {
-        UpdateSensors();
-        // Analyze sensor hits
-        foreach (RaycastHit hit in hits)
+        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out RaycastHit carHit, 0.5f, carLayer))
         {
-            if (hit.collider != null) { }
-            else SetBehavior(_previousbehavior);
-        }
-        //if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out RaycastHit carHit, 0.5f, carLayer))
-        //{
 
-        //}
-        //else
-        //    SetBehavior(_previousbehavior);
+        }
+        else
+            SetBehavior(_previousbehavior);
     }
-    void UpdateSensors()
+    private void SlowDownVehicle()
     {
-        // Main forward ray
-        rayDirections[0] = transform.forward;
-
-        // Angled rays for corner detection
-        rayDirections[1] = (transform.forward + transform.right * 0.5f).normalized;
-        rayDirections[2] = (transform.forward - transform.right * 0.5f).normalized;
-
-        for (int i = 0; i < rayDirections.Length; i++)
-        {
-            Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, rayDirections[i], out hits[i], 0.5f, carLayer);
-        }
+        speed = 0.5f;
+        steeringSensitivity = 3.5f;
     }
 
     #endregion
@@ -314,7 +294,7 @@ public class Vehicle : MonoBehaviour
         if (noTrackDetectedTime >= disappearTime)
         {
             Destroy(gameObject);
-            print("whaaa");
+            //print("whaaa");
         }
     }
 
