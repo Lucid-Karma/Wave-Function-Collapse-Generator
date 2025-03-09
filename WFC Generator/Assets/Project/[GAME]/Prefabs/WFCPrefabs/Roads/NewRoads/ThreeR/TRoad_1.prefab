@@ -274,8 +274,8 @@ Transform:
   m_GameObject: {fileID: 2104610133569234292}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.14324333, y: 0, z: -1.03}
-  m_LocalScale: {x: 0.21621628, y: 1, z: 1}
+  m_LocalPosition: {x: -0.147, y: 0, z: -1.03}
+  m_LocalScale: {x: 0.2205406, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7457776078419052584}
@@ -447,8 +447,8 @@ Transform:
   m_GameObject: {fileID: 2607210854769946576}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.14324333, y: 0, z: -1.03}
-  m_LocalScale: {x: 0.21621628, y: 1, z: 1}
+  m_LocalPosition: {x: -0.147, y: 0, z: -1.03}
+  m_LocalScale: {x: 0.22270276, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8590300086483780917}
@@ -553,8 +553,8 @@ Transform:
   m_GameObject: {fileID: 2835061459393698815}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.07195947, y: 0, z: 2.145}
-  m_LocalScale: {x: 3.1999984, y: 1, z: 0.06756759}
+  m_LocalPosition: {x: 0.07195947, y: 0, z: 2.21}
+  m_LocalScale: {x: 3.3279982, y: 1, z: 0.06756759}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7457776078419052584}
@@ -1120,8 +1120,8 @@ Transform:
   m_GameObject: {fileID: 6440580849846352568}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.07195947, y: 0, z: 2.145}
-  m_LocalScale: {x: 3.1999984, y: 1, z: 0.06756759}
+  m_LocalPosition: {x: 0.07195947, y: 0, z: 2.19}
+  m_LocalScale: {x: 3.3279982, y: 1, z: 0.06756759}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8590300086483780917}
@@ -1419,7 +1419,7 @@ Transform:
   m_GameObject: {fileID: 8620590364101587994}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.0335, y: 0.24699995, z: -0.17}
+  m_LocalPosition: {x: -1.182, y: 0.24699995, z: -0.207}
   m_LocalScale: {x: 0.19153301, y: 0.19153301, z: 0.19153301}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1528,7 +1528,7 @@ GameObject:
   - component: {fileID: 1175878289168394962}
   - component: {fileID: 5906933581090670514}
   - component: {fileID: -8179472988560085132}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: TRoad_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1576,13 +1576,7 @@ MonoBehaviour:
   isStraightRoad: 0
   isRoad: 1
   smokeParticlePrefab: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
-  back:
-  - {fileID: 8520670830475106397}
-  - {fileID: 5305149559434362656}
-  forward:
-  - {fileID: 2466969319053667607}
-  - {fileID: 4431318322740364402}
-  Waypoints: []
+  spawnPoint: {x: 0, y: 0, z: 0}
 --- !u!33 &1175878289168394962
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1683,7 +1677,7 @@ Transform:
   m_GameObject: {fileID: 8930027834729238707}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: -0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 0.0035199998, y: 0, z: -0.0003026668}
+  m_LocalPosition: {x: 0.0032, y: 0, z: -0.0003026668}
   m_LocalScale: {x: 0.02, y: 0.0006046934, z: 0.0013333334}
   m_ConstrainProportionsScale: 0
   m_Children: []

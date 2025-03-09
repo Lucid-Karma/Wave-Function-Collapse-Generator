@@ -32,13 +32,13 @@ public class CharacterBase : Singleton<CharacterBase>
 
     void OnEnable()
     {
-        //WfcGenerator.OnMapReady.AddListener(EnsureDraw);
+        WfcGenerator.OnMapReady.AddListener(EnsureDraw);
         WfcGenerator.OnMapSolve.AddListener(RestoreMOsToOriginal);
         EventManager.OnClick.AddListener(UpdateAndCheckMap);
     }
     void OnDisable()
     {
-        //WfcGenerator.OnMapReady.RemoveListener(EnsureDraw);
+        WfcGenerator.OnMapReady.RemoveListener(EnsureDraw);
         WfcGenerator.OnMapSolve.RemoveListener(RestoreMOsToOriginal);
         EventManager.OnClick.RemoveListener(UpdateAndCheckMap);
     }

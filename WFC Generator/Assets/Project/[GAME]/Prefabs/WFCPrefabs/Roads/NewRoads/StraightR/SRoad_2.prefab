@@ -381,8 +381,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waypointType: 0
   connectedWaypoints: []
-  block: {fileID: 8675134424663093118}
-  laneID: 1
 --- !u!1 &3065265438229936286
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,7 +605,7 @@ GameObject:
   - component: {fileID: 7515855021039042293}
   - component: {fileID: 7483504773437589046}
   - component: {fileID: -7489973380002417259}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SRoad_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -654,11 +652,7 @@ MonoBehaviour:
   isStraightRoad: 0
   isRoad: 1
   smokeParticlePrefab: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
-  back:
-  - {fileID: 8675134424663093118}
-  forward:
-  - {fileID: 3378349647693598830}
-  Waypoints: []
+  spawnPoint: {x: 0, y: 0, z: 0}
 --- !u!33 &7515855021039042293
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -856,8 +850,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waypointType: 0
   connectedWaypoints: []
-  block: {fileID: 3378349647693598830}
-  laneID: 0
 --- !u!1 &7148605751590854273
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -49,7 +50,10 @@ public class StopForTrafficLight : IVehicleBehavior
 
 public class StopForDraw : IVehicleBehavior
 {
-    public void Drive(Vehicle vehicle) { }
+    public void Drive(Vehicle vehicle) 
+    {
+        vehicle.WaitForPlay();
+    }
 }
 
 public class Vehicle : MonoBehaviour
@@ -93,11 +97,12 @@ public class Vehicle : MonoBehaviour
 
     public void FindIntersectionWaypoint()
     {
-        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out RaycastHit waypointHit, 0.5f, WaypointLayer))
+        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out hit/*RaycastHit waypointHit*/, 0.5f, WaypointLayer))
         {
-            lastWaypoint = waypointHit.transform;
+            lastWaypoint = hit.transform;
 
-            if (lastWaypoint.GetComponent<Waypoint>().waypointType != WaypointType.Intersection) return;
+            if(lastWaypoint.GetComponent<Waypoint>() != null)
+                if (lastWaypoint.GetComponent<Waypoint>().waypointType != WaypointType.Intersection) return;
 
             List<Transform> possibleWaypoints = new List<Transform>();
 
@@ -159,6 +164,9 @@ public class Vehicle : MonoBehaviour
             transform.Rotate(0, rotationAmount, 0);
             if (Vector3.Distance(transform.position, targetWaypoint.position) < waypointThreshold)
             {
+                rayOrigin = transform.position + transform.forward * frontOffset + Vector3.up * rayHeightOffset;
+                Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer);
+
                 SetBehavior(new NormalDriving());
                 //Debug.Log("intersectiondan çýkýlýyor");
             }
@@ -170,6 +178,7 @@ public class Vehicle : MonoBehaviour
 
 
 
+    public LayerMask ModuleLayer;
     public LayerMask trackLayer;
     public float speed = 5f;
     public float rayDistance = 0.5f;
@@ -188,20 +197,12 @@ public class Vehicle : MonoBehaviour
         CanMove = true;
         IdentifyGuardrailDistance();
         SetVehiclePriority();
+    }
 
-        //WfcGenerator.OnMapReady.AddListener(WaitForPlay);
-        EventManager.OnLevelFinish.AddListener(MoveAfterWin);
-    }
-    private void OnDisable()
-    {
-        //WfcGenerator.OnMapReady.RemoveListener(WaitForPlay);
-        EventManager.OnLevelFinish.RemoveListener(MoveAfterWin);
-    }
     private void SetVehiclePriority()
     {
         int p = VehicleManager.Instance.vehiclePriority++;
         Priority = p;
-        print(Priority);
     }
 
     Vector3 rayOrigin;
@@ -237,9 +238,16 @@ public class Vehicle : MonoBehaviour
             correction = Mathf.Clamp(correction, -1f, 1f);
             transform.Rotate(0, -correction * steeringSensitivity, 0);
             noTrackDetectedTime = 0;
+            SetParent(); // rayOrigin'in frontOffset kadar önden kontrol etmesi, araçlarýn henüz girmediði modullerin hareketiyle hareket etmesine neden olacak.
         }
         else
-            DestroyVehicle();
+        {
+            if (Physics.Raycast(rayOrigin, -transform.up, out RaycastHit moduleHit, rayDistance, ModuleLayer))
+                SetBehavior(new StopForDraw());//StartCoroutine(DelayStop());
+            else
+                DestroyVehicle();
+        }
+            
     }
 
     private IVehicleBehavior _previousbehavior;
@@ -273,16 +281,30 @@ public class Vehicle : MonoBehaviour
 
     #endregion
 
-    private void WaitForPlay()
+    Transform nextParent;
+    private void SetParent()
     {
-        transform.SetParent(hit.transform.parent);
-        _previousbehavior = _behavior;
-        SetBehavior(new StopForDraw());
+        nextParent = hit.transform.parent.transform.parent;
+
+        if (transform.parent != nextParent)
+        {
+            transform.parent = nextParent;
+        }
+        //transform.SetParent(hit.transform.parent.transform.parent);
     }
-    private void MoveAfterWin()
+    public void WaitForPlay()
     {
-        transform.SetParent(null);
-        SetBehavior(_previousbehavior);
+        if (Physics.Raycast(rayOrigin, transform.right, out RaycastHit _hit, rayDistance, trackLayer))
+        {
+            SetBehavior(new NormalDriving());
+        }
+    }
+    private IEnumerator DelayStop()
+    {
+        yield return null;
+
+        if (!Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer))
+            SetBehavior(new StopForDraw());
     }
 
     private float noTrackDetectedTime = 0f;

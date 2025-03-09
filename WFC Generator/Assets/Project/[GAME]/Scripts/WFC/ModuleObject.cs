@@ -28,14 +28,14 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         ActivateCity();
 
         CharacterBase.OnGridCollapse.AddListener(() => isChecked = false);
-        //CharacterBase.OnModulesRotate.AddListener(DeactivateCity);
+        CharacterBase.OnModulesRotate.AddListener(DeactivateCity);
         EventManager.OnLevelFinish.AddListener(ActivateCity);
         WfcGenerator.OnMapPreReady.AddListener(SpawnCar);
     }
     void OnDisable()
     {
         CharacterBase.OnGridCollapse.RemoveListener(() => isChecked = false);
-        //CharacterBase.OnModulesRotate.RemoveListener(DeactivateCity);
+        CharacterBase.OnModulesRotate.RemoveListener(DeactivateCity);
         EventManager.OnLevelFinish.RemoveListener(ActivateCity);
         WfcGenerator.OnMapPreReady.RemoveListener(SpawnCar);
 
@@ -69,15 +69,15 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         if (_cityPart != null)
         {
             ShowCity();
-            ShowVehicle();
+            //ShowVehicle();
         }
     }
     private void DeactivateCity()
     {
         if (_cityPart != null)
         {
-            HideCity();
-            HideVehicle();
+            //HideCity();
+            //HideVehicle();
         }
     }
 

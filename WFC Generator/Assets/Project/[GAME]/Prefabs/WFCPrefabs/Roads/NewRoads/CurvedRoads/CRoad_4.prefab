@@ -513,8 +513,8 @@ Transform:
   m_GameObject: {fileID: 2754498700880730158}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.14324333, y: 0, z: -1.03}
-  m_LocalScale: {x: 0.21621628, y: 1, z: 1}
+  m_LocalPosition: {x: -0.147, y: 0, z: -1.03}
+  m_LocalScale: {x: 0.2205406, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2475485675058392718}
@@ -639,7 +639,7 @@ GameObject:
   - component: {fileID: 6822341970664128304}
   - component: {fileID: 2540877376508997534}
   - component: {fileID: -446781469162693501}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: CRoad_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -685,11 +685,7 @@ MonoBehaviour:
   isStraightRoad: 0
   isRoad: 1
   smokeParticlePrefab: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
-  back:
-  - {fileID: 6281300020345305949}
-  forward:
-  - {fileID: 4452380256931420684}
-  Waypoints: []
+  spawnPoint: {x: 0, y: 0, z: 0}
 --- !u!33 &6822341970664128304
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1331,8 +1327,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waypointType: 0
   connectedWaypoints: []
-  block: {fileID: 6281300020345305949}
-  laneID: 0
 --- !u!1 &7332548418185904887
 GameObject:
   m_ObjectHideFlags: 0
@@ -1992,8 +1986,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waypointType: 0
   connectedWaypoints: []
-  block: {fileID: 4452380256931420684}
-  laneID: 1
 --- !u!1 &8310817251748246972
 GameObject:
   m_ObjectHideFlags: 0
@@ -2139,8 +2131,8 @@ Transform:
   m_GameObject: {fileID: 9182819710366053536}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.07195947, y: 0, z: 2.145}
-  m_LocalScale: {x: 3.1999984, y: 1, z: 0.06756759}
+  m_LocalPosition: {x: 0.07195947, y: 0, z: 2.19}
+  m_LocalScale: {x: 3.2639983, y: 1, z: 0.06756759}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2475485675058392718}

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8736871828342045056}
   - component: {fileID: 9053978120651269008}
   - component: {fileID: -8002801413926980825}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: EmptyRoad_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,8 +54,10 @@ MonoBehaviour:
   south: 0
   east: 0
   west: 0
-  isRotatable: 0
+  isStraightRoad: 0
+  isRoad: 0
   smokeParticlePrefab: {fileID: 0}
+  spawnPoint: {x: 0, y: 0, z: 0}
 --- !u!33 &8736871828342045056
 MeshFilter:
   m_ObjectHideFlags: 0
