@@ -25,14 +25,14 @@ public class ThemeManager : Singleton<ThemeManager>
     {
         SetRegions();
 
-        EventManager.OnLevelFinish.AddListener(() => StartCoroutine(GetColorScheme()));
         EventManager.OnLevelStart.AddListener(SetRegionColors);
+        EventManager.OnLevelFinish.AddListener(ChangeMainColor);
         LevelManager.OnLoopComplete.AddListener(() => HexColor = GenerateRandomColor());
     }
     private void OnDisable()
     {
-        EventManager.OnLevelFinish.RemoveListener(() => StartCoroutine(GetColorScheme()));
         EventManager.OnLevelStart.RemoveListener(SetRegionColors);
+        EventManager.OnLevelFinish.RemoveListener(ChangeMainColor);
         LevelManager.OnLoopComplete.RemoveListener(() => HexColor = GenerateRandomColor());
     }
 
@@ -131,7 +131,7 @@ public class ThemeManager : Singleton<ThemeManager>
                     GrassColor = GetColorFromString(colorScheme.colors[2].hex.value);
                     RoadColor = GetColorFromString(colorScheme.colors[0].hex.value);
                     RoadBorderColor = GetColorFromString(colorScheme.colors[1].hex.value);
-                    HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
+                    //HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
 
                     CameraBgColor = GetColorFromString("#" + TransformHexColor(colorScheme.colors[0].hex.value));
 
@@ -146,6 +146,11 @@ public class ThemeManager : Singleton<ThemeManager>
                 Debug.LogError("API isteði baþarýsýz: " + request.error);
             }
         }
+    }
+    private void ChangeMainColor()
+    {
+        HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
+        StartCoroutine(GetColorScheme());
     }
 
     private int HexToDec(string hex)

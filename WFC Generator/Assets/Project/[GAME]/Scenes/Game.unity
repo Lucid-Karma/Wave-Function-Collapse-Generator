@@ -883,7 +883,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -266.30304
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_LocalPosition.z
@@ -907,7 +907,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 454.61807
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -20087,7 +20087,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 250
-  field of view: 57
+  field of view: 55
   orthographic: 0
   orthographic size: 7.24
   m_Depth: 0
@@ -23742,7 +23742,7 @@ MonoBehaviour:
   target: {fileID: 87283360338334688}
   zoomSpeed: 2
   rotationSpeed: 3
-  minYAngle: 5
+  minYAngle: 60
   maxYAngle: 90
   minZoomDistance: 5
   maxZoomDistance: 40
@@ -33269,7 +33269,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -650.75397
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_LocalPosition.z
@@ -33293,7 +33293,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 454.61807
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -33340,7 +33340,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

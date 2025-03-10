@@ -61,7 +61,7 @@ public class ClaimTimerTextController : MonoBehaviour
         parent.SetActive(false);
     }
 
-    private void OnDisable()
+    private void OnApplicationQuit()
     {
         PlayerPrefs.SetFloat("CurrentTime", currentTime);
     }

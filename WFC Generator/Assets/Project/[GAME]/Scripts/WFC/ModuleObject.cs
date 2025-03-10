@@ -128,9 +128,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         if (isStraightRoad)
         {
             Vector3 spawnPosition = gameObject.transform.position + spawnPoint;
-            //Debug.Log($"Waypoint position: {spawnPosition}");
             GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], spawnPosition, Quaternion.identity);
-            //Debug.Log($"Vehicle spawned at: {obj.transform.position}");
             obj.transform.parent = transform;
             obj.SetActive(true);
             ShowVehicle();
