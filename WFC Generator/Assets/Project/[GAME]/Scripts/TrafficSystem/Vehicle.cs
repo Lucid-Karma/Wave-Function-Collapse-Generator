@@ -13,6 +13,7 @@ public class NormalDriving : IVehicleBehavior
 {
     public void Drive(Vehicle vehicle)
     {
+        vehicle.SetParent();
         vehicle.MoveForward();
         vehicle.AdjustSteering();
         vehicle.FindIntersectionWaypoint();
@@ -24,6 +25,7 @@ public class IntersectionDriving : IVehicleBehavior
 {
     public void Drive(Vehicle vehicle)
     {
+        vehicle.SetParent();
         vehicle.MoveTowardsWaypoint();
         vehicle.CheckOtherVehicles();
     }
@@ -72,13 +74,13 @@ public class Vehicle : MonoBehaviour
     {
         IsAtTrafficLight = false;
         CanPassTrafficLight = true;
-
+       
         SetBehavior(new NormalDriving());
     }
 
     public void Stop()
     {
-        // Logic to stop the vehicle
+        CanMove = false;
     }
 
     private void FixedUpdate()
@@ -97,9 +99,9 @@ public class Vehicle : MonoBehaviour
 
     public void FindIntersectionWaypoint()
     {
-        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out hit/*RaycastHit waypointHit*/, 0.5f, WaypointLayer))
+        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out RaycastHit waypointHit, 0.5f, WaypointLayer))
         {
-            lastWaypoint = hit.transform;
+            lastWaypoint = waypointHit.transform;
 
             if(lastWaypoint.GetComponent<Waypoint>() != null)
                 if (lastWaypoint.GetComponent<Waypoint>().waypointType != WaypointType.Intersection) return;
@@ -164,9 +166,6 @@ public class Vehicle : MonoBehaviour
             transform.Rotate(0, rotationAmount, 0);
             if (Vector3.Distance(transform.position, targetWaypoint.position) < waypointThreshold)
             {
-                rayOrigin = transform.position + transform.forward * frontOffset + Vector3.up * rayHeightOffset;
-                Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer);
-
                 SetBehavior(new NormalDriving());
                 //Debug.Log("intersectiondan çýkýlýyor");
             }
@@ -197,6 +196,7 @@ public class Vehicle : MonoBehaviour
         CanMove = true;
         IdentifyGuardrailDistance();
         SetVehiclePriority();
+        SetParent();
     }
 
     private void SetVehiclePriority()
@@ -238,12 +238,14 @@ public class Vehicle : MonoBehaviour
             correction = Mathf.Clamp(correction, -1f, 1f);
             transform.Rotate(0, -correction * steeringSensitivity, 0);
             noTrackDetectedTime = 0;
-            SetParent(); // rayOrigin'in frontOffset kadar önden kontrol etmesi, araçlarýn henüz girmediði modullerin hareketiyle hareket etmesine neden olacak.
+            //SetParent(); // rayOrigin'in frontOffset kadar önden kontrol etmesi, araçlarýn henüz girmediði modullerin hareketiyle hareket etmesine neden olacak.
         }
         else
         {
-            if (Physics.Raycast(rayOrigin, -transform.up, out RaycastHit moduleHit, rayDistance, ModuleLayer))
-                SetBehavior(new StopForDraw());//StartCoroutine(DelayStop());
+            if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, -transform.up, out RaycastHit moduleHit, rayDistance, ModuleLayer))
+            {
+                SetBehavior(new StopForDraw());
+            }  
             else
                 DestroyVehicle();
         }
@@ -282,29 +284,26 @@ public class Vehicle : MonoBehaviour
     #endregion
 
     Transform nextParent;
-    private void SetParent()
+    public void SetParent()
     {
-        nextParent = hit.transform.parent.transform.parent;
-
-        if (transform.parent != nextParent)
+        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, -transform.up, out RaycastHit floorHit, 0.5f, ModuleLayer))
         {
-            transform.parent = nextParent;
+            nextParent = floorHit.transform;
+
+            if (transform.parent !=  null && transform.parent != nextParent)
+            {
+                transform.parent = nextParent;
+            }
         }
-        //transform.SetParent(hit.transform.parent.transform.parent);
     }
     public void WaitForPlay()
     {
-        if (Physics.Raycast(rayOrigin, transform.right, out RaycastHit _hit, rayDistance, trackLayer))
+        rayOrigin = transform.position + transform.forward * frontOffset + Vector3.up * rayHeightOffset;
+
+        if (Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer))
         {
             SetBehavior(new NormalDriving());
         }
-    }
-    private IEnumerator DelayStop()
-    {
-        yield return null;
-
-        if (!Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer))
-            SetBehavior(new StopForDraw());
     }
 
     private float noTrackDetectedTime = 0f;
@@ -316,7 +315,7 @@ public class Vehicle : MonoBehaviour
         if (noTrackDetectedTime >= disappearTime)
         {
             Destroy(gameObject);
-            //print("whaaa");
+            print("whaaa");
         }
     }
 
@@ -337,9 +336,12 @@ public class Vehicle : MonoBehaviour
         if (!Application.isPlaying) return;
 
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position + Vector3.up * rayHeightOffset, rayOrigin + transform.forward * 0.5f);
+        Gizmos.DrawLine(transform.position + Vector3.up * rayHeightOffset, transform.position + Vector3.up * rayHeightOffset + transform.forward * 0.5f);
 
         Gizmos.color = Color.red;
         Gizmos.DrawLine(rayOrigin, rayOrigin + transform.right * rayDistance);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(rayOrigin, rayOrigin - transform.up * 0.5f);
     }
 }

@@ -26,18 +26,19 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         if (gameObject.transform.childCount > 0)
            _cityPart = gameObject.transform.GetChild(0).gameObject;
         ActivateCity();
+        SpawnCar();
 
         CharacterBase.OnGridCollapse.AddListener(() => isChecked = false);
         CharacterBase.OnModulesRotate.AddListener(DeactivateCity);
         EventManager.OnLevelFinish.AddListener(ActivateCity);
-        WfcGenerator.OnMapPreReady.AddListener(SpawnCar);
+        //WfcGenerator.OnMapPreReady.AddListener(SpawnCar);
     }
     void OnDisable()
     {
         CharacterBase.OnGridCollapse.RemoveListener(() => isChecked = false);
         CharacterBase.OnModulesRotate.RemoveListener(DeactivateCity);
         EventManager.OnLevelFinish.RemoveListener(ActivateCity);
-        WfcGenerator.OnMapPreReady.RemoveListener(SpawnCar);
+        //WfcGenerator.OnMapPreReady.RemoveListener(SpawnCar);
 
         isChecked = false;
 
@@ -94,6 +95,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
     public void RotateModule()
     {
         CharacterBase.Instance.isRotating = true;
+        ControlVehicle(false);
 
         //GameObject particle = Instantiate(smokeParticlePrefab, transform.position + new Vector3(0, -1f, 0), Quaternion.identity);
         //Destroy(particle, 1.5f);
@@ -109,6 +111,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
                 {
                     CharacterBase.Instance.isRotating = false; UpdateMO_Angle(transform);
                     EventManager.OnClick.Invoke();
+                    ControlVehicle(true);
                 });
 
         
@@ -118,37 +121,55 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     #region Traffic
     [SerializeField] private Vector3 spawnPoint;
-    private GameObject vehicle;
+    private GameObject vehicleObj;
+    private Vehicle vehicle;
     public void SpawnCar()
     {
         if (isStraightRoad)
         {
             Vector3 spawnPosition = gameObject.transform.position + spawnPoint;
             //Debug.Log($"Waypoint position: {spawnPosition}");
-            GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], /*spawnPosition + Vector3.up * -0.091f*/ spawnPosition /*forward[0].position + (Vector3.up * -0.091f)*/, Quaternion.identity);
+            GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], spawnPosition, Quaternion.identity);
             //Debug.Log($"Vehicle spawned at: {obj.transform.position}");
+            obj.transform.parent = transform;
             obj.SetActive(true);
             ShowVehicle();
-            vehicle = obj;
+            vehicleObj = obj;
+            vehicle = obj.GetComponent<Vehicle>();
+        }
+    }
+    private void ControlVehicle(bool vehiclePresence)
+    {
+        int childCount = transform.childCount;
+
+        for (int i = 0; i < childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            if (child.CompareTag("Car"))
+            {
+                Vehicle vehicle = child.GetComponent<Vehicle>();
+                vehicle.CanMove = vehiclePresence;
+                return;
+            }
         }
     }
     private void HideVehicle()
     {
         if (!isStraightRoad) return;
-        if (vehicle == null) { print("null to hide"); return; }
-        vehicle.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InBack).OnComplete(() => vehicle.SetActive(false));
-        vehicle.GetComponent<Vehicle>().CanMove = false;
+        if (vehicleObj == null) { print("null to hide"); return; }
+        vehicleObj.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InBack).OnComplete(() => vehicleObj.SetActive(false));
+        vehicle.CanMove = false;
         //print("Hide");
     }
     private void ShowVehicle()
     {
         if (!isStraightRoad) return;
-        if (vehicle == null) { /*print("null to show");*/ return; }
+        if (vehicleObj == null) { /*print("null to show");*/ return; }
 
-        vehicle.SetActive(true);
-        vehicle.transform.localScale = Vector3.zero;
-        vehicle.transform.DOScale(new Vector3(0.1f, 0.1f, 0.1f), 1f).SetEase(Ease.OutBounce);
-        vehicle.GetComponent<Vehicle>().CanMove = true;
+        vehicleObj.SetActive(true);
+        vehicleObj.transform.localScale = Vector3.zero;
+        vehicleObj.transform.DOScale(new Vector3(0.1f, 0.1f, 0.1f), 1f).SetEase(Ease.OutBounce);
+        vehicle.CanMove = true;
         //print("Heyyy");
     }
     #endregion
