@@ -27,13 +27,13 @@ public class ThemeManager : Singleton<ThemeManager>
 
         EventManager.OnLevelStart.AddListener(SetRegionColors);
         EventManager.OnLevelFinish.AddListener(ChangeMainColor);
-        LevelManager.OnLoopComplete.AddListener(() => HexColor = GenerateRandomColor());
+        //LevelManager.OnLoopComplete.AddListener(() => HexColor = GenerateGhibliColor());
     }
     private void OnDisable()
     {
         EventManager.OnLevelStart.RemoveListener(SetRegionColors);
         EventManager.OnLevelFinish.RemoveListener(ChangeMainColor);
-        LevelManager.OnLoopComplete.RemoveListener(() => HexColor = GenerateRandomColor());
+        //LevelManager.OnLoopComplete.RemoveListener(() => HexColor = GenerateGhibliColor());
     }
 
     private void Start()
@@ -70,6 +70,10 @@ public class ThemeManager : Singleton<ThemeManager>
         material.SetColorArray("_RegionColors", new Color[] {
             GrassColor, RoadColor, RoadBorderColor, Color.white // Colors
         });
+
+        //print($"GrassColor {ColorToHex(GrassColor)}");
+        //print($"RoadColor {ColorToHex(RoadColor)}");
+        //print($"RoadBorderColor {ColorToHex(RoadBorderColor)}");
     }
     private void SetCityColors()
     {
@@ -149,8 +153,18 @@ public class ThemeManager : Singleton<ThemeManager>
     }
     private void ChangeMainColor()
     {
-        HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
-        StartCoroutine(GetColorScheme());
+        if (LevelManager.Instance.LevelIndex != 0)
+        {
+            print("regular level");
+            HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
+            StartCoroutine(GetColorScheme());
+        }
+        else    //LevelIndex >= LevelData.Levels.Count - 1
+        {
+            print("loop ended");
+            GenerateGhibliColor();
+            StartCoroutine(GetColorScheme());
+        }
     }
 
     private int HexToDec(string hex)
@@ -172,6 +186,7 @@ public class ThemeManager : Singleton<ThemeManager>
         return new Color(r, g, b);
     }
 
+    #region new theme
     private System.Random random = new System.Random();
     public string GenerateRandomColor()
     {
@@ -182,7 +197,15 @@ public class ThemeManager : Singleton<ThemeManager>
         return $"{red:X2}{green:X2}{blue:X2}";
     }
 
-    public  string GetRandomPastelColorHex()
+    private string GenerateGhibliColor()
+    {
+        int mononoke = random.Next(StudioGhibliPalette.ghibliPalette.Length);
+        Debug.Log(mononoke);
+        return StudioGhibliPalette.ghibliPalette[mononoke];
+    }
+    #endregion
+
+    public string GetRandomPastelColorHex()
     {
         // Generate a random pastel color
         float hue = UnityEngine.Random.Range(0f, 1f);
