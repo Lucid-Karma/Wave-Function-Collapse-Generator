@@ -17,6 +17,7 @@ public class ThemeManager : Singleton<ThemeManager>
     [HideInInspector] public Color RoadColor;
     private Color RoadBorderColor;
     [HideInInspector] public Color CameraBgColor;
+    private Color RoofColor;
 
     private int TextureAtlasSize = 2;
     private float NormalizedBlockTextureSize { get { return 1f / (float)TextureAtlasSize; } }
@@ -27,13 +28,13 @@ public class ThemeManager : Singleton<ThemeManager>
 
         EventManager.OnLevelStart.AddListener(SetRegionColors);
         EventManager.OnLevelFinish.AddListener(ChangeMainColor);
-        //LevelManager.OnLoopComplete.AddListener(() => HexColor = GenerateGhibliColor());
+        LevelManager.OnLoopComplete.AddListener(() => HexColor = GenerateGhibliColor());
     }
     private void OnDisable()
     {
         EventManager.OnLevelStart.RemoveListener(SetRegionColors);
         EventManager.OnLevelFinish.RemoveListener(ChangeMainColor);
-        //LevelManager.OnLoopComplete.RemoveListener(() => HexColor = GenerateGhibliColor());
+        LevelManager.OnLoopComplete.RemoveListener(() => HexColor = GenerateGhibliColor());
     }
 
     private void Start()
@@ -78,7 +79,7 @@ public class ThemeManager : Singleton<ThemeManager>
     private void SetCityColors()
     {
         cityMaterial.SetVectorArray("_RegionCoords", new Vector4[] { roof1, roof2 });
-        cityMaterial.SetColorArray("_RegionColors", new Color[] { GrassColor, RoadColor });
+        cityMaterial.SetColorArray("_RegionColors", new Color[] { RoofColor, RoofColor });
     }
 
     private Vector4 CalculateSquareRegion(int textureId)
@@ -135,6 +136,7 @@ public class ThemeManager : Singleton<ThemeManager>
                     GrassColor = GetColorFromString(colorScheme.colors[2].hex.value);
                     RoadColor = GetColorFromString(colorScheme.colors[0].hex.value);
                     RoadBorderColor = GetColorFromString(colorScheme.colors[1].hex.value);
+                    RoofColor = GetColorFromString(colorScheme.colors[0].hex.value);
                     //HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
 
                     CameraBgColor = GetColorFromString("#" + TransformHexColor(colorScheme.colors[0].hex.value));
@@ -159,10 +161,9 @@ public class ThemeManager : Singleton<ThemeManager>
             HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
             StartCoroutine(GetColorScheme());
         }
-        else    //LevelIndex >= LevelData.Levels.Count - 1
+        else    
         {
             print("loop ended");
-            GenerateGhibliColor();
             StartCoroutine(GetColorScheme());
         }
     }

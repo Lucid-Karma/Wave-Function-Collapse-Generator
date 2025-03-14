@@ -95,11 +95,18 @@ public class CharacterBase : Singleton<CharacterBase>
     {
         if (moduleTransform != null) 
         {
+            ModuleObject moForVehicle = moduleTransform.GetComponent<ModuleObject>();
             int randomIndex = Random.Range(0, _desiredAngles.Length - 1);
             int randomRotation = _desiredAngles[randomIndex];
 
+            moForVehicle?.ControlVehicle(false);
+            moduleTransform.DOMove(new Vector3(moduleTransform.position.x, 1, moduleTransform.position.z), 1f).SetEase(Ease.Unset)
+                .OnComplete(() =>
+                {
+                    moduleTransform.DOMove(new Vector3(moduleTransform.position.x, 0, moduleTransform.position.z), 0.2f).SetEase(Ease.InBack);
+                }); 
             moduleTransform.DORotate(new Vector3(0f, 0f, (float)randomRotation), 1f, RotateMode.LocalAxisAdd)
-                .SetEase(Ease.OutQuad);
+                .SetEase(Ease.OutQuad).OnComplete(() => { moForVehicle?.ControlVehicle(true); }); 
             for (int i = 0; i < randomIndex + 1; i++)
             {
                 moduleObject = moduleTransform.GetComponent<IModuleObject>();
@@ -122,14 +129,23 @@ public class CharacterBase : Singleton<CharacterBase>
     {
         for (int i = 0; i < _rotatableTransforms.Count; i++)
         {
-            gap = _moduleAngles[i] - _rotatableTransforms[i].localEulerAngles.y;
-            _rotatableTransforms[i].DORotate(new Vector3(0f, 0f, gap), 1f, RotateMode.LocalAxisAdd)
-                .SetEase(Ease.OutQuad);
+            Transform rotatableTransform = _rotatableTransforms[i];
+            ModuleObject moForVehicle = rotatableTransform.GetComponent<ModuleObject>();
 
-            moduleObject = _rotatableTransforms[i].GetComponent<IModuleObject>();
+            gap = _moduleAngles[i] - rotatableTransform.localEulerAngles.y;
+            moForVehicle?.ControlVehicle(false);
+            rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 1, rotatableTransform.position.z), 1f).SetEase(Ease.Unset)
+                .OnComplete(() =>
+                {
+                    rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 0, rotatableTransform.position.z), 0.2f).SetEase(Ease.InBack);
+                }); 
+            rotatableTransform.DORotate(new Vector3(0f, 0f, gap), 1f, RotateMode.LocalAxisAdd)
+                .SetEase(Ease.OutQuad).OnComplete(() => { moForVehicle?.ControlVehicle(true); });
+
+            moduleObject = rotatableTransform.GetComponent<IModuleObject>();
             if (moduleObject != null)
             {
-                moduleObject.UpdateMO_Angle(_rotatableTransforms[i]);
+                moduleObject.UpdateMO_Angle(rotatableTransform);
             }
         }
 

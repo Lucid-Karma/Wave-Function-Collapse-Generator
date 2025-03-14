@@ -17,6 +17,7 @@ public class VehicleManager : Singleton<VehicleManager>
 
     private void MakeDefaultPriority()
     {
+        print(vehiclePriority);
         vehiclePriority = 0;
     }
 }

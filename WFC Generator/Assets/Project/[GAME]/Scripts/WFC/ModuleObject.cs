@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ModuleObject: MonoBehaviour, IModuleObject
@@ -31,14 +32,12 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         CharacterBase.OnGridCollapse.AddListener(() => isChecked = false);
         CharacterBase.OnModulesRotate.AddListener(DeactivateCity);
         EventManager.OnLevelFinish.AddListener(ActivateCity);
-        //WfcGenerator.OnMapPreReady.AddListener(SpawnCar);
     }
     void OnDisable()
     {
         CharacterBase.OnGridCollapse.RemoveListener(() => isChecked = false);
         CharacterBase.OnModulesRotate.RemoveListener(DeactivateCity);
         EventManager.OnLevelFinish.RemoveListener(ActivateCity);
-        //WfcGenerator.OnMapPreReady.RemoveListener(SpawnCar);
 
         isChecked = false;
 
@@ -77,7 +76,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
     {
         if (_cityPart != null)
         {
-            //HideCity();
+            HideCity();
             //HideVehicle();
         }
     }
@@ -121,8 +120,6 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     #region Traffic
     [SerializeField] private Vector3 spawnPoint;
-    private GameObject vehicleObj;
-    private Vehicle vehicle;
     public void SpawnCar()
     {
         if (isStraightRoad)
@@ -131,12 +128,9 @@ public class ModuleObject: MonoBehaviour, IModuleObject
             GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], spawnPosition, Quaternion.identity);
             obj.transform.parent = transform;
             obj.SetActive(true);
-            ShowVehicle();
-            vehicleObj = obj;
-            vehicle = obj.GetComponent<Vehicle>();
         }
     }
-    private void ControlVehicle(bool vehiclePresence)
+    public void ControlVehicle(bool vehiclePresence)
     {
         int childCount = transform.childCount;
 
@@ -147,28 +141,24 @@ public class ModuleObject: MonoBehaviour, IModuleObject
             {
                 Vehicle vehicle = child.GetComponent<Vehicle>();
                 vehicle.CanMove = vehiclePresence;
+                //Debug.Log(" the vehicle has stopped by " + name + " " + child.position);
                 return;
             }
         }
     }
-    private void HideVehicle()
+    private Queue<Vehicle> _childVehicles = new Queue<Vehicle>();
+    public void EnqueueVehicle(Vehicle vehicle)
     {
-        if (!isStraightRoad) return;
-        if (vehicleObj == null) { print("null to hide"); return; }
-        vehicleObj.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InBack).OnComplete(() => vehicleObj.SetActive(false));
-        vehicle.CanMove = false;
-        //print("Hide");
+        _childVehicles.Enqueue(vehicle);
     }
-    private void ShowVehicle()
+    public void DequeueVehicle()
     {
-        if (!isStraightRoad) return;
-        if (vehicleObj == null) { /*print("null to show");*/ return; }
-
-        vehicleObj.SetActive(true);
-        vehicleObj.transform.localScale = Vector3.zero;
-        vehicleObj.transform.DOScale(new Vector3(0.1f, 0.1f, 0.1f), 1f).SetEase(Ease.OutBounce);
-        vehicle.CanMove = true;
-        //print("Heyyy");
+        if( _childVehicles.Count > 0 )
+            _childVehicles.Dequeue();
+    }
+    public bool IsPriorVehicle(Vehicle vehicle)
+    {
+        return vehicle == _childVehicles.Peek();
     }
     #endregion
 

@@ -13,11 +13,13 @@ public class NormalDriving : IVehicleBehavior
 {
     public void Drive(Vehicle vehicle)
     {
-        vehicle.SetParent();
-        vehicle.MoveForward();
+        //vehicle.Destroy();
         vehicle.AdjustSteering();
+        vehicle.MoveForward();
+        
         vehicle.FindIntersectionWaypoint();
         vehicle.CheckOtherVehicles();
+        vehicle.SetParent();
     }
 }
 
@@ -25,9 +27,9 @@ public class IntersectionDriving : IVehicleBehavior
 {
     public void Drive(Vehicle vehicle)
     {
-        vehicle.SetParent();
         vehicle.MoveTowardsWaypoint();
         vehicle.CheckOtherVehicles();
+        vehicle.SetParent();
     }
 }
 
@@ -63,6 +65,7 @@ public class Vehicle : MonoBehaviour
     private IVehicleBehavior _behavior;
     public Queue<Vector3> _path = new Queue<Vector3>();
 
+    //[SerializeField] private AudioSource beepFx;
     public bool IsAtTrafficLight { get; private set; }
     public bool CanPassTrafficLight { get; private set; }
     public bool CanMove { get; set; }
@@ -88,7 +91,6 @@ public class Vehicle : MonoBehaviour
         if (!CanMove) return;
         _behavior?.Drive(this);
     }
-
 
 
 
@@ -145,16 +147,11 @@ public class Vehicle : MonoBehaviour
 
         float currentAngle = transform.eulerAngles.y;
 
-        //if (Vector3.Distance(transform.position, targetWaypoint.position) > 1.7f)
-        //{
-        //    float ngleDifference = Mathf.DeltaAngle(currentAngle, targetAngle);
         //    float otationStep = 100f * Time.fixedDeltaTime;
-        //    float otationAmount = Mathf.Clamp(ngleDifference, -otationStep, otationStep);
         //    if (Mathf.Abs(ngleDifference) > 1f) // Küçük farklar için dönmeyi engelle
         //    {
         //        transform.Rotate(0, otationAmount, 0);
         //    }
-        //}
 
         if (Vector3.Distance(transform.position, targetWaypoint.position) < 1.5f)
         {
@@ -197,6 +194,14 @@ public class Vehicle : MonoBehaviour
         IdentifyGuardrailDistance();
         SetVehiclePriority();
         SetParent();
+
+        WfcGenerator.OnMapReady.AddListener(Stop);
+        CharacterBase.OnModulesRotate.AddListener(() => CanMove = true);
+    }
+    private void OnDisable()
+    {
+        WfcGenerator.OnMapReady.RemoveListener(Stop);
+        CharacterBase.OnModulesRotate.RemoveListener(() => CanMove = true);
     }
 
     private void SetVehiclePriority()
@@ -238,16 +243,16 @@ public class Vehicle : MonoBehaviour
             correction = Mathf.Clamp(correction, -1f, 1f);
             transform.Rotate(0, -correction * steeringSensitivity, 0);
             noTrackDetectedTime = 0;
-            //SetParent(); // rayOrigin'in frontOffset kadar önden kontrol etmesi, araçlarýn henüz girmediði modullerin hareketiyle hareket etmesine neden olacak.
         }
         else
         {
             if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, -transform.up, out RaycastHit moduleHit, rayDistance, ModuleLayer))
-            {
+            { 
+                //beepFx.Play();
                 SetBehavior(new StopForDraw());
-            }  
-            else
-                DestroyVehicle();
+            }
+            //else 
+            //    DestroyVehicle();
         }
             
     }
@@ -258,11 +263,13 @@ public class Vehicle : MonoBehaviour
     {
         if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out RaycastHit carHit, 0.5f, carLayer))
         {
-            int otherPriorityValue = carHit.collider.gameObject.GetComponent<Vehicle>().Priority;
-            if (otherPriorityValue > Priority)
+            //int otherPriorityValue = carHit.collider.gameObject.GetComponent<Vehicle>().Priority;
+            //if (otherPriorityValue > Priority)
+            if(!parentMo.IsPriorVehicle(this) || transform.parent != carHit.transform.parent)
             {
                 _previousbehavior = _behavior;
                 SetBehavior(new CarefulDriving());
+                //beepFx.Play();
             }
         }
     }
@@ -273,7 +280,10 @@ public class Vehicle : MonoBehaviour
 
         }
         else
+        {
+            //beepFx.Pause();
             SetBehavior(_previousbehavior);
+        }
     }
     private void SlowDownVehicle()
     {
@@ -284,15 +294,20 @@ public class Vehicle : MonoBehaviour
     #endregion
 
     Transform nextParent;
+    ModuleObject parentMo;
     public void SetParent()
     {
-        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, -transform.up, out RaycastHit floorHit, 0.5f, ModuleLayer))
+        rayOrigin = transform.position + transform.forward * frontOffset + Vector3.up * rayHeightOffset;
+        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, -transform.up, out RaycastHit floorHit, 0.5f, ModuleLayer) /*Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer)*/)
         {
             nextParent = floorHit.transform;
 
             if (transform.parent !=  null && transform.parent != nextParent)
             {
+                parentMo?.DequeueVehicle();
                 transform.parent = nextParent;
+                parentMo = transform.parent.GetComponent<ModuleObject>();
+                parentMo.EnqueueVehicle(this);
             }
         }
     }
@@ -302,8 +317,13 @@ public class Vehicle : MonoBehaviour
 
         if (Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer))
         {
+            //beepFx.Pause();
             SetBehavior(new NormalDriving());
         }
+    }
+    private void SetToNormalDrv()
+    {
+        SetBehavior(new NormalDriving());
     }
 
     private float noTrackDetectedTime = 0f;
@@ -313,6 +333,15 @@ public class Vehicle : MonoBehaviour
         noTrackDetectedTime += Time.fixedDeltaTime; 
 
         if (noTrackDetectedTime >= disappearTime)
+        {
+            Destroy(gameObject);
+            print("whaaa");
+        }
+    }
+    public void Destroy()
+    {
+        rayOrigin = transform.position + transform.forward * frontOffset + Vector3.up * rayHeightOffset;
+        if (!Physics.Raycast(rayOrigin, -transform.up, out RaycastHit floorHit, rayDistance, ModuleLayer))
         {
             Destroy(gameObject);
             print("whaaa");
