@@ -360,17 +360,17 @@ public class Vehicle : MonoBehaviour
         //Debug.Log("You CAN'T see me, my time is NOW..!");
     }
 
-    void OnDrawGizmos()
-    {
-        if (!Application.isPlaying) return;
+    //void OnDrawGizmos()
+    //{
+    //    if (!Application.isPlaying) return;
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position + Vector3.up * rayHeightOffset, transform.position + Vector3.up * rayHeightOffset + transform.forward * 0.5f);
+    //    Gizmos.color = Color.blue;
+    //    Gizmos.DrawLine(transform.position + Vector3.up * rayHeightOffset, transform.position + Vector3.up * rayHeightOffset + transform.forward * 0.5f);
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(rayOrigin, rayOrigin + transform.right * rayDistance);
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawLine(rayOrigin, rayOrigin + transform.right * rayDistance);
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(rayOrigin, rayOrigin - transform.up * 0.5f);
-    }
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawLine(rayOrigin, rayOrigin - transform.up * 0.5f);
+    //}
 }

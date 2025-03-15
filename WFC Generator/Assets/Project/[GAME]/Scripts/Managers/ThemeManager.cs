@@ -10,8 +10,8 @@ public class ThemeManager : Singleton<ThemeManager>
     [SerializeField] private Vector4 Grass;
     [SerializeField] private Vector4 Road;
     [SerializeField] private Vector4 RoadBorder;
-    private Vector4 roof1;
-    private Vector4 roof2;
+    private Vector4 roof1, roof2;
+    private Vector4 trees;
 
     [HideInInspector] public Color GrassColor;
     [HideInInspector] public Color RoadColor;
@@ -52,6 +52,7 @@ public class ThemeManager : Singleton<ThemeManager>
         TextureAtlasSize = 8;
         roof1 = CalculateSquareRegion(18);
         roof2 = CalculateSquareRegion(37);
+        trees = CalculateSquareRegion(14);
     }
 
     private void SetRegionColors()
@@ -78,8 +79,8 @@ public class ThemeManager : Singleton<ThemeManager>
     }
     private void SetCityColors()
     {
-        cityMaterial.SetVectorArray("_RegionCoords", new Vector4[] { roof1, roof2 });
-        cityMaterial.SetColorArray("_RegionColors", new Color[] { RoofColor, RoofColor });
+        cityMaterial.SetVectorArray("_RegionCoords", new Vector4[] { roof1, roof2, trees });
+        cityMaterial.SetColorArray("_RegionColors", new Color[] { RoofColor, RoofColor, RoadColor });
     }
 
     private Vector4 CalculateSquareRegion(int textureId)

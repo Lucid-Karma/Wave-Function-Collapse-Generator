@@ -883,7 +883,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -266.30298
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_LocalPosition.z
@@ -18882,6 +18882,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPrefabs:
   - {fileID: 124617205856973326, guid: 78a3879430080b54ba5850489cb133d7, type: 3}
+  - {fileID: 124617205856973326, guid: bb7c7b99fbb705444ad7efdf0f7122c8, type: 3}
 --- !u!1 &2601215968602375517
 GameObject:
   m_ObjectHideFlags: 0
@@ -33269,7 +33270,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -650.7539
       objectReference: {fileID: 0}
     - target: {fileID: 4938264355554224368, guid: b8103a2b21d635a43ae3b127ba904496, type: 3}
       propertyPath: m_LocalPosition.z
