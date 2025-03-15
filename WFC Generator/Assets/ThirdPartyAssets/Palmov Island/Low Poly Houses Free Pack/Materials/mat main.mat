@@ -112,6 +112,7 @@ Material:
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
     - _Glossiness: 0
+    - _GlossinessSource: 0
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
@@ -124,8 +125,11 @@ Material:
     - _RimStepSmooth: 0
     - _ShadowStep: 0.64
     - _ShadowStepSmooth: 0
+    - _Shininess: 0
     - _Smoothness: 0
+    - _SmoothnessSource: 0
     - _SmoothnessTextureChannel: 0
+    - _SpecSource: 0
     - _SpecularHighlights: 1
     - _SpecularStep: 0.17
     - _SpecularStepSmooth: 0

@@ -2,23 +2,37 @@ using UnityEngine;
 
 public static class StudioGhibliPalette
 {
-    public static readonly string[] ghibliPalette = new string[10]
+    public static readonly string[] ghibliPalette = new string[18]
     {
-        "9F3543",
-        "ec8d54",
-        "CB9D06",
-        //"D3B39D",
-        //"40826D",//??
-        "7A9B3D",
-        "3D61A4",
-        //"007BA7",
-        "395C8D",
-        //"E6E6FA",//miss but too bright :(
-        "9B4F96",
-        "F08080",
-        "E97451",
-        "9FE29C"
-        //"555D50"
+
+        "C0392B",   //1 Tall Poppy
+        "2ECC71",   //2 Zümrüt Yeþili
+        "9B59B6",   //3 Kraliyet Moru
+        "5D6D7E",   //4 Stormy Gray
+        "F39C12",   // Turuncu
+        "BE6E46",   //5 Brown Sugar
+        "C0392B",   //1 Velvet Red
+        "1ABC9C",   //2 Mystic Teal
+        "ACAD94",   //5 Sage !!
+        "2E86C1",   //0 Deep Ocean
+        "6C3483",   //3 Royal Plum
+        "8A6552",   //4 Raw Umber
+        "D62839",   //1 Crimson
+        "285943",   //2 Castleton Green
+        "9D8420",   //5 Dark Goldenrod
+        "A5402D",   //1 Chestnut
+        "582C4D",   //3 Violet (JTC)
+        "3498DB",   //0 Derin Turkuaz
+        //////////////
+        //"6B8FAF",
+        //"9F3543",
+        //"CB9D06",
+        //"7A9B3D",
+        //"3D61A4",
+        //"395C8D",
+        //"9B4F96",
+        //"F08080",
+        //"9FE29C"
     };
 
 

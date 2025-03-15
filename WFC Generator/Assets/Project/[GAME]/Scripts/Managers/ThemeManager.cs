@@ -166,6 +166,7 @@ public class ThemeManager : Singleton<ThemeManager>
             print("loop ended");
             StartCoroutine(GetColorScheme());
         }
+        print("main color " + HexColor);
     }
 
     private int HexToDec(string hex)
@@ -200,9 +201,11 @@ public class ThemeManager : Singleton<ThemeManager>
 
     private string GenerateGhibliColor()
     {
-        int mononoke = random.Next(StudioGhibliPalette.ghibliPalette.Length);
-        Debug.Log(mononoke);
-        return StudioGhibliPalette.ghibliPalette[mononoke];
+        int division = LevelManager.Instance.LevelCount / 6;    // loop index
+        if (division < 18) return StudioGhibliPalette.ghibliPalette[division - 1];
+        int remainder = division % 18;
+        int result = (remainder == 0)? 18: remainder;
+        return StudioGhibliPalette.ghibliPalette[result - 1];
     }
     #endregion
 
