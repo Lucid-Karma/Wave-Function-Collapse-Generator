@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class GamePanels : Panel
 {
@@ -25,6 +22,7 @@ public class GamePanels : Panel
     private void InitializeInGamePanel()
     {
         WelcomePanel.HidePanel();
+        Destroy(WelcomePanel.gameObject);
         InGamePanel.ShowPanel();
     }
 

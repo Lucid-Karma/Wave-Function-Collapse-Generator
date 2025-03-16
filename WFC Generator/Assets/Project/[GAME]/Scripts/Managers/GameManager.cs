@@ -12,14 +12,14 @@ public class GameManager : Singleton<GameManager>
 
     void Awake()
     {
-        PlayerPrefs.SetInt("LastLevel", 0);
-        PlayerPrefs.SetInt("LevelCount", 0);
-        //PlayerPrefs.SetInt("RewardAmount", 0);
-        //PlayerPrefs.SetInt("SolveCount", 0);
-        PlayerPrefs.SetInt("LoginCount", 0);
-        PlayerPrefs.SetInt("LastLevelDifficultyIndex", 0);
-        PlayerPrefs.SetString("HexColor", "");
-        PlayerPrefs.SetFloat("CurrentTime", 0);
+        //PlayerPrefs.SetInt("LastLevel", 0);
+        //PlayerPrefs.SetInt("LevelCount", 0);
+        ////PlayerPrefs.SetInt("RewardAmount", 0);
+        ////PlayerPrefs.SetInt("SolveCount", 0);
+        //PlayerPrefs.SetInt("LoginCount", 0);
+        //PlayerPrefs.SetInt("LastLevelDifficultyIndex", 0);
+        //PlayerPrefs.SetString("HexColor", "");
+        //PlayerPrefs.SetFloat("CurrentTime", 0);
     }
 
     public void StartGame()

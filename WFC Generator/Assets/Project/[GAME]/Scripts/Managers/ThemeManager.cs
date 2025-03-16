@@ -72,10 +72,6 @@ public class ThemeManager : Singleton<ThemeManager>
         material.SetColorArray("_RegionColors", new Color[] {
             GrassColor, RoadColor, RoadBorderColor, Color.white // Colors
         });
-
-        //print($"GrassColor {ColorToHex(GrassColor)}");
-        //print($"RoadColor {ColorToHex(RoadColor)}");
-        //print($"RoadBorderColor {ColorToHex(RoadBorderColor)}");
     }
     private void SetCityColors()
     {
@@ -116,7 +112,7 @@ public class ThemeManager : Singleton<ThemeManager>
         }
     }
 
-    private string hexColor = "3197E6";
+    private string hexColor = "1ABC9C";
     private string apiUrl => $"https://www.thecolorapi.com/scheme?hex={HexColor}&mode=triad&count=5";
     ColorScheme colorScheme;
 
@@ -158,16 +154,16 @@ public class ThemeManager : Singleton<ThemeManager>
     {
         if (LevelManager.Instance.LevelIndex != 0)
         {
-            print("regular level");
+            //print("regular level");
             HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
             StartCoroutine(GetColorScheme());
         }
         else    
         {
-            print("loop ended");
+            //print("loop ended");
             StartCoroutine(GetColorScheme());
         }
-        print("main color " + HexColor);
+        //print("main color " + HexColor);
     }
 
     private int HexToDec(string hex)
