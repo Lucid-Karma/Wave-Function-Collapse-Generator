@@ -20,10 +20,10 @@ public class ClaimButton : Button
 
     private void ClaimReward()
     {
-        if (!ClaimTimerTextController.isActive)
-        {
+        //if (!ClaimTimerTextController.isActive)
+        //{
             OnRewardClaim.Invoke();
             EventManager.OnButtonClick.Invoke();
-        }
+        //}
     }
 }

@@ -25,7 +25,10 @@ public class ClaimTimerTextController : MonoBehaviour
 
     private void OnEnable()
     {
-        isActive = true;
+        EventManager.OnGameStart.AddListener(() => isActive = true);
+
+        if(GameManager.Instance.IsGameStarted)
+            isActive = true;
     }
 
     private void Start()
@@ -61,8 +64,14 @@ public class ClaimTimerTextController : MonoBehaviour
         parent.SetActive(false);
     }
 
-    private void OnApplicationQuit()
+    private void OnDisable()
     {
+        EventManager.OnGameStart.RemoveListener(() => isActive = true);
         PlayerPrefs.SetFloat("CurrentTime", currentTime);
     }
+
+    //private void OnApplicationQuit()
+    //{
+    //    PlayerPrefs.SetFloat("CurrentTime", currentTime);
+    //}
 }
