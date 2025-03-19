@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Networking;
 
 public class ThemeManager : Singleton<ThemeManager>
@@ -29,12 +30,18 @@ public class ThemeManager : Singleton<ThemeManager>
         EventManager.OnLevelStart.AddListener(SetRegionColors);
         EventManager.OnLevelFinish.AddListener(ChangeMainColor);
         LevelManager.OnLoopComplete.AddListener(() => HexColor = GenerateGhibliColor());
+        WfcGenerator.OnMapPreReady.AddListener(CheckDaylight);
     }
     private void OnDisable()
     {
         EventManager.OnLevelStart.RemoveListener(SetRegionColors);
         EventManager.OnLevelFinish.RemoveListener(ChangeMainColor);
         LevelManager.OnLoopComplete.RemoveListener(() => HexColor = GenerateGhibliColor());
+        WfcGenerator.OnMapPreReady.RemoveListener(CheckDaylight);
+    }
+    private void CheckDaylight()
+    {
+        IsColorDark(colorScheme.colors[2].hex.value);
     }
 
     private void Start()
@@ -248,6 +255,28 @@ public class ThemeManager : Singleton<ThemeManager>
         // Convert back to Color and then to hex
         Color transformedColor = Color.HSVToRGB(h, s, v);
         return ColorUtility.ToHtmlStringRGB(transformedColor);
+    }
+    #endregion
+
+    #region ColorUtils
+    [HideInInspector] public static UnityEvent OnNight = new();
+    public void IsColorDark(string hex)
+    {
+        if (!ColorUtility.TryParseHtmlString(hex, out Color color))
+        {
+            print("GECERSIZ");
+            return;
+        }
+
+        // RGB bileþenlerini al ve 0-255 arasýna dönüþtür
+        Color32 color32 = color;
+        int brightness = (int)(0.2126f * color32.r + 0.7152f * color32.g + 0.0722f * color32.b);
+
+        if (brightness < 64) //128
+        {
+            print("Night");
+            OnNight.Invoke();
+        }  
     }
     #endregion
 }

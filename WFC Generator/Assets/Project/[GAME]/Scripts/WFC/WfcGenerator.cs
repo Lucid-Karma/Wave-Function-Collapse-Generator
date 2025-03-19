@@ -349,7 +349,7 @@ public class WfcGenerator : Singleton<WfcGenerator>
         gridHolder.transform.position = Vector3.zero;
         Invoke("AnnounceMapPreReady", 0.5f);
         print("R COUNT: " + rotatableObjectTs.Count);
-        Invoke("AnnounceMapReady", 6f); // 2f
+        Invoke("AnnounceMapReady", 4f); // 2f
     }
 
     #region Utility Methods

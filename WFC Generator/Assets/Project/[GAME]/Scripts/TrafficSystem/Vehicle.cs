@@ -66,6 +66,7 @@ public class Vehicle : MonoBehaviour
     public Queue<Vector3> _path = new Queue<Vector3>();
 
     //[SerializeField] private AudioSource beepFx;
+    [SerializeField] private GameObject headlight;
     public bool IsAtTrafficLight { get; private set; }
     public bool CanPassTrafficLight { get; private set; }
     public bool CanMove { get; set; }
@@ -194,14 +195,16 @@ public class Vehicle : MonoBehaviour
         IdentifyGuardrailDistance();
         SetVehiclePriority();
         SetParent();
-
+        
         WfcGenerator.OnMapReady.AddListener(Stop);
         CharacterBase.OnModulesRotate.AddListener(() => CanMove = true);
+        ThemeManager.OnNight.AddListener(() => headlight.SetActive(true));
     }
     private void OnDisable()
     {
         WfcGenerator.OnMapReady.RemoveListener(Stop);
         CharacterBase.OnModulesRotate.RemoveListener(() => CanMove = true);
+        ThemeManager.OnNight.RemoveListener(() => headlight.SetActive(true));
     }
 
     private void SetVehiclePriority()
