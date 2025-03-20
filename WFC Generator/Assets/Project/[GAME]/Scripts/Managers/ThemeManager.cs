@@ -263,18 +263,15 @@ public class ThemeManager : Singleton<ThemeManager>
     public void IsColorDark(string hex)
     {
         if (!ColorUtility.TryParseHtmlString(hex, out Color color))
-        {
-            print("GECERSIZ");
             return;
-        }
 
         // RGB bileþenlerini al ve 0-255 arasýna dönüþtür
         Color32 color32 = color;
         int brightness = (int)(0.2126f * color32.r + 0.7152f * color32.g + 0.0722f * color32.b);
 
-        if (brightness < 64) //128
+        if (brightness < 48) //128, 64
         {
-            print("Night");
+            //print("Night");
             OnNight.Invoke();
         }  
     }

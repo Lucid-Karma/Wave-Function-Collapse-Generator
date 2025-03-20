@@ -122,7 +122,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e6d0602be5e35641aae0b439d9669f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  headlight: {fileID: 8883990664116953088}
+  headlights:
+  - {fileID: 2539842445896238314}
+  - {fileID: 4528402871777658159}
   ModuleLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -183,7 +185,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7325722001223750803}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -304,7 +306,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7620996691583653572}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -400,7 +402,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7936377678864813992
 Transform:
   m_ObjectHideFlags: 0

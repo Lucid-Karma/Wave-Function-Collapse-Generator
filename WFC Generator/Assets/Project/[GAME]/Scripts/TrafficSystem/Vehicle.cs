@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 using static Waypoint;
 
 public interface IVehicleBehavior
@@ -66,7 +67,7 @@ public class Vehicle : MonoBehaviour
     public Queue<Vector3> _path = new Queue<Vector3>();
 
     //[SerializeField] private AudioSource beepFx;
-    [SerializeField] private GameObject headlight;
+    [SerializeField] private Light[] headlights;
     public bool IsAtTrafficLight { get; private set; }
     public bool CanPassTrafficLight { get; private set; }
     public bool CanMove { get; set; }
@@ -198,15 +199,21 @@ public class Vehicle : MonoBehaviour
         
         WfcGenerator.OnMapReady.AddListener(Stop);
         CharacterBase.OnModulesRotate.AddListener(() => CanMove = true);
-        ThemeManager.OnNight.AddListener(() => headlight.SetActive(true));
+        ThemeManager.OnNight.AddListener(EnableHeadlights);
     }
     private void OnDisable()
     {
         WfcGenerator.OnMapReady.RemoveListener(Stop);
         CharacterBase.OnModulesRotate.RemoveListener(() => CanMove = true);
-        ThemeManager.OnNight.RemoveListener(() => headlight.SetActive(true));
+        ThemeManager.OnNight.RemoveListener(EnableHeadlights);
     }
-
+    private void EnableHeadlights()
+    {
+        for (int i = 0; i < headlights.Length; i++)
+        {
+            headlights[i].enabled = true;
+        }
+    }
     private void SetVehiclePriority()
     {
         int p = VehicleManager.Instance.vehiclePriority++;
