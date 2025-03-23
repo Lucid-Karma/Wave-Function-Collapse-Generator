@@ -31,12 +31,14 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
         CharacterBase.OnGridCollapse.AddListener(() => isChecked = false);
         CharacterBase.OnModulesRotate.AddListener(DeactivateCity);
+        //VehicleManager.OnVehiclesStopped.AddListener(DeactivateCity);
         EventManager.OnLevelFinish.AddListener(ActivateCity);
     }
     void OnDisable()
     {
         CharacterBase.OnGridCollapse.RemoveListener(() => isChecked = false);
         CharacterBase.OnModulesRotate.RemoveListener(DeactivateCity);
+        //VehicleManager.OnVehiclesStopped.RemoveListener(DeactivateCity);
         EventManager.OnLevelFinish.RemoveListener(ActivateCity);
 
         isChecked = false;
@@ -167,12 +169,32 @@ public class ModuleObject: MonoBehaviour, IModuleObject
     {
         _cityPart.SetActive(true);
         _cityPart.transform.localScale = Vector3.zero;
-        _cityPart.transform.DOScale(new Vector3(0.0066f, 0.0066f, 0.0066f), 1f).SetEase(Ease.OutBounce);
+        _cityPart.transform.DOScale(new Vector3(0.0066f, 0.0066f, 0.0066f), 1f).SetEase(Ease.OutBounce).OnComplete(() => ActivateVehicle());
     }
 
     public void HideCity()
     {
-        _cityPart.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InBack).OnComplete(() => _cityPart.SetActive(false));
+        _cityPart.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InBack).OnComplete(() => {
+            _cityPart.SetActive(false);
+            DeactivateVehicle();
+        });
+    }
+
+    private void DeactivateVehicle()
+    {
+        foreach (Vehicle vehicle in _childVehicles)
+        {
+            if(vehicle != null) 
+                vehicle.gameObject.SetActive(false);
+        }
+    }
+    private void ActivateVehicle()
+    {
+        foreach (Vehicle vehicle in _childVehicles)
+        {
+            if (vehicle != null)
+                vehicle.gameObject.SetActive(true);
+        }
     }
     #endregion
 }

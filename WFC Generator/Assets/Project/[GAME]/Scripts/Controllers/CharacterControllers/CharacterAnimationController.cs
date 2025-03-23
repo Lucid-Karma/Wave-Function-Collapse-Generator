@@ -9,6 +9,7 @@ public class CharacterAnimationController : MonoBehaviour
     {
         EventManager.OnGameStart.AddListener(() => InvokeTrigger("Greet"));
         CharacterBase.OnModulesRotate.AddListener(() => InvokeTrigger("Request"));
+        //VehicleManager.OnVehiclesStopped.AddListener(() => InvokeTrigger("Request"));
         EventManager.OnLevelFinish.AddListener(() => InvokeTrigger("Clap"));
         EventManager.OnMusicOn.AddListener(() => UpdateIdleVersion("ListeningIdle", true));
         EventManager.OnMusicOff.AddListener(() => UpdateIdleVersion("Idle", false));
@@ -18,6 +19,7 @@ public class CharacterAnimationController : MonoBehaviour
     {
         EventManager.OnGameStart.RemoveListener(() => InvokeTrigger("Greet"));
         CharacterBase.OnModulesRotate.RemoveListener(() => InvokeTrigger("Request"));
+        //VehicleManager.OnVehiclesStopped.RemoveListener(() => InvokeTrigger("Request"));
         EventManager.OnLevelFinish.RemoveListener(() => InvokeTrigger("Clap"));
         EventManager.OnMusicOn.RemoveListener(() => UpdateIdleVersion("ListeningIdle", true));
         EventManager.OnMusicOff.RemoveListener(() => UpdateIdleVersion("Idle", false));

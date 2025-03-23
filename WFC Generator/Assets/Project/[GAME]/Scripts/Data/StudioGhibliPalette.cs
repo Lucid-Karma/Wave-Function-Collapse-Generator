@@ -4,35 +4,43 @@ public static class StudioGhibliPalette
 {
     public static readonly string[] ghibliPalette = new string[18]
     {
-
-        "C0392B",   //1 Tall Poppy
-        "2ECC71",   //2 Zümrüt Yeþili
-        "9B59B6",   //3 Kraliyet Moru
-        "5D6D7E",   //4 Stormy Gray
-        "F39C12",   // Turuncu
-        "BE6E46",   //5 Brown Sugar
-        "C0392B",   //1 Velvet Red
-        "1ABC9C",   //2 Mystic Teal
-        "ACAD94",   //5 Sage !!
-        "2E86C1",   //0 Deep Ocean
-        "6C3483",   //3 Royal Plum
-        "8A6552",   //4 Raw Umber
-        "D62839",   //1 Crimson
-        "285943",   //2 Castleton Green
-        "9D8420",   //5 Dark Goldenrod
-        "A5402D",   //1 Chestnut
-        "582C4D",   //3 Violet (JTC)
-        "3498DB",   //0 Derin Turkuaz
-        //////////////
-        //"6B8FAF",
-        //"9F3543",
-        //"CB9D06",
-        //"7A9B3D",
-        //"3D61A4",
-        //"395C8D",
-        //"9B4F96",
-        //"F08080",
-        //"9FE29C"
+        "FF3B30",   //1
+        "32D74B",   //2
+        "AF52DE",   //3
+        "FFD60A",   //5
+        "007AFF",   //0
+        "E74C3C",   //1
+        "2ECC71",   //2
+        "8E44AD",   //3
+        "FFA500",   //5
+        "0099CC",   //0
+        "FF6B6B",   //1
+        "00C853",   //2
+        "FF4081",   //3
+        "FF9F43",   //5
+        "1D4ED8",   //0
+        "27AE60",   //2
+        "E91E63",   //3
+        "4A90E2",   //0
+        ///////////////////////////////////////////
+        //"C0392B",   //1 Tall Poppy
+        //"2ECC71",   //2 Zümrüt Yeþili
+        //"9B59B6",   //3 Kraliyet Moru
+        //"5D6D7E",   //4 Stormy Gray
+        //"F39C12",   // Turuncu
+        //"BE6E46",   //5 Brown Sugar
+        //"C0392B",   //1 Velvet Red
+        //"1ABC9C",   //2 Mystic Teal
+        //"ACAD94",   //5 Sage !!
+        //"2E86C1",   //0 Deep Ocean
+        //"6C3483",   //3 Royal Plum
+        //"8A6552",   //4 Raw Umber
+        //"D62839",   //1 Crimson
+        //"285943",   //2 Castleton Green
+        //"9D8420",   //5 Dark Goldenrod
+        //"A5402D",   //1 Chestnut
+        //"582C4D",   //3 Violet (JTC)
+        //"3498DB",   //0 Derin Turkuaz
     };
 
 

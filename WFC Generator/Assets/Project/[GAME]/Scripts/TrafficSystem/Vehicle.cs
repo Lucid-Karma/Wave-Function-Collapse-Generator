@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
 using static Waypoint;
@@ -66,7 +68,6 @@ public class Vehicle : MonoBehaviour
     private IVehicleBehavior _behavior;
     public Queue<Vector3> _path = new Queue<Vector3>();
 
-    //[SerializeField] private AudioSource beepFx;
     [SerializeField] private Light[] headlights;
     public bool IsAtTrafficLight { get; private set; }
     public bool CanPassTrafficLight { get; private set; }
@@ -193,18 +194,23 @@ public class Vehicle : MonoBehaviour
     void OnEnable()
     {
         CanMove = true;
-        IdentifyGuardrailDistance();
-        SetVehiclePriority();
+        if(_behavior == null)
+        {
+            IdentifyGuardrailDistance();
+            SetVehiclePriority();
+        }
         SetParent();
-        
+
         WfcGenerator.OnMapReady.AddListener(Stop);
         CharacterBase.OnModulesRotate.AddListener(() => CanMove = true);
+        //VehicleManager.OnVehiclesStopped.AddListener(() => { Stop(); mapPinCanvas.SetActive(false); });
         ThemeManager.OnNight.AddListener(EnableHeadlights);
     }
     private void OnDisable()
     {
         WfcGenerator.OnMapReady.RemoveListener(Stop);
         CharacterBase.OnModulesRotate.RemoveListener(() => CanMove = true);
+        //VehicleManager.OnVehiclesStopped.RemoveListener(() => { Stop(); mapPinCanvas.SetActive(false); });
         ThemeManager.OnNight.RemoveListener(EnableHeadlights);
     }
     private void EnableHeadlights()
@@ -256,13 +262,14 @@ public class Vehicle : MonoBehaviour
         }
         else
         {
-            if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, -transform.up, out RaycastHit moduleHit, rayDistance, ModuleLayer))
-            { 
-                //beepFx.Play();
+            if (!Physics.Raycast(rayOrigin + transform.forward * frontOffset, -transform.up, out RaycastHit moduleHit, rayDistance, ModuleLayer))
+            {
+                DestroyVehicle();
+            }
+            else //if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, -transform.up, out RaycastHit mHit, rayDistance, ModuleLayer))
+            {
                 SetBehavior(new StopForDraw());
             }
-            //else 
-            //    DestroyVehicle();
         }
             
     }
@@ -275,11 +282,15 @@ public class Vehicle : MonoBehaviour
         {
             //int otherPriorityValue = carHit.collider.gameObject.GetComponent<Vehicle>().Priority;
             //if (otherPriorityValue > Priority)
-            if(!parentMo.IsPriorVehicle(this) || transform.parent != carHit.transform.parent)
+            if (!parentMo.IsPriorVehicle(this) || transform.parent != carHit.transform.parent)
             {
                 _previousbehavior = _behavior;
                 SetBehavior(new CarefulDriving());
-                //beepFx.Play();
+                mapPinCanvas.SetActive(true);
+                //if (carHit.collider.gameObject.GetComponent<Vehicle>().onLine)
+                //{
+                //    IncreaseStoppedCount();
+                //}
             }
         }
     }
@@ -291,7 +302,7 @@ public class Vehicle : MonoBehaviour
         }
         else
         {
-            //beepFx.Pause();
+            mapPinCanvas.SetActive(false);
             SetBehavior(_previousbehavior);
         }
     }
@@ -327,8 +338,23 @@ public class Vehicle : MonoBehaviour
 
         if (Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer))
         {
-            //beepFx.Pause();
+            onLine = false;
             SetBehavior(new NormalDriving());
+        }
+    }
+    bool onLine;
+    [SerializeField] private GameObject mapPinCanvas;
+    public void IncreaseStoppedCount()
+    {
+        if(CharacterBase.Instance.isDrawCompleted)
+        {
+            mapPinCanvas.SetActive(true);
+            VehicleManager.Instance.StoppedVehicleCount++;
+            onLine = true;
+            //print(parentMo + "pos: " + parentMo.gameObject.transform.position);
+//#if UNITY_EDITOR
+//            EditorApplication.isPaused = true;
+//#endif
         }
     }
     private void SetToNormalDrv()
@@ -337,7 +363,7 @@ public class Vehicle : MonoBehaviour
     }
 
     private float noTrackDetectedTime = 0f;
-    private float disappearTime = 1f;
+    private float disappearTime = 2.5f;
     private void DestroyVehicle()
     {
         noTrackDetectedTime += Time.fixedDeltaTime; 
@@ -345,7 +371,7 @@ public class Vehicle : MonoBehaviour
         if (noTrackDetectedTime >= disappearTime)
         {
             Destroy(gameObject);
-            print("whaaa");
+            //print("whaaa");
         }
     }
     public void Destroy()

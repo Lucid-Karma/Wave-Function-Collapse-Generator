@@ -1,10 +1,26 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class VehicleManager : Singleton<VehicleManager>
 {
+    [HideInInspector] public static UnityEvent OnVehiclesStopped = new();
+
     [HideInInspector]
     public int vehiclePriority;
+    
+    private int stoppedVehicleCount;
+    public int StoppedVehicleCount { get => stoppedVehicleCount; 
+        set  
+        {
+            stoppedVehicleCount = value;
+            //if (stoppedVehicleCount >= 3) 
+            //{
+            //    CharacterBase.Instance.isDrawCompleted = true;
+            //    OnVehiclesStopped.Invoke();
+            //}    
+        } 
+    }
 
     private void OnEnable()
     {

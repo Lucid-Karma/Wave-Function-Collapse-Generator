@@ -119,7 +119,7 @@ public class ThemeManager : Singleton<ThemeManager>
         }
     }
 
-    private string hexColor = "1ABC9C";
+    private string hexColor = "3197E6";
     private string apiUrl => $"https://www.thecolorapi.com/scheme?hex={HexColor}&mode=triad&count=5";
     ColorScheme colorScheme;
 
@@ -135,12 +135,12 @@ public class ThemeManager : Singleton<ThemeManager>
                 //Debug.Log(HexColor);
                 colorScheme = JsonUtility.FromJson<ColorScheme>(jsonResponse);
 
-                if (colorScheme?.colors != null && colorScheme.colors.Length >= 3)
+                if (colorScheme?.colors != null && colorScheme.colors.Length >= 4)
                 {
                     GrassColor = GetColorFromString(colorScheme.colors[2].hex.value);
                     RoadColor = GetColorFromString(colorScheme.colors[0].hex.value);
                     RoadBorderColor = GetColorFromString(colorScheme.colors[1].hex.value);
-                    RoofColor = GetColorFromString(colorScheme.colors[0].hex.value);
+                    RoofColor = GetColorFromString(colorScheme.colors[3].hex.value);
                     //HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
 
                     CameraBgColor = GetColorFromString("#" + TransformHexColor(colorScheme.colors[0].hex.value));
