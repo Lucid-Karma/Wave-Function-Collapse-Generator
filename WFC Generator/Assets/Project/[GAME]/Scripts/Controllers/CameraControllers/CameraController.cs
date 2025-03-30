@@ -18,13 +18,16 @@ public class CameraController : MonoBehaviour
     //    }
     //}
 
+    /// <summary>
+    /// current one
+    /// </summary>
     public Transform target; // Kameranýn bakacaðý merkez (hedef)
     public float zoomSpeed = 2.0f; // Zoom hýzý
-    public float rotationSpeed = 200.0f; // Rotasyon hýzý
-    public float minYAngle = 10f; // Minimum y ekseni açýsý (kürenin altýna inmemek için)
+    public float rotationSpeed = 3.0f; // Rotasyon hýzý
+    public float minYAngle = 60f; // Minimum y ekseni açýsý (kürenin altýna inmemek için)
     public float maxYAngle = 90f; // Maksimum y ekseni açýsý (tam yukarý bakmak için)
     public float minZoomDistance = 5f; // Minimum zoom mesafesi
-    public float maxZoomDistance = 20f; // Maksimum zoom mesafesi
+    public float maxZoomDistance = 40f; // Maksimum zoom mesafesi
 
     private float distance; // Hedefe olan mesafe (zoom)
     private float currentX = 0f; // X ekseni rotasyonu
@@ -86,7 +89,77 @@ public class CameraController : MonoBehaviour
         transform.position = target.position + rotation * direction;
 
         // Her zaman hedefe bak
-        transform.LookAt(target);
+        transform.rotation = rotation;
     }
+
+
+
+    //public Transform pivot; // Grid merkezindeki pivot
+    //public float rotateSpeed = 0.3f;
+    //public float zoomSpeed = 0.01f;
+    //public float minDistance = 30f;
+    //public float maxDistance = 150f;
+    //public float minVerticalAngle = 10f; // Yatay bakýþý sýnýrla
+    //public float maxVerticalAngle = 90f;
+
+    //private Vector2 initialTouchPos;
+    //private float currentDistance;
+    //private float horizontalAngle = 225f; // Baþlangýç açýsý (kamera (0,51,0)'da)
+    //private float verticalAngle = 43.8f; // Baþlangýç dikey açý
+
+    //void Start()
+    //{
+    //    currentDistance = Vector3.Distance(transform.position, pivot.position);
+    //    UpdateCameraPosition();
+    //}
+
+    //void Update()
+    //{
+    //    HandleTouchInput();
+    //    UpdateCameraPosition();
+    //    AdjustFarClip();
+    //}
+
+    //void HandleTouchInput()
+    //{
+    //    if (Input.touchCount == 1) // Döndürme
+    //    {
+    //        Touch touch = Input.GetTouch(0);
+    //        if (touch.phase == TouchPhase.Moved)
+    //        {
+    //            horizontalAngle += touch.deltaPosition.x * rotateSpeed;
+    //            verticalAngle -= touch.deltaPosition.y * rotateSpeed;
+    //            verticalAngle = Mathf.Clamp(verticalAngle, minVerticalAngle, maxVerticalAngle);
+    //        }
+    //    }
+    //    else if (Input.touchCount == 2) // Zoom
+    //    {
+    //        Touch t1 = Input.GetTouch(0);
+    //        Touch t2 = Input.GetTouch(1);
+
+    //        Vector2 t1Prev = t1.position - t1.deltaPosition;
+    //        Vector2 t2Prev = t2.position - t2.deltaPosition;
+
+    //        float prevMag = (t1Prev - t2Prev).magnitude;
+    //        float currentMag = (t1.position - t2.position).magnitude;
+
+    //        currentDistance -= (currentMag - prevMag) * zoomSpeed;
+    //        currentDistance = Mathf.Clamp(currentDistance, minDistance, maxDistance);
+    //    }
+    //}
+
+    //void UpdateCameraPosition()
+    //{
+    //    Quaternion rotation = Quaternion.Euler(verticalAngle, horizontalAngle, 0);
+    //    Vector3 offset = rotation * new Vector3(0, 0, -currentDistance);
+    //    transform.position = pivot.position + offset;
+    //    transform.LookAt(pivot.position);
+    //}
+
+    //void AdjustFarClip()
+    //{
+    //    float gridDiagonal = 37.5f * Mathf.Sqrt(2) * 2; // Grid'in köþegen uzunluðu
+    //    GetComponent<Camera>().farClipPlane = currentDistance + gridDiagonal;
+    //}
 
 }
