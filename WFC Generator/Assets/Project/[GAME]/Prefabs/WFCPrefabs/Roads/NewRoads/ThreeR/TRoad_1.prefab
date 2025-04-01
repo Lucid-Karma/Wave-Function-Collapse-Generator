@@ -1573,10 +1573,11 @@ MonoBehaviour:
   south: 0
   east: 1
   west: 1
-  isStraightRoad: 0
+  isStraightRoad: 1
   isRoad: 1
   smokeParticlePrefab: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
-  spawnPoint: {x: 0, y: 0, z: 0}
+  spawnPoint: {x: 0, y: -0.091, z: -0.21}
+  spawnRotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
 --- !u!33 &1175878289168394962
 MeshFilter:
   m_ObjectHideFlags: 0

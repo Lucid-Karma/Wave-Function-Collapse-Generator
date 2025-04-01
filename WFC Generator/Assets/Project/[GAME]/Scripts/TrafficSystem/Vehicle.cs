@@ -19,8 +19,9 @@ public class NormalDriving : IVehicleBehavior
         vehicle.MoveForward();
         
         vehicle.FindIntersectionWaypoint();
-        vehicle.CheckOtherVehicles();
         vehicle.SetParent();
+        vehicle.CheckOtherVehicles();
+        
     }
 }
 
@@ -29,8 +30,9 @@ public class IntersectionDriving : IVehicleBehavior
     public void Drive(Vehicle vehicle)
     {
         vehicle.MoveTowardsWaypoint();
-        vehicle.CheckOtherVehicles();
         vehicle.SetParent();
+        vehicle.CheckOtherVehicles();
+        
     }
 }
 
@@ -320,6 +322,7 @@ public class Vehicle : MonoBehaviour
     {
         _previousbehavior = _behavior;
         _trafficLight = trafficLight;
+        mapPinCanvas.SetActive(true);
         SetBehavior(new StopForTrafficLight());
     }
     public void WaitRedLight()
@@ -327,6 +330,7 @@ public class Vehicle : MonoBehaviour
         if (_trafficLight.CanGo())
         {
             SetBehavior(_previousbehavior);
+            mapPinCanvas.SetActive(false);
         }
     }
     #endregion
@@ -373,10 +377,6 @@ public class Vehicle : MonoBehaviour
 //            EditorApplication.isPaused = true;
 //#endif
         }
-    }
-    private void SetToNormalDrv()
-    {
-        SetBehavior(new NormalDriving());
     }
 
     private float noTrackDetectedTime = 0f;

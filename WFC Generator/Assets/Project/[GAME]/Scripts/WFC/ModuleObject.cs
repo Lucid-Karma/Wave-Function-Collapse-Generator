@@ -122,12 +122,13 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     #region Traffic
     [SerializeField] private Vector3 spawnPoint;
+    [SerializeField] private Quaternion spawnRotation;
     public void SpawnCar()
     {
         if (isStraightRoad)
         {
             Vector3 spawnPosition = gameObject.transform.position + spawnPoint;
-            GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], spawnPosition, Quaternion.identity);
+            GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], spawnPosition, spawnRotation);
             obj.transform.parent = transform;
             obj.SetActive(true);
         }
@@ -174,9 +175,9 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     public void HideCity()
     {
+        DeactivateVehicle();
         _cityPart.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InBack).OnComplete(() => {
             _cityPart.SetActive(false);
-            DeactivateVehicle();
         });
     }
 
