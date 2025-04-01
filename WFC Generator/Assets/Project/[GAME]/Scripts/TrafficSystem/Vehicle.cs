@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
 using static Waypoint;
 
 public interface IVehicleBehavior
@@ -48,10 +46,12 @@ public class StopForTrafficLight : IVehicleBehavior
 {
     public void Drive(Vehicle vehicle)
     {
-        if (vehicle.IsAtTrafficLight && !vehicle.CanPassTrafficLight)
-            vehicle.Stop();
+        //if (vehicle.IsAtTrafficLight && !vehicle.CanPassTrafficLight)
+        //    vehicle.Stop();
         //else
             //vehicle.FollowPath();
+
+        vehicle.WaitRedLight();
     }
 }
 
@@ -314,6 +314,23 @@ public class Vehicle : MonoBehaviour
 
     #endregion
 
+    #region TrafficLights
+    TrafficLight _trafficLight;
+    public void StopForRedLight(TrafficLight trafficLight)
+    {
+        _previousbehavior = _behavior;
+        _trafficLight = trafficLight;
+        SetBehavior(new StopForTrafficLight());
+    }
+    public void WaitRedLight()
+    {
+        if (_trafficLight.CanGo())
+        {
+            SetBehavior(_previousbehavior);
+        }
+    }
+    #endregion
+
     Transform nextParent;
     ModuleObject parentMo;
     public void SetParent()
@@ -372,15 +389,6 @@ public class Vehicle : MonoBehaviour
         {
             Destroy(gameObject);
             //print("whaaa");
-        }
-    }
-    public void Destroy()
-    {
-        rayOrigin = transform.position + transform.forward * frontOffset + Vector3.up * rayHeightOffset;
-        if (!Physics.Raycast(rayOrigin, -transform.up, out RaycastHit floorHit, rayDistance, ModuleLayer))
-        {
-            Destroy(gameObject);
-            print("whaaa");
         }
     }
 
