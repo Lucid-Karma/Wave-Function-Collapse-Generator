@@ -4,8 +4,8 @@ using UnityEngine;
 public class Billboard : MonoBehaviour
 {
     #region Animation
-    private float bounceDistance = 0.3f; // Zýplama mesafesi (dünya birimi)
-    private float duration = 0.6f;       // Zýplama süresi
+    private float bounceDistance = 0.3f; 
+    private float duration = 0.6f;       
 
     private Vector3 originalLocalPosition;
     private RectTransform rectTransform;
@@ -44,5 +44,10 @@ public class Billboard : MonoBehaviour
         }, 1f, duration)
         .SetEase(Ease.InOutSine)
         .SetLoops(-1, LoopType.Yoyo);
+    }
+
+    private void OnDisable()
+    {
+        Destroy(gameObject);
     }
 }

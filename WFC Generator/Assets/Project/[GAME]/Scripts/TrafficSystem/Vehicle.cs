@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using static Waypoint;
 using Sirenix.OdinInspector;
@@ -79,7 +77,7 @@ public class Vehicle : MonoBehaviour
     [ShowInInspector]
     public bool CanMove { get; set; }
     public int Priority { get; private set; }
-    public string Name;
+    //public string Name;
 
     //public void SetBehavior(IVehicleBehavior behavior) => _behavior = behavior;
     public void SetBehavior(IVehicleBehavior behavior)
@@ -214,13 +212,13 @@ public class Vehicle : MonoBehaviour
         }
         SetParent();
 
-        WfcGenerator.OnMapReady.AddListener(Stop);
+        WfcGenerator.OnMapPreReady.AddListener(Stop);
         CharacterBase.OnModulesRotate.AddListener(() => CanMove = true);
         ThemeManager.OnNight.AddListener(EnableHeadlights);
     }
     private void OnDisable()
     {
-        WfcGenerator.OnMapReady.RemoveListener(Stop);
+        WfcGenerator.OnMapPreReady.RemoveListener(Stop);
         CharacterBase.OnModulesRotate.RemoveListener(() => CanMove = true);
         ThemeManager.OnNight.RemoveListener(EnableHeadlights);
     }
@@ -346,7 +344,8 @@ public class Vehicle : MonoBehaviour
     {
         if (_trafficLight.CanGo())
         {
-            SetBehavior(_previousbehavior);
+            //SetBehavior(_previousbehavior);
+            SetBehavior(new NormalDriving());
         }
     }
     #endregion
@@ -362,7 +361,7 @@ public class Vehicle : MonoBehaviour
 
             if (transform.parent !=  null && transform.parent != nextParent)
             {
-                parentMo?.DequeueVehicle();
+                parentMo?.DequeueVehicle(this);
                 transform.parent = nextParent;
                 parentMo = transform.parent.GetComponent<ModuleObject>();
                 parentMo.EnqueueVehicle(this);
@@ -371,10 +370,10 @@ public class Vehicle : MonoBehaviour
     }
     public void WaitForPlay()
     {
-        rayOrigin = transform.position + transform.forward * frontOffset + Vector3.up * rayHeightOffset;
+        //rayOrigin = transform.position + transform.forward * frontOffset + Vector3.up * rayHeightOffset;
 
-        if (Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer))
-        {
+        //if (Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer))
+        //{
             if (!CharacterBase.Instance.isDrawCompleted)
             {
                 onLine = false;
@@ -382,7 +381,7 @@ public class Vehicle : MonoBehaviour
                 SetBehavior(_previousbehavior);
                 mapPinCanvas.SetActive(false);
             }
-        }
+        //}
     }
     bool onLine;
     [SerializeField] private GameObject mapPinCanvas;

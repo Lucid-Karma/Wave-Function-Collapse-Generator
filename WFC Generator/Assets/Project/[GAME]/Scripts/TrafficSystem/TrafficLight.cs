@@ -31,7 +31,9 @@ public class TrafficLight : MonoBehaviour
     Vehicle vehicle;
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Car"))
+        if (!enabled) return;
+
+        if (other.CompareTag("Car"))
         {
             vehicle = other.GetComponent<Vehicle>();
             if(!CanGo())

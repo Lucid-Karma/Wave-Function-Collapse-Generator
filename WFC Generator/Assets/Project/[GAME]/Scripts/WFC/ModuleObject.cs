@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ModuleObject: MonoBehaviour, IModuleObject
@@ -154,19 +155,25 @@ public class ModuleObject: MonoBehaviour, IModuleObject
             }
         }
     }
-    private Queue<Vehicle> _childVehicles = new Queue<Vehicle>();
+    //private Queue<Vehicle> _childVehicles = new Queue<Vehicle>();
+    private List<Vehicle> _childVehicles = new();
     public void EnqueueVehicle(Vehicle vehicle)
     {
-        _childVehicles.Enqueue(vehicle);
+        //_childVehicles.Enqueue(vehicle);
+        _childVehicles.Add(vehicle);
     }
-    public void DequeueVehicle()
+    public void DequeueVehicle(Vehicle vehicle)
     {
-        if( _childVehicles.Count > 0 )
-            _childVehicles.Dequeue();
+        //if( _childVehicles.Count > 0 )
+        //    _childVehicles.Dequeue();
+
+        if (_childVehicles.Count > 0)
+            _childVehicles.Remove(vehicle);
     }
     public bool IsPriorVehicle(Vehicle vehicle)
     {
-        return vehicle == _childVehicles.Peek();
+        //return vehicle == _childVehicles.Peek();
+        return vehicle == _childVehicles.First();
     }
     public bool IsCityActive()
     {
@@ -184,7 +191,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     public void HideCity()
     {
-        DeactivateVehicle();
+        //DeactivateVehicle();
         _cityPart.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InBack).OnComplete(() => {
             _cityPart.SetActive(false);
         });
@@ -194,8 +201,11 @@ public class ModuleObject: MonoBehaviour, IModuleObject
     {
         foreach (Vehicle vehicle in _childVehicles)
         {
-            if(vehicle != null) 
-                vehicle.gameObject.SetActive(false);
+            if(vehicle != null)
+            {
+                vehicle.Stop();
+            }
+                //vehicle.gameObject.SetActive(false);
         }
     }
     private void ActivateVehicle()
@@ -203,7 +213,10 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         foreach (Vehicle vehicle in _childVehicles)
         {
             if (vehicle != null)
-                vehicle.gameObject.SetActive(true);
+            {
+                vehicle.CanMove = true;
+            }
+                //vehicle.gameObject.SetActive(true);
         }
     }
     #endregion
