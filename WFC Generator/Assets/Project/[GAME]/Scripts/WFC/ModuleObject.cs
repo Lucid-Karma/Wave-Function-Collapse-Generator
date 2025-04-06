@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ModuleObject: MonoBehaviour, IModuleObject
 {
+    [HideInInspector] public bool isDowntown;
     public bool isChecked = false;
     public int Row;
     public int Column;
@@ -51,6 +52,8 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
         Row = 0;
         Column = 0;
+
+        gameObject.isStatic = false;
     }
 
     public void UpdateMO_Angle(Transform moduleTransform)
@@ -68,6 +71,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     private void ActivateCity()
     {
+        if (!isDowntown) return;
         if (_cityPart != null)
         {
             ShowCity();
@@ -76,6 +80,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
     }
     private void DeactivateCity()
     {
+        if (!isDowntown) return;
         if (_cityPart != null)
         {
             HideCity();
@@ -162,6 +167,10 @@ public class ModuleObject: MonoBehaviour, IModuleObject
     public bool IsPriorVehicle(Vehicle vehicle)
     {
         return vehicle == _childVehicles.Peek();
+    }
+    public bool IsCityActive()
+    {
+        return _cityPart.activeSelf;
     }
     #endregion
 

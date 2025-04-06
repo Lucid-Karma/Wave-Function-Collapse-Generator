@@ -18,7 +18,7 @@ public class TrafficLight : MonoBehaviour
 
     public bool CanGo()
     {
-        return m_LightColor == LightColor.GREEN? true: false;
+        return m_LightColor == LightColor.GREEN;
     }
 
     public void SetTrafficLight(bool isGreen)

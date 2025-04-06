@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using static Waypoint;
+using Sirenix.OdinInspector;
 
 public interface IVehicleBehavior
 {
@@ -14,6 +15,7 @@ public class NormalDriving : IVehicleBehavior
 {
     public void Drive(Vehicle vehicle)
     {
+        //vehicle.SetParent();
         //vehicle.Destroy();
         vehicle.AdjustSteering();
         vehicle.MoveForward();
@@ -21,7 +23,7 @@ public class NormalDriving : IVehicleBehavior
         vehicle.FindIntersectionWaypoint();
         vehicle.SetParent();
         vehicle.CheckOtherVehicles();
-        
+        //vehicle.SetParent();
     }
 }
 
@@ -29,10 +31,11 @@ public class IntersectionDriving : IVehicleBehavior
 {
     public void Drive(Vehicle vehicle)
     {
+        //vehicle.SetParent();
         vehicle.MoveTowardsWaypoint();
         vehicle.SetParent();
         vehicle.CheckOtherVehicles();
-        
+        //vehicle.SetParent();
     }
 }
 
@@ -73,10 +76,17 @@ public class Vehicle : MonoBehaviour
     [SerializeField] private Light[] headlights;
     public bool IsAtTrafficLight { get; private set; }
     public bool CanPassTrafficLight { get; private set; }
+    [ShowInInspector]
     public bool CanMove { get; set; }
     public int Priority { get; private set; }
+    public string Name;
 
-    public void SetBehavior(IVehicleBehavior behavior) => _behavior = behavior;
+    //public void SetBehavior(IVehicleBehavior behavior) => _behavior = behavior;
+    public void SetBehavior(IVehicleBehavior behavior)
+    {
+        _previousbehavior = _behavior;
+        _behavior = behavior;
+    }
 
     private void Start()
     {
@@ -95,6 +105,7 @@ public class Vehicle : MonoBehaviour
     {
         if (!CanMove) return;
         _behavior?.Drive(this);
+        //Name = _behavior.GetType().Name;
     }
 
 
@@ -205,14 +216,12 @@ public class Vehicle : MonoBehaviour
 
         WfcGenerator.OnMapReady.AddListener(Stop);
         CharacterBase.OnModulesRotate.AddListener(() => CanMove = true);
-        //VehicleManager.OnVehiclesStopped.AddListener(() => { Stop(); mapPinCanvas.SetActive(false); });
         ThemeManager.OnNight.AddListener(EnableHeadlights);
     }
     private void OnDisable()
     {
         WfcGenerator.OnMapReady.RemoveListener(Stop);
         CharacterBase.OnModulesRotate.RemoveListener(() => CanMove = true);
-        //VehicleManager.OnVehiclesStopped.RemoveListener(() => { Stop(); mapPinCanvas.SetActive(false); });
         ThemeManager.OnNight.RemoveListener(EnableHeadlights);
     }
     private void EnableHeadlights()
@@ -270,7 +279,12 @@ public class Vehicle : MonoBehaviour
             }
             else //if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, -transform.up, out RaycastHit mHit, rayDistance, ModuleLayer))
             {
-                SetBehavior(new StopForDraw());
+                if (CharacterBase.Instance.isDrawCompleted)
+                {
+                    mapPinCanvas.SetActive(true);
+                    SetBehavior(new StopForDraw());
+                }
+                    
             }
         }
             
@@ -286,9 +300,7 @@ public class Vehicle : MonoBehaviour
             //if (otherPriorityValue > Priority)
             if (!parentMo.IsPriorVehicle(this) || transform.parent != carHit.transform.parent)
             {
-                _previousbehavior = _behavior;
                 SetBehavior(new CarefulDriving());
-                mapPinCanvas.SetActive(true);
                 //if (carHit.collider.gameObject.GetComponent<Vehicle>().onLine)
                 //{
                 //    IncreaseStoppedCount();
@@ -298,13 +310,17 @@ public class Vehicle : MonoBehaviour
     }
     public void CarefulDrive()
     {
+        if (!parentMo.IsCityActive()) return;
+
         if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, transform.forward, out RaycastHit carHit, 0.5f, carLayer))
         {
-
+            if(parentMo.IsPriorVehicle(this) && transform.parent == carHit.transform.parent)
+            {
+                SetBehavior(_previousbehavior);
+            }  
         }
         else
         {
-            mapPinCanvas.SetActive(false);
             SetBehavior(_previousbehavior);
         }
     }
@@ -320,9 +336,10 @@ public class Vehicle : MonoBehaviour
     TrafficLight _trafficLight;
     public void StopForRedLight(TrafficLight trafficLight)
     {
-        _previousbehavior = _behavior;
+        //_previousbehavior = _behavior;
         _trafficLight = trafficLight;
-        mapPinCanvas.SetActive(true);
+        SetParent();
+        //mapPinCanvas.SetActive(true);
         SetBehavior(new StopForTrafficLight());
     }
     public void WaitRedLight()
@@ -330,7 +347,6 @@ public class Vehicle : MonoBehaviour
         if (_trafficLight.CanGo())
         {
             SetBehavior(_previousbehavior);
-            mapPinCanvas.SetActive(false);
         }
     }
     #endregion
@@ -340,7 +356,7 @@ public class Vehicle : MonoBehaviour
     public void SetParent()
     {
         rayOrigin = transform.position + transform.forward * frontOffset + Vector3.up * rayHeightOffset;
-        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, -transform.up, out RaycastHit floorHit, 0.5f, ModuleLayer) /*Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer)*/)
+        if (Physics.Raycast(transform.position + Vector3.up * rayHeightOffset, -transform.up * 0.1f, out RaycastHit floorHit, 0.5f, ModuleLayer) /*Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer)*/)
         {
             nextParent = floorHit.transform;
 
@@ -359,8 +375,13 @@ public class Vehicle : MonoBehaviour
 
         if (Physics.Raycast(rayOrigin, transform.right, out hit, rayDistance, trackLayer))
         {
-            onLine = false;
-            SetBehavior(new NormalDriving());
+            if (!CharacterBase.Instance.isDrawCompleted)
+            {
+                onLine = false;
+                //SetBehavior(new NormalDriving());
+                SetBehavior(_previousbehavior);
+                mapPinCanvas.SetActive(false);
+            }
         }
     }
     bool onLine;
@@ -392,17 +413,17 @@ public class Vehicle : MonoBehaviour
         }
     }
 
-    private void OnBecameVisible()
-    {
-        gameObject.SetActive(true);
-        //Debug.Log("boringgg");
-    }
+    //private void OnBecameVisible()
+    //{
+    //    gameObject.SetActive(true);
+    //    //Debug.Log("boringgg");
+    //}
 
-    private void OnBecameInvisible()
-    {
-        gameObject.SetActive(false);
-        //Debug.Log("You CAN'T see me, my time is NOW..!");
-    }
+    //private void OnBecameInvisible()
+    //{
+    //    gameObject.SetActive(false);
+    //    //Debug.Log("You CAN'T see me, my time is NOW..!");
+    //}
 
     //void OnDrawGizmos()
     //{
@@ -415,6 +436,6 @@ public class Vehicle : MonoBehaviour
     //    Gizmos.DrawLine(rayOrigin, rayOrigin + transform.right * rayDistance);
 
     //    Gizmos.color = Color.red;
-    //    Gizmos.DrawLine(rayOrigin, rayOrigin - transform.up * 0.5f);
+    //    Gizmos.DrawLine(rayOrigin, rayOrigin - transform.up * 0.1f);
     //}
 }

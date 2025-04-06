@@ -108,6 +108,7 @@ public class WfcGenerator : Singleton<WfcGenerator>
             moduleObject.Row = cells[firstCollapse].Row;
             moduleObject.Column = cells[firstCollapse].Column;
             moduleObjects.Add(moduleObject);
+            moduleObject.isDowntown = true;
         }
 
         ListRotatableMOTransforms(cells[firstCollapse], cells[firstCollapse].modules[0], obj.transform);
@@ -318,6 +319,7 @@ public class WfcGenerator : Singleton<WfcGenerator>
         ListRotatableMOTransforms(nextCell, nextCell.modules[0], obj.transform);
 
         obj.transform.SetParent(gridHolder.transform);
+        SetModulesStatic(nextCell, moduleObject, obj);
         //Debug.Log("cell index is: " + candidateCells.IndexOf(nextCell));
         candidateCells.Remove(nextCell);
         
@@ -366,6 +368,16 @@ public class WfcGenerator : Singleton<WfcGenerator>
             rotatableObjectTs.Add(moduleTransform);
             //print("CANDIDATE NO: " + cells.IndexOf(cell));
         }
+    }
+    private void SetModulesStatic(CellSO cell, ModuleObject module, GameObject moduleObj)
+    {
+        if (!RotatableRegionIndexList.Contains(cells.IndexOf(cell)))
+        {
+            module.isDowntown = false;
+            moduleObj.isStatic = true;
+        }
+        else
+            module.isDowntown = true;
     }
     List<int> RotatableRegionIndexList = new List<int>();
     int centerCellIndex;
