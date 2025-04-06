@@ -149,11 +149,13 @@ public class ThemeManager : Singleton<ThemeManager>
                 else
                 {
                     Debug.LogError("Color scheme data is incomplete or null.");
+                    FallbackToDefaultColor();
                 }
             }
             else
             {
                 Debug.LogError("API isteði baþarýsýz: " + request.error);
+                FallbackToDefaultColor();
             }
         }
     }
@@ -274,6 +276,16 @@ public class ThemeManager : Singleton<ThemeManager>
             //print("Night");
             OnNight.Invoke();
         }  
+    }
+
+    void FallbackToDefaultColor()
+    {
+        Color fallback = GetColorFromString("#D4248A");
+        RoadColor = fallback;
+        RoadBorderColor = GetColorFromString("#8ADE26");
+        GrassColor = GetColorFromString("#2E94E3");
+        RoofColor = GetColorFromString("#369AE7");
+        CameraBgColor = fallback;
     }
     #endregion
 }
