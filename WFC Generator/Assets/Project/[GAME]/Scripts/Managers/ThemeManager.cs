@@ -155,7 +155,7 @@ public class ThemeManager : Singleton<ThemeManager>
             else
             {
                 Debug.LogError("API isteði baþarýsýz: " + request.error);
-                FallbackToDefaultColor();
+                //InternetChecker.Instance.ShowNoInternet(noInternetPanel);
             }
         }
     }
@@ -163,13 +163,11 @@ public class ThemeManager : Singleton<ThemeManager>
     {
         if (LevelManager.Instance.LevelIndex != 0)
         {
-            //print("regular level");
             HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
             StartCoroutine(GetColorScheme());
         }
         else    
         {
-            //print("loop ended");
             StartCoroutine(GetColorScheme());
         }
         //print("main color " + HexColor);
@@ -278,7 +276,8 @@ public class ThemeManager : Singleton<ThemeManager>
         }  
     }
 
-    void FallbackToDefaultColor()
+    // public only for button action. Do not use outside
+    public void FallbackToDefaultColor()
     {
         Color fallback = GetColorFromString("#D4248A");
         RoadColor = fallback;
@@ -286,6 +285,48 @@ public class ThemeManager : Singleton<ThemeManager>
         GrassColor = GetColorFromString("#2E94E3");
         RoofColor = GetColorFromString("#369AE7");
         CameraBgColor = fallback;
+    }
+    #endregion
+
+    #region Lovely Spaghetti
+    [SerializeField] private GameObject noInternetPanel;
+
+    // public only for button action. Do not use outside
+    public void TryChangeMainColor()
+    {
+        if (LevelManager.Instance.LevelIndex != 0)
+        {
+            HexColor = colorScheme.colors[0].hex.value.Substring(1, 6);
+            StartCoroutine(TryGetColorScheme());
+        }
+        else
+        {
+            StartCoroutine(TryGetColorScheme());
+        }
+    }
+    IEnumerator TryGetColorScheme()
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get(apiUrl))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string jsonResponse = request.downloadHandler.text;
+                colorScheme = JsonUtility.FromJson<ColorScheme>(jsonResponse);
+
+                if (colorScheme?.colors != null && colorScheme.colors.Length >= 4)
+                {
+                    GrassColor = GetColorFromString(colorScheme.colors[2].hex.value);
+                    RoadColor = GetColorFromString(colorScheme.colors[0].hex.value);
+                    RoadBorderColor = GetColorFromString(colorScheme.colors[1].hex.value);
+                    RoofColor = GetColorFromString(colorScheme.colors[3].hex.value);
+
+                    CameraBgColor = GetColorFromString("#" + TransformHexColor(colorScheme.colors[0].hex.value));
+                    InternetChecker.Instance.HideNoInternet(noInternetPanel);
+                }
+            }
+        }
     }
     #endregion
 }

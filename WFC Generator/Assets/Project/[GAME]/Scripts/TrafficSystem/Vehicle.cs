@@ -13,8 +13,6 @@ public class NormalDriving : IVehicleBehavior
 {
     public void Drive(Vehicle vehicle)
     {
-        //vehicle.SetParent();
-        //vehicle.Destroy();
         vehicle.AdjustSteering();
         vehicle.MoveForward();
         
@@ -29,7 +27,6 @@ public class IntersectionDriving : IVehicleBehavior
 {
     public void Drive(Vehicle vehicle)
     {
-        //vehicle.SetParent();
         vehicle.MoveTowardsWaypoint();
         vehicle.SetParent();
         vehicle.CheckOtherVehicles();
@@ -49,11 +46,6 @@ public class StopForTrafficLight : IVehicleBehavior
 {
     public void Drive(Vehicle vehicle)
     {
-        //if (vehicle.IsAtTrafficLight && !vehicle.CanPassTrafficLight)
-        //    vehicle.Stop();
-        //else
-            //vehicle.FollowPath();
-
         vehicle.WaitRedLight();
     }
 }
@@ -72,8 +64,6 @@ public class Vehicle : MonoBehaviour
     public Queue<Vector3> _path = new Queue<Vector3>();
 
     [SerializeField] private Light[] headlights;
-    public bool IsAtTrafficLight { get; private set; }
-    public bool CanPassTrafficLight { get; private set; }
     [ShowInInspector]
     public bool CanMove { get; set; }
     public int Priority { get; private set; }
@@ -88,9 +78,6 @@ public class Vehicle : MonoBehaviour
 
     private void Start()
     {
-        IsAtTrafficLight = false;
-        CanPassTrafficLight = true;
-       
         SetBehavior(new NormalDriving());
     }
 

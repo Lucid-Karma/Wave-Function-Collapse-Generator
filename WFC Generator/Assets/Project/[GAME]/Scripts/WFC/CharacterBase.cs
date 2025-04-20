@@ -74,7 +74,10 @@ public class CharacterBase : Singleton<CharacterBase>
 
         for (int i = 0; i < cellCountToRotate; i++)
         {
-            randomTIndex = Random.Range(0, lotTransforms.Count - 1);
+            if (lotTransforms.Count == 0)
+                break;
+
+            randomTIndex = Random.Range(0, lotTransforms.Count);
             RotatePrefab(lotTransforms[randomTIndex]);
             lotTransforms.RemoveAt(randomTIndex);
         }

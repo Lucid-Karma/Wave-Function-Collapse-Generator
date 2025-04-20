@@ -6,8 +6,6 @@ public class Audio : MonoBehaviour
     public static Audio audioObject = null;
 
     private AudioSource background;
-    [SerializeField] private AudioClip singlePlayerBackground;
-    [SerializeField] private AudioClip multiplayerBackground;
 
     void Awake()
     {
@@ -42,27 +40,5 @@ public class Audio : MonoBehaviour
     public void PauseMusic()
     {
         background.Pause();
-    }
-
-    private void PlayMultiplayer()
-    {
-        background.clip = multiplayerBackground;
-
-        if (MuteButton.IsMusicOn)
-        {
-            background.volume = 0.5f;
-            background.Play();
-        } 
-    }
-
-    private void PlaySinglePlayer()
-    {
-        background.clip = singlePlayerBackground;
-
-        if (MuteButton.IsMusicOn)
-        {
-            background.volume = 1f;
-            background.Play();
-        } 
     }
 }

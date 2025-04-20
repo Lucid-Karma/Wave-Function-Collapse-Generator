@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class InternetChecker : MonoBehaviour
+public class InternetChecker : Singleton<InternetChecker>
 {
     [SerializeField] private GameObject noInternetPanel; // Assign in inspector
     [SerializeField] private Button retryButton; // Optional: Retry button
@@ -13,7 +13,7 @@ public class InternetChecker : MonoBehaviour
     {
         noInternetPanel?.SetActive(false);
         retryButton?.onClick.AddListener(RetryConnection);
-        continueButton?.onClick.AddListener(HideNoInternet);
+        continueButton?.onClick.AddListener(() => HideNoInternet(noInternetPanel));
         StartCoroutine(CheckConnectionCoroutine());
     }
 
@@ -27,7 +27,7 @@ public class InternetChecker : MonoBehaviour
         // First: Quick reachability check
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
-            ShowNoInternet();
+            ShowNoInternet(noInternetPanel);
             yield break;
         }
 
@@ -45,20 +45,20 @@ public class InternetChecker : MonoBehaviour
 #endif
 
         if (hasInternet)
-            HideNoInternet();
+            HideNoInternet(noInternetPanel);
         else
-            ShowNoInternet();
+            ShowNoInternet(noInternetPanel);
     }
 
-    void ShowNoInternet()
+    public void ShowNoInternet(GameObject panel)
     {
-        noInternetPanel?.SetActive(true);
-        Time.timeScale = 0f; // Optional: pause the game
+        panel.SetActive(true);
+        Time.timeScale = 0f; // pause the game
     }
 
-    void HideNoInternet()
+    public void HideNoInternet(GameObject panel)
     {
-        noInternetPanel?.SetActive(false);
+        panel.SetActive(false);
         Time.timeScale = 1f;
     }
 }
