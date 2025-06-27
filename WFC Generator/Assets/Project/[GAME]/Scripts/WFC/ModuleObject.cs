@@ -107,11 +107,11 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         //GameObject particle = Instantiate(smokeParticlePrefab, transform.position + new Vector3(0, -1f, 0), Quaternion.identity);
         //Destroy(particle, 1.5f);
 
-        transform.DOMove(new Vector3(transform.position.x, 1, transform.position.z), 0.2f).SetEase(Ease.Unset/*OutBounce*/)
-            .OnComplete(() =>
-            {
-                transform.DOMove(new Vector3(transform.position.x, 0, transform.position.z), 0.2f).SetEase(Ease.InBack);
-            });
+        //transform.DOMove(new Vector3(transform.position.x, 1, transform.position.z), 0.2f).SetEase(Ease.Unset/*OutBounce*/)
+        //    .OnComplete(() =>
+        //    {
+        //        transform.DOMove(new Vector3(transform.position.x, 0, transform.position.z), 0.2f).SetEase(Ease.InBack);
+        //    });
         transform.DORotate(new Vector3(0f, 0f, 90f), 0.4f, RotateMode.LocalAxisAdd)
                 .SetEase(Ease.Unset)
                 .OnComplete(() =>
@@ -194,6 +194,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         //DeactivateVehicle();
         _cityPart.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InBack).OnComplete(() => {
             _cityPart.SetActive(false);
+            DeactivateVehicle();
         });
     }
 
@@ -204,6 +205,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
             if(vehicle != null)
             {
                 vehicle.Stop();
+                vehicle.gameObject.SetActive(false);
             }
                 //vehicle.gameObject.SetActive(false);
         }
@@ -214,6 +216,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
         {
             if (vehicle != null)
             {
+                vehicle.gameObject.SetActive(true);
                 vehicle.CanMove = true;
             }
                 //vehicle.gameObject.SetActive(true);

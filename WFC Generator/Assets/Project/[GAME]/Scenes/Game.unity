@@ -1182,8 +1182,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: No Internet Connection !!!\n\nSome features of the game may not work correctly
-    without a connection.
+  m_text: No Internet Connection !!!\n\nSome features of the game may not work correctly.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4e5974faef0c1494b808ab5eeb518758, type: 2}
   m_sharedMaterial: {fileID: -7580180292926479999, guid: 4e5974faef0c1494b808ab5eeb518758, type: 2}
@@ -1882,7 +1881,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 7e2eb0fae86587a4bb51105b3e10a6cd, type: 3}
   m_Resource: {fileID: 8300000, guid: 7e2eb0fae86587a4bb51105b3e10a6cd, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -21047,6 +21046,7 @@ MonoBehaviour:
   GrassColor: {r: 0, g: 0, b: 0, a: 0}
   RoadColor: {r: 0, g: 0, b: 0, a: 0}
   CameraBgColor: {r: 0, g: 0, b: 0, a: 0}
+  directionalLight: {fileID: 705507994}
   noInternetPanel: {fileID: 2072478219}
 --- !u!1 &3653518868024488044
 GameObject:

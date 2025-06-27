@@ -72,6 +72,7 @@ public class CharacterBase : Singleton<CharacterBase>
         
         cellCountToRotate = LevelManager.Instance.DifficultyData.MO_CountToRotate;
 
+        LiftAndLowerMOs();
         for (int i = 0; i < cellCountToRotate; i++)
         {
             if (lotTransforms.Count == 0)
@@ -93,6 +94,22 @@ public class CharacterBase : Singleton<CharacterBase>
 
         Invoke("AnnounceRotateCompleted", 1f);
     }
+    private void LiftAndLowerMOs()
+    {
+        for (int i = 0; i < _rotatableTransforms.Count; i++)
+        {
+            Transform rotatableTransform = _rotatableTransforms[i];
+            rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 1, rotatableTransform.position.z), 1f).SetEase(Ease.Unset)
+                .OnComplete(() =>
+                {
+                    rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 0, rotatableTransform.position.z), 0.2f).SetEase(Ease.InBack);
+                });
+        }
+    }
+    public bool IsRotatable(Transform t)
+    {
+        return _rotatableTransforms.Contains(t);
+    }
 
     private void RotatePrefab(Transform moduleTransform)
     {
@@ -103,11 +120,11 @@ public class CharacterBase : Singleton<CharacterBase>
             int randomRotation = _desiredAngles[randomIndex];
 
             moForVehicle?.ControlVehicle(false);
-            moduleTransform.DOMove(new Vector3(moduleTransform.position.x, 1, moduleTransform.position.z), 1f).SetEase(Ease.Unset)
-                .OnComplete(() =>
-                {
-                    moduleTransform.DOMove(new Vector3(moduleTransform.position.x, 0, moduleTransform.position.z), 0.2f).SetEase(Ease.InBack);
-                }); 
+            //moduleTransform.DOMove(new Vector3(moduleTransform.position.x, 1, moduleTransform.position.z), 1f).SetEase(Ease.Unset)
+            //    .OnComplete(() =>
+            //    {
+            //        moduleTransform.DOMove(new Vector3(moduleTransform.position.x, 0, moduleTransform.position.z), 0.2f).SetEase(Ease.InBack);
+            //    }); 
             moduleTransform.DORotate(new Vector3(0f, 0f, (float)randomRotation), 1f, RotateMode.LocalAxisAdd)
                 .SetEase(Ease.OutQuad).OnComplete(() => { moForVehicle?.ControlVehicle(true); }); 
             for (int i = 0; i < randomIndex + 1; i++)
@@ -137,11 +154,8 @@ public class CharacterBase : Singleton<CharacterBase>
 
             gap = _moduleAngles[i] - rotatableTransform.localEulerAngles.y;
             moForVehicle?.ControlVehicle(false);
-            rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 1, rotatableTransform.position.z), 1f).SetEase(Ease.Unset)
-                .OnComplete(() =>
-                {
-                    rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 0, rotatableTransform.position.z), 0.2f).SetEase(Ease.InBack);
-                }); 
+
+            LiftAndLowerMOs();
             rotatableTransform.DORotate(new Vector3(0f, 0f, gap), 1f, RotateMode.LocalAxisAdd)
                 .SetEase(Ease.OutQuad).OnComplete(() => { moForVehicle?.ControlVehicle(true); });
 

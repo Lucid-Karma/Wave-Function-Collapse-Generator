@@ -24,10 +24,10 @@ public class TrafficSound : MonoBehaviour
 
     private void TurnUp()
     {
-        trafficSound.volume = 0.3f;
+        trafficSound.volume = 0.5f;
     }
     private void TurnOff()
     {
-        trafficSound.volume = 0.1f;
+        trafficSound.volume = 0.3f;
     }
 }
