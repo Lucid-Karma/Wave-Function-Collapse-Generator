@@ -64,6 +64,7 @@ public class ThemeManager : Singleton<ThemeManager>
 
     private void SetRegionColors()
     {
+        directionalLight.intensity = 1;
         SetTileColors();
         SetCityColors();
     }
@@ -260,6 +261,7 @@ public class ThemeManager : Singleton<ThemeManager>
 
     #region ColorUtils
     [HideInInspector] public static UnityEvent OnNight = new();
+    public Light directionalLight;
     public void IsColorDark(string hex)
     {
         if (!ColorUtility.TryParseHtmlString(hex, out Color color))
@@ -271,6 +273,7 @@ public class ThemeManager : Singleton<ThemeManager>
 
         if (brightness < 48) //128, 64
         {
+            directionalLight.intensity = 0.5f;
             //print("Night");
             OnNight.Invoke();
         }  
