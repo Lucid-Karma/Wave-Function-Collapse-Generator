@@ -208,7 +208,7 @@ public class Vehicle : MonoBehaviour
 
     void OnEnable()
     {
-        CanMove = true;
+        Stop();
         if(_behavior == null)
         {
             IdentifyGuardrailDistance();
@@ -216,12 +216,14 @@ public class Vehicle : MonoBehaviour
         }
         SetParent();
 
+        WfcGenerator.OnMapAnimationEnd.AddListener(() => CanMove = true);
         WfcGenerator.OnMapPreReady.AddListener(Stop);
         CharacterBase.OnModulesRotate.AddListener(() => CanMove = true);
         ThemeManager.OnNight.AddListener(EnableHeadlights);
     }
     private void OnDisable()
     {
+        WfcGenerator.OnMapAnimationEnd.RemoveListener(() => CanMove = true);
         WfcGenerator.OnMapPreReady.RemoveListener(Stop);
         CharacterBase.OnModulesRotate.RemoveListener(() => CanMove = true);
         ThemeManager.OnNight.RemoveListener(EnableHeadlights);

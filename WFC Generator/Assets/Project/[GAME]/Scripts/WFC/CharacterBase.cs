@@ -72,13 +72,13 @@ public class CharacterBase : Singleton<CharacterBase>
         
         cellCountToRotate = LevelManager.Instance.DifficultyData.MO_CountToRotate;
 
-        LiftAndLowerMOs();
         for (int i = 0; i < cellCountToRotate; i++)
         {
             if (lotTransforms.Count == 0)
                 break;
 
             randomTIndex = Random.Range(0, lotTransforms.Count);
+            LiftAndLowerBrokeMO(lotTransforms[randomTIndex]);
             RotatePrefab(lotTransforms[randomTIndex]);
             lotTransforms.RemoveAt(randomTIndex);
         }
@@ -93,6 +93,14 @@ public class CharacterBase : Singleton<CharacterBase>
         while (!isFail);
 
         Invoke("AnnounceRotateCompleted", 1f);
+    }
+    private void LiftAndLowerBrokeMO(Transform rotatableTransform)
+    {
+        rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 1, rotatableTransform.position.z), 1f).SetEase(Ease.Unset)
+            .OnComplete(() =>
+            {
+                rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 0, rotatableTransform.position.z), 0.2f).SetEase(Ease.InBack);
+            });
     }
     private void LiftAndLowerMOs()
     {

@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
+using DG.Tweening;
+using System.Collections;
 
 public class WfcGenerator : Singleton<WfcGenerator>
 {
@@ -30,10 +32,12 @@ public class WfcGenerator : Singleton<WfcGenerator>
     [HideInInspector] public List<Transform> rotatableObjectTs = new();
     public List<ModuleObject> moduleObjects = new();
     ModuleObject moduleObject;
+    [HideInInspector] public List<GameObject> animationSequenceList = new();
     [HideInInspector] public List<GameObject> multiplayerPieces = new();
 
     [HideInInspector] public static UnityEvent OnMapReady = new();
     [HideInInspector] public static UnityEvent OnMapSolve = new();
+    [HideInInspector] public static UnityEvent OnMapAnimationEnd = new();
     [HideInInspector] public static UnityEvent OnMapPreReady = new();
 
     private void Start()
@@ -55,8 +59,6 @@ public class WfcGenerator : Singleton<WfcGenerator>
     private List<GameObject> cars = new List<GameObject>();
     public virtual void RecreateLevel()
     {
-        //DestroyCars();
-        //DestroyMO_Objects();
         ResetData();
         Destroy(gridHolder);
         LevelManager.Instance.StartLevel();
@@ -68,6 +70,9 @@ public class WfcGenerator : Singleton<WfcGenerator>
         rotatableObjectTs.Clear();
         moduleObjects.Clear();
         RotatableRegionIndexList.Clear();
+
+        originalPositions.Clear();
+        animationSequenceList.Clear();
     }
     private void DestroyMO_Objects()
     {
@@ -116,6 +121,7 @@ public class WfcGenerator : Singleton<WfcGenerator>
         gridHolder = (GameObject)Instantiate(emptyObject);
         gridHolder.transform.position = obj.transform.position;
         obj.transform.SetParent(gridHolder.transform);
+        animationSequenceList.Add(obj);
     }
 
     private void Generate()
@@ -138,7 +144,8 @@ public class WfcGenerator : Singleton<WfcGenerator>
 
         centerCellIndex = cells.Count / 2;
         starterIndex = centerCellIndex - 4 - (_length * 2);
-        CalculateRotatableRegion();
+        //CalculateRotatableRegion();
+        GetDiagonalAreaIndexes(9, 5);
         //Debug.Log("Grid generated. Cell count: " + cells.Count);
     }
     
@@ -320,6 +327,7 @@ public class WfcGenerator : Singleton<WfcGenerator>
 
         obj.transform.SetParent(gridHolder.transform);
         SetModulesStatic(nextCell, moduleObject, obj);
+        animationSequenceList.Add(obj);
         //Debug.Log("cell index is: " + candidateCells.IndexOf(nextCell));
         candidateCells.Remove(nextCell);
         
@@ -347,11 +355,12 @@ public class WfcGenerator : Singleton<WfcGenerator>
                 break;
             }
         }
-       
-        gridHolder.transform.position = Vector3.zero;
-        Invoke("AnnounceMapPreReady", 3.5f);
-        print("R COUNT: " + rotatableObjectTs.Count);
-        Invoke("AnnounceMapReady", 4f); // 2f
+
+        gridHolder.transform.position = new Vector3(0, 0, 28);//Vector3.zero;
+        //Invoke("AnnounceMapPreReady", 3.5f);
+        //print("R COUNT: " + rotatableObjectTs.Count);
+        //Invoke("AnnounceMapReady", 4f); // 2f
+        AnimateModulesEnter();
     }
 
     #region Utility Methods
@@ -361,7 +370,7 @@ public class WfcGenerator : Singleton<WfcGenerator>
 
         if (module.north == module.south && module.south == module.east && module.east == module.west)
         {
-            
+            InnerIntersectionList.Add(moduleTransform);
         }
         else
         {
@@ -379,6 +388,7 @@ public class WfcGenerator : Singleton<WfcGenerator>
         else
             module.isDowntown = true;
     }
+    List<Transform> InnerIntersectionList = new List<Transform>();
     List<int> RotatableRegionIndexList = new List<int>();
     int centerCellIndex;
     int starterIndex;
@@ -397,6 +407,88 @@ public class WfcGenerator : Singleton<WfcGenerator>
             starterIndex += _length;
             cellIndex = starterIndex;
         }
+    }
+    private void GetDiagonalAreaIndexes(int length, int thickness)
+    {
+        // Start from bottom-left
+        int startX = 5;
+        int startZ = 13;
+
+        for (int i = 0; i < length; i++)
+        {
+            int x = startX + i;
+            int z = startZ - i;
+
+            if (x >= _width || z < 0) break;
+
+            // For each point along the diagonal, add thickness vertically along z-axis
+            int halfThickness = thickness / 2;
+            for (int dz = -halfThickness; dz <= halfThickness; dz++)
+            {
+                int thickZ = z + dz;
+                if (thickZ >= 0 && thickZ < _length)
+                {
+                    int index = thickZ * _width + x;
+                    RotatableRegionIndexList.Add(index);
+                }
+            }
+        }
+    }
+
+    [SerializeField] private float delayBetweenBlocks = 0.1f;
+    [SerializeField] private float riseDuration = 0.5f;
+    [SerializeField] private float startYOffset = -49f;
+
+    private List<Vector3> originalPositions = new List<Vector3>();
+    private void AnimateModulesEnter()
+    {
+        foreach (var block in animationSequenceList)
+        {
+            Vector3 originalPos = block.transform.position;
+            originalPositions.Add(originalPos);
+            block.transform.position = originalPos + Vector3.up * startYOffset;
+        }
+
+        // 2. Animasyonu baþlat
+        StartCoroutine(RevealCity());
+    }
+    [SerializeField] private AudioSource cityPartAnimFx;
+    [SerializeField] private AudioClip cityPartClip;
+    [SerializeField] private AudioSource restOfTheCityAnimFx;
+    IEnumerator RevealCity()
+    {
+        for (int i = 0; i < InnerIntersectionList.Count; i++)
+        {
+            InnerIntersectionList[i].DOMoveY(originalPositions[i].y, riseDuration)
+                .SetEase(Ease.OutBack);
+
+            cityPartAnimFx.PlayOneShot(cityPartClip);
+            animationSequenceList.Remove(rotatableObjectTs[i].gameObject);
+            yield return new WaitForSeconds(delayBetweenBlocks);
+        }
+        for (int i = 0; i < rotatableObjectTs.Count; i++)
+        {
+            rotatableObjectTs[i].DOMoveY(originalPositions[i].y, riseDuration)
+                .SetEase(Ease.OutBack);
+
+            cityPartAnimFx.PlayOneShot(cityPartClip);
+            animationSequenceList.Remove(rotatableObjectTs[i].gameObject);
+            yield return new WaitForSeconds(delayBetweenBlocks);
+        }
+        yield return new WaitForSeconds(0.3f);
+        for (int i = 0; i < animationSequenceList.Count; i++)
+        {
+            animationSequenceList[i].transform.DOMoveY(originalPositions[i].y, riseDuration)
+                .SetEase(Ease.OutBack);
+        }
+        restOfTheCityAnimFx.Play() ;
+
+        InnerIntersectionList.Clear();
+        OnMapAnimationEnd.Invoke();
+
+        Invoke("AnnounceMapPreReady", 3.5f);
+        print("R COUNT: " + rotatableObjectTs.Count);
+        Invoke("AnnounceMapReady", 4f); // 2f
     }
 
     //private int MapSize = 15;
