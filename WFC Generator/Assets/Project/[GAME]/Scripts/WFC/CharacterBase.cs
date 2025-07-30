@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using Unity.Netcode;
 using UnityEngine.EventSystems;
 
+public class BrokenRoadCountEvent : UnityEvent<int> { }
 public class CharacterBase : Singleton<CharacterBase> 
 {
     private List<ModuleObject> _candidateMOs = new();
@@ -23,6 +24,8 @@ public class CharacterBase : Singleton<CharacterBase>
 
     [HideInInspector] public static UnityEvent OnGridCollapse = new();
     [HideInInspector] public static UnityEvent OnModulesRotate = new();
+    [HideInInspector] public static BrokenRoadCountEvent OnSingleModuleMove = new();
+    [HideInInspector] public static UnityEvent OnFineModuleClick = new();
     [HideInInspector] public static UnityEvent OnNetworkShutdown = new();
 
     [HideInInspector] public bool isMapSucceed { get; private set; }
@@ -126,13 +129,14 @@ public class CharacterBase : Singleton<CharacterBase>
             ModuleObject moForVehicle = moduleTransform.GetComponent<ModuleObject>();
             int randomIndex = Random.Range(0, _desiredAngles.Length - 1);
             int randomRotation = _desiredAngles[randomIndex];
+            if (moForVehicle.isStraightRoad)
+            {
+                randomIndex = 2;
+                randomRotation = 270;
+            }
 
             moForVehicle?.ControlVehicle(false);
-            //moduleTransform.DOMove(new Vector3(moduleTransform.position.x, 1, moduleTransform.position.z), 1f).SetEase(Ease.Unset)
-            //    .OnComplete(() =>
-            //    {
-            //        moduleTransform.DOMove(new Vector3(moduleTransform.position.x, 0, moduleTransform.position.z), 0.2f).SetEase(Ease.InBack);
-            //    }); 
+
             moduleTransform.DORotate(new Vector3(0f, 0f, (float)randomRotation), 1f, RotateMode.LocalAxisAdd)
                 .SetEase(Ease.OutQuad).OnComplete(() => { moForVehicle?.ControlVehicle(true); }); 
             for (int i = 0; i < randomIndex + 1; i++)
@@ -150,6 +154,7 @@ public class CharacterBase : Singleton<CharacterBase>
     {
         OnModulesRotate.Invoke();
         isDrawCompleted = true;
+        CountMinimallyIncorrectModules();
     }
 
     float gap;
@@ -219,13 +224,20 @@ public class CharacterBase : Singleton<CharacterBase>
 
     public void AdaptGameMode(Transform moduleTransform)
     {
-        if (_rotatableTransforms.Contains(moduleTransform))
+        bool isChildOfRotatable = _rotatableTransforms.Any(rt => moduleTransform.IsChildOf(rt));
+
+        if (_rotatableTransforms.Contains(moduleTransform) || isChildOfRotatable)
         {
             moduleObject = moduleTransform.GetComponent<IModuleObject>();
             if (moduleObject != null)
             {
                 moduleTransform.GetComponent<ModuleObject>().RotateModule();
             }
+        }
+        else
+        {
+            bool isRoad = moduleTransform.GetComponent<ModuleObject>().isRoad;
+            if (isRoad) OnFineModuleClick.Invoke();
         }
     }
     public NetworkVariable<bool> isRotatableTransformsContains = new NetworkVariable<bool>(false);
@@ -236,6 +248,8 @@ public class CharacterBase : Singleton<CharacterBase>
         _candidateMOs.Clear();
         _candidateMOs.AddRange(generator.moduleObjects);
         isFail = false;
+
+        CountMinimallyIncorrectModules();
     }
 
     private void CollapseMO()
@@ -385,4 +399,23 @@ public class CharacterBase : Singleton<CharacterBase>
 
         return false;
     }
+
+    #region CountCorruptedModules
+
+    int incorrectModuleCount;
+    float _gap;
+    private void CountMinimallyIncorrectModules()
+    {
+        for (int i = 0; i < _rotatableTransforms.Count; i++)
+        {
+            Transform rotatableTransform = _rotatableTransforms[i];
+
+            _gap = _moduleAngles[i] - rotatableTransform.localEulerAngles.y;
+            if(_gap != 0) incorrectModuleCount++;
+        } 
+
+        OnSingleModuleMove.Invoke(incorrectModuleCount);
+        incorrectModuleCount = 0;
+    }
+    #endregion
 }

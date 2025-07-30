@@ -18,77 +18,70 @@ public class CameraController : MonoBehaviour
     //    }
     //}
 
-    /// <summary>
-    /// current one
-    /// </summary>
-    public Transform target; // Kameranýn bakacaðý merkez (hedef)
-    public float zoomSpeed = 2.0f; // Zoom hýzý
-    public float rotationSpeed = 3.0f; // Rotasyon hýzý
-    public float minYAngle = 60f; // Minimum y ekseni açýsý (kürenin altýna inmemek için)
-    public float maxYAngle = 90f; // Maksimum y ekseni açýsý (tam yukarý bakmak için)
-    public float minZoomDistance = 5f; // Minimum zoom mesafesi
-    public float maxZoomDistance = 40f; // Maksimum zoom mesafesi
+    public float zoomSpeed = 0.1f;
+    public float panSpeed = 0.01f;
+    public float minZoom = 2f;
+    public float maxZoom = 20f;
+    public float returnSmoothSpeed = 5f; // Higher = faster return
+    public float zoomLerpSpeed = 10f; // For smooth zooming
 
-    private float distance; // Hedefe olan mesafe (zoom)
-    private float currentX = 0f; // X ekseni rotasyonu
-    private float currentY = 45f; // Y ekseni rotasyonu (baþlangýç açýsý)
-
-    private Vector2 lastTouchPos; // Son dokunmatik pozisyonu
+    private Camera cam;
+    private Vector3 originalPosition;
+    private Vector3 currentPanOffset = Vector3.zero;
+    private float targetZoom;
 
     void Start()
     {
-        // Baþlangýçta kameranýn hedefe olan mesafesini ayarla
-        distance = Vector3.Distance(transform.position, target.position);
+        cam = Camera.main;
+        if (!cam.orthographic)
+        {
+            Debug.LogWarning("Camera must be orthographic for this controller to work correctly.");
+        }
 
-        // Kamerayý baþlangýç konumuna ayarla (90 derece merkezden yukarý bakacak)
-        currentY = maxYAngle;
+        originalPosition = cam.transform.position;
+        targetZoom = cam.orthographicSize;
     }
 
     void Update()
     {
-        // Tek dokunuþla kameranýn rotasyonunu kontrol et
-        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
+        float zoomFactor = Mathf.InverseLerp(maxZoom, minZoom, targetZoom); // 0 at maxZoom, 1 at minZoom
+
+        // -------- PAN WITH ONE FINGER --------
+        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved && zoomFactor > 0f)
         {
-            Vector2 touchDelta = Input.GetTouch(0).deltaPosition;
-
-            // Rotasyon hareketini uygula
-            currentX += touchDelta.x * rotationSpeed * Time.deltaTime;
-            currentY -= touchDelta.y * rotationSpeed * Time.deltaTime;
-
-            // Y ekseni sýnýrlarýný uygula (sadece üst yarýda kalacak þekilde)
-            currentY = Mathf.Clamp(currentY, minYAngle, maxYAngle);
+            Vector2 delta = Input.GetTouch(0).deltaPosition;
+            Vector3 move = new Vector3(-delta.x * panSpeed, -delta.y * panSpeed, 0f);
+            cam.transform.Translate(move * zoomFactor, Space.Self);
+            currentPanOffset = cam.transform.position - originalPosition;
         }
 
-        // Ýki dokunuþla zoom kontrolü yap
+        // -------- ZOOM WITH TWO FINGERS --------
         if (Input.touchCount == 2)
         {
-            Touch touchZero = Input.GetTouch(0);
-            Touch touchOne = Input.GetTouch(1);
+            Touch touch0 = Input.GetTouch(0);
+            Touch touch1 = Input.GetTouch(1);
 
-            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+            Vector2 touch0Prev = touch0.position - touch0.deltaPosition;
+            Vector2 touch1Prev = touch1.position - touch1.deltaPosition;
 
-            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
-            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+            float prevMag = (touch0Prev - touch1Prev).magnitude;
+            float currentMag = (touch0.position - touch1.position).magnitude;
 
-            // Ýki dokunuþ arasýndaki mesafe deðiþikliðine göre zoom yap
-            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+            float deltaMag = prevMag - currentMag;
 
-            distance += deltaMagnitudeDiff * zoomSpeed * Time.deltaTime;
-
-            // Zoom mesafesini sýnýrla
-            distance = Mathf.Clamp(distance, minZoomDistance, maxZoomDistance);
+            targetZoom += deltaMag * zoomSpeed;
+            targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
         }
-    }
 
-    void LateUpdate()
-    {
-        // Kameranýn yeni pozisyonunu ve rotasyonunu hesapla
-        Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
-        Vector3 direction = new Vector3(0, 0, -distance);
-        transform.position = target.position + rotation * direction;
+        // -------- SMOOTH ZOOM TRANSITION --------
+        cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime * zoomLerpSpeed);
 
-        transform.rotation = rotation;
+        // -------- SMOOTH RETURN TO ORIGINAL POSITION WHEN ZOOMED OUT --------
+        if (zoomFactor <= 0.01f)
+        {
+            cam.transform.position = Vector3.Lerp(cam.transform.position, originalPosition, Time.deltaTime * returnSmoothSpeed);
+            currentPanOffset = cam.transform.position - originalPosition; // Keep tracking the offset
+        }
     }
 
 }

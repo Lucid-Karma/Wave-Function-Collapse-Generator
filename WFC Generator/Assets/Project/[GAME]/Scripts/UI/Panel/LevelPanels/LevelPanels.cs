@@ -13,30 +13,32 @@ public class LevelPanels : Panel
     public Panel LevelCompletedPanel;
     public Panel BonusLevelPanel;
     public Panel NextLvlPanel;
+    public GameObject ChibiInformative;
     public ParticleSystem confetti;
 
     private void OnEnable()
     {
-        //EventManager.OnLevelStart.AddListener(HideLevelPanels);
         EventManager.OnLvlEndPanelFinish.AddListener(InitializeNextLevelPanel);  
         EventManager.OnLevelFinish.AddListener(() => StartCoroutine(InitializeLevelSuccessPanel()));
         SuccessAnimController.OnSuccessWent.AddListener(InitializeLevelCompletedPanel);
         NextLevelButton.OnBonusLevel.AddListener(InitializeBonusLevelPanel);
+        CharacterBase.OnFineModuleClick.AddListener(() => StartCoroutine(ShowChibiInformative()));
     }
 
     private void OnDisable()
     {
-        //EventManager.OnLevelStart.RemoveListener(HideLevelPanels);
         EventManager.OnLvlEndPanelFinish.RemoveListener(InitializeNextLevelPanel);
         EventManager.OnLevelFinish.RemoveListener(() => StartCoroutine(InitializeLevelSuccessPanel()));
         SuccessAnimController.OnSuccessWent.RemoveListener(InitializeLevelCompletedPanel);
         NextLevelButton.OnBonusLevel.RemoveListener(InitializeBonusLevelPanel);
+        CharacterBase.OnFineModuleClick.RemoveListener(() => StartCoroutine(ShowChibiInformative()));
     }
 
     private void Start()
     {
         HideLevelPanels();
         NextLvlPanel.HidePanel();
+        ChibiInformative.SetActive(false);
     }
 
     private IEnumerator InitializeLevelSuccessPanel()
@@ -105,5 +107,14 @@ public class LevelPanels : Panel
             return true;
 
         return false;
+    }
+
+    private IEnumerator ShowChibiInformative()
+    {
+        ChibiInformative.SetActive(true);
+
+        yield return new WaitForSeconds(0.8f);
+
+        ChibiInformative.SetActive(false);
     }
 }

@@ -507,6 +507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 467691bb410251b469d5e47ab478a77e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isDowntown: 0
   isChecked: 0
   Row: 0
   Column: 0
@@ -514,10 +515,12 @@ MonoBehaviour:
   south: 1
   east: 0
   west: 0
+  isVehicleSpawnPoint: 1
   isStraightRoad: 1
   isRoad: 1
   smokeParticlePrefab: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
   spawnPoint: {x: 0.226, y: -0.091, z: 0}
+  spawnRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &5872279781500607846
 MeshFilter:
   m_ObjectHideFlags: 0

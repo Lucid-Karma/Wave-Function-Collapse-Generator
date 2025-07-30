@@ -19,6 +19,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
 
     GameObject _cityPart;
 
+    public bool isVehicleSpawnPoint;
     public bool isStraightRoad;
     public bool isRoad;
 
@@ -131,7 +132,7 @@ public class ModuleObject: MonoBehaviour, IModuleObject
     [SerializeField] private Quaternion spawnRotation;
     public void SpawnCar()
     {
-        if (isStraightRoad)
+        if (isVehicleSpawnPoint)
         {
             Vector3 spawnPosition = gameObject.transform.position + spawnPoint;
             GameObject obj = Instantiate(GameManager.Instance.carPrefabs[Random.Range(0, GameManager.Instance.carPrefabs.Length)], spawnPosition, spawnRotation);
