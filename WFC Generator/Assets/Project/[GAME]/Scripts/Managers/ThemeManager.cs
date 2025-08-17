@@ -291,7 +291,7 @@ public class ThemeManager : Singleton<ThemeManager>
     }
     #endregion
 
-    #region Lovely Spaghetti
+    #region Internet Checker
     [SerializeField] private GameObject noInternetPanel;
 
     // public only for button action. Do not use outside

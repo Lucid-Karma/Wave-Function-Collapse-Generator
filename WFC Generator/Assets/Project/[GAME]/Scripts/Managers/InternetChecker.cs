@@ -6,14 +6,12 @@ using UnityEngine.UI;
 public class InternetChecker : Singleton<InternetChecker>
 {
     [SerializeField] private GameObject noInternetPanel; // Assign in inspector
-    [SerializeField] private Button retryButton; // Optional: Retry button
-    [SerializeField] private Button continueButton;
+    [SerializeField] private Button retryButton; // Retry button
 
     private void Start()
     {
         noInternetPanel?.SetActive(false);
         retryButton?.onClick.AddListener(RetryConnection);
-        continueButton?.onClick.AddListener(() => HideNoInternet(noInternetPanel));
         StartCoroutine(CheckConnectionCoroutine());
     }
 

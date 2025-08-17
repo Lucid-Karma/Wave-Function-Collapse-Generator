@@ -18,7 +18,7 @@ public class AdsManager : Singleton<AdsManager>
     {
         EventManager.OnLvlEndPanelFinish.AddListener(() => bannerAds.ShowBannerAd());
         EventManager.OnLevelFinish.AddListener(() => bannerAds.HideBannerAd());
-        LevelSolve.OnSolveBtnUse.AddListener(() => solveCount ++);
+        //LevelSolve.OnSolveBtnUse.AddListener(() => solveCount ++);
         CharacterBase.OnModulesRotate.AddListener(ShowInterstitialAd);
         ClaimButton.OnRewardClaim.AddListener(ShowRewardedAd);
         Screenshot.OnScreenshotStart.AddListener(() => bannerAds.HideBannerAd());
@@ -28,21 +28,19 @@ public class AdsManager : Singleton<AdsManager>
     {
         EventManager.OnLvlEndPanelFinish.RemoveListener(() => bannerAds.ShowBannerAd());
         EventManager.OnLevelFinish.RemoveListener(() => bannerAds.HideBannerAd());
-        LevelSolve.OnSolveBtnUse.RemoveListener(() => solveCount++);
+        //LevelSolve.OnSolveBtnUse.RemoveListener(() => solveCount++);
         CharacterBase.OnModulesRotate.RemoveListener(ShowInterstitialAd);
         ClaimButton.OnRewardClaim.RemoveListener(ShowRewardedAd);
         Screenshot.OnScreenshotStart.RemoveListener(() => bannerAds.HideBannerAd());
         Screenshot.OnScreenshotEnd.RemoveListener(() => bannerAds.ShowBannerAd());
     }
 
-    int solveCount = 0;
     private void ShowInterstitialAd()
     {
-        if(solveCount >= 3)
+        if(LevelManager.Instance.LevelCount % 3 == 0)
         {
             bannerAds.HideBannerAd();
             interstitialAds.ShowInterstitialAd();
-            solveCount = 0;
         }
     }
 

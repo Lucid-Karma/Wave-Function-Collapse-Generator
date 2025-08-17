@@ -110,7 +110,7 @@ public class CharacterBase : Singleton<CharacterBase>
         for (int i = 0; i < _rotatableTransforms.Count; i++)
         {
             Transform rotatableTransform = _rotatableTransforms[i];
-            rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 1, rotatableTransform.position.z), 1f).SetEase(Ease.Unset)
+            rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 0.5f, rotatableTransform.position.z), 1f).SetEase(Ease.Unset)
                 .OnComplete(() =>
                 {
                     rotatableTransform.DOMove(new Vector3(rotatableTransform.position.x, 0, rotatableTransform.position.z), 0.2f).SetEase(Ease.InBack);
